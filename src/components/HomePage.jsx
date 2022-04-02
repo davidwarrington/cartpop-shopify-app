@@ -10,6 +10,7 @@ import {
 } from "@shopify/polaris";
 
 import trophyImgUrl from "../assets/home-trophy.png";
+import { CheckoutLinkCard } from "./CheckoutLinkCard";
 
 import { ProductsCard } from "./ProductsCard";
 
@@ -76,7 +77,8 @@ export function HomePage() {
           </Card>
         </Layout.Section>
         <Layout.Section secondary>
-          <ProductsCard />
+          <CheckoutLinkCard products={[]} />
+          {/* <ProductsCard /> */}
         </Layout.Section>
       </Layout>
     </Page>
