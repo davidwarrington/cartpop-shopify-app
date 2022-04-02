@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { Shopify, ApiVersion } from "@shopify/shopify-api";
 import "dotenv/config";
 
+import webhookRoutes from "./webhooks/index.js";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 
@@ -80,47 +81,7 @@ export async function createServer(
 
   app.use(express.json());
 
-  /*
-    GDPR Webhooks - https://shopify.dev/apps/webhooks/configuration/mandatory-webhooks
-    
-    Note: We return 200 as we don't currently store any information
-  */
-
-  // customers/redact
-  // > Delete data stored on a customer. The `customer_id` is provided in payload.
-  // > Learn more: https://shopify.dev/apps/webhooks/configuration/mandatory-webhooks#customers-redact
-  app.post("/webhooks/customers/redact", async (req, res) => {
-    try {
-      res.status(200).send();
-    } catch (error) {
-      console.log(`Failed to process webhook: ${error}`);
-      res.status(500).send(error.message);
-    }
-  });
-
-  // customers/data_request
-  // > Learn more: https://shopify.dev/apps/webhooks/configuration/mandatory-webhooks#customers-data_request
-  // > Respond with any customer data store on your system. The `customer_id` is provided in payload.
-  app.post("/webhooks/customers/data_request", async (req, res) => {
-    try {
-      res.status(200).send();
-    } catch (error) {
-      console.log(`Failed to process webhook: ${error}`);
-      res.status(500).send(error.message);
-    }
-  });
-
-  // shop/redact
-  // > Erase store specific data
-  // > Learn more: https://shopify.dev/apps/webhooks/configuration/mandatory-webhooks#shop-redact
-  app.post("/webhooks/shop/redact", async (req, res) => {
-    try {
-      res.status(200).send();
-    } catch (error) {
-      console.log(`Failed to process webhook: ${error}`);
-      res.status(500).send(error.message);
-    }
-  });
+  webhookRoutes(app);
 
   app.use((req, res, next) => {
     const shop = req.query.shop;
