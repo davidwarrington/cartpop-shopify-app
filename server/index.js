@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { Shopify, ApiVersion } from "@shopify/shopify-api";
 import "dotenv/config";
 
+import webhookGdprRoutes from "./webhooks/gdpr.js";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 
@@ -79,6 +80,8 @@ export async function createServer(
   });
 
   app.use(express.json());
+
+  webhookGdprRoutes(app);
 
   app.use((req, res, next) => {
     const shop = req.query.shop;
