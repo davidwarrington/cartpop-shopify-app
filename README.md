@@ -1,6 +1,4 @@
-# Shopify App Node
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
+# CartPop - Shopify App
 
 This is a sample app to help developers bootstrap their Shopify app development.
 
@@ -10,9 +8,8 @@ This is the repository used when you create a new Node app with the [Shopify CLI
 
 ## Requirements
 
-- If you don’t have one, [create a Shopify partner account](https://partners.shopify.com/signup).
-- If you don’t have one, [create a Development store](https://help.shopify.com/en/partners/dashboard/development-stores#create-a-development-store) where you can install and test your app.
-- **If you are not using the Shopify CLI**, in the Partner dashboard, [create a new app](https://help.shopify.com/en/api/tools/partner-dashboard/your-apps#create-a-new-app). You’ll need this app’s API credentials during the setup process.
+- Shopify Partner account
+- Node 16+
 
 ## Installation
 

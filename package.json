@@ -1,6 +1,9 @@
 {
-  "name": "shopify-app-node",
-  "private": true,
+  "name": "cartpop-shopify-app",
+  "author": {
+    "name": "Gil Greenberg",
+    "url": "https://www.CheckoutPromotions.com",
+  },
   "scripts": {
     "build": "npm run build:client",
     "build:client": "vite build --outDir dist/client",
