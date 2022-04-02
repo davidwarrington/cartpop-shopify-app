@@ -3,10 +3,13 @@ import {
     Banner,
     Button,
     Card,
+    Checkbox,
     FormLayout,
     Stack,
     TextField,
     Modal,
+    Subheading,
+    TextStyle,
 } from "@shopify/polaris"
 
 export function OrderCard({
@@ -16,12 +19,13 @@ export function OrderCard({
     const [discountCode, setDiscount] = useState("")
     const [note, setNote] = useState("")
     const [ref, setRef] = useState("")
+    const [useShopPay, setShopPay] = useState(false)
     
     const toggleModalVisibility = useCallback(() => {
-        setShowModal(showModal => !showModal);
+        setShowModal(showModal => !showModal)
     }, [])
 
-    const hasOrderInfo = discountCode || note || ref;
+    const hasOrderInfo = discountCode || note || ref
 
     return (
         <>
@@ -37,13 +41,13 @@ export function OrderCard({
                 {hasOrderInfo ? (
                     <>Order information goes here</>
                 ) : (
-                    <Button primary>Add order information</Button>
+                    <Button primary onClick={toggleModalVisibility}>Add order information</Button>
                 )}
             </Card>
             <Modal 
                 open={showModal} 
                 onClose={toggleModalVisibility}
-                title="Customer information"
+                title="Order information"
                 secondaryActions={[
                     {
                         content: "Save and close",
@@ -71,8 +75,19 @@ export function OrderCard({
                     </FormLayout>
                 </Modal.Section>
                 <Modal.Section>
+                    <Subheading>Order attributes</Subheading>
                     <FormLayout>
-                        // TODO: attributes
+                        <TextStyle>None specified</TextStyle>
+                    
+                        <Button>Add attribute</Button>
+                    </FormLayout>
+                </Modal.Section>
+                <Modal.Section>
+                    <FormLayout>
+                        <Checkbox
+                            label="Redirect to Shop Pay"
+                            checked={useShopPay}
+                        />
                     </FormLayout>
                 </Modal.Section>
             </Modal>
