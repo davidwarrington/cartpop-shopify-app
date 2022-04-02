@@ -1,4 +1,4 @@
-export default function webhookRoutes(app) {
+export default function webhookGdprRoutes(app) {
     /*
         GDPR Webhooks 
         > Note: We return 200 as we don't currently store any information
