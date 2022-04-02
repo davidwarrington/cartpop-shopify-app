@@ -2,7 +2,7 @@
   "name": "cartpop-shopify-app",
   "author": {
     "name": "Gil Greenberg",
-    "url": "https://www.CheckoutPromotions.com",
+    "url": "https://www.CheckoutPromotions.com"
   },
   "scripts": {
     "build": "npm run build:client",
