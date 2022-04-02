@@ -12,6 +12,7 @@ import {
 import trophyImgUrl from "../assets/home-trophy.png";
 import { CheckoutLinkCard } from "./CheckoutLinkCard";
 import { CustomerCard } from "./CustomerCard";
+import { OrderCard } from "./OrderCard";
 
 import { ProductsCard } from "./ProductsCard";
 
@@ -21,6 +22,7 @@ export function HomePage() {
       <Layout>
         <Layout.Section>
           <CustomerCard />
+          <OrderCard />
           <Card sectioned>
             <Stack
               wrap={false}
