@@ -32,6 +32,8 @@ export function CheckoutLinkCard({
             ) : (
                 <Stack vertical>
                     <TextField 
+                        label="Generated checkout link"
+                        labelHidden
                         value={generatedUrl} 
                         disabled
                         selectTextOnFocus
