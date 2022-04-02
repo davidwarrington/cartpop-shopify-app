@@ -22,7 +22,10 @@ export function CheckoutLinkCard({
             return;
         }
 
-        setUrl(`dddd`)
+        // TODO: get actual shop url from API
+        const shopDomain = new URL(location).searchParams.get("shop")
+
+        setUrl(`${shopDomain}/`)
     }, [products])
 
     return (
