@@ -27,7 +27,7 @@ export function CheckoutLinkCard({
 
     return (
         <Card sectioned title="Checkout Link">
-            {generatedUrl ? (
+            {!generatedUrl ? (
                 <Banner>Please add a product in order to generate a link.</Banner>
             ) : (
                 <Stack vertical>
