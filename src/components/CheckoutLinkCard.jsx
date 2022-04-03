@@ -51,7 +51,9 @@ export function CheckoutLinkCard({
     useEffect(() => {
         // Return early if no products. Only required parameter
         if (!products || !products.length) {
-            return;
+            // Clear url if it's set
+            generatedUrl && setUrl('')
+            return
         }
 
         // Get actual shop url from API
