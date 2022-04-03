@@ -34,6 +34,8 @@ const CardContainer = ({ sectioned, children }) => {
 
 export function CheckoutLinkCard({
     products,
+    customer,
+    order,
 }) {
     const { error, data, loading } = useQuery(SHOP_DOMAIN_QUERY)
     const [generatedUrl, setUrl] = useState("")
@@ -67,10 +69,44 @@ export function CheckoutLinkCard({
         ).join(",")
 
         // Build Remainder of Parameters
-        // TODO:
+        let urlParameters = ""
+        
+        if (customer) {
+            if (customer.email) {
+                urlParameters += `&checkout[email]=${customer.email}`
+            }
 
-        setUrl(`https://${shopDomain.replace("https://", "")}/cart/${productString}?`)
-    }, [products])
+            if (customer.first_name) {
+                urlParameters += `&checkout[shipping_address][first_name]=${customer.first_name}`
+            }
+
+            if (customer.last_name) {
+                urlParameters += `&checkout[shipping_address][last_name]=${customer.last_name}`
+            }
+
+            if (customer.address1) {
+                urlParameters += `&checkout[shipping_address][address1]=${customer.address1}`
+            }
+
+            if (customer.address2) {
+                urlParameters += `&checkout[shipping_address][address2]=${customer.address2}`
+            }
+
+            if (customer.city) {
+                urlParameters += `&checkout[shipping_address][city]=${customer.city}`
+            }
+
+            if (customer.province) {
+                urlParameters += `&checkout[shipping_address][province]=${customer.province}`
+            }
+
+            if (customer.zipcode) {
+                urlParameters += `&checkout[shipping_address][zip]=${customer.zipcode}`
+            }
+        }
+
+        setUrl(`https://${shopDomain.replace("https://", "")}/cart/${productString}?${urlParameters}`)
+    }, [products, customer, order, accessToken])
 
     // Show loading indicator while we fetch shop domain
     if (loading) {

@@ -20,13 +20,14 @@ import { OrderCard } from "./OrderCard"
 
 export function HomePage() {
   const [products, setProducts] = useState([])
+  const [customer, setCustomer] = useState({})
 
   return (
     <Page>
       <Layout>
         <Layout.Section>
           <ProductsCard products={products} setProducts={setProducts} />
-          <CustomerCard />
+          <CustomerCard customer={customer} setCustomer={setCustomer} />
           <OrderCard />
           <Card sectioned>
             <Stack
@@ -88,6 +89,7 @@ export function HomePage() {
         <Layout.Section secondary>
           <CheckoutLinkCard 
             products={products}
+            customer={customer}
           />
         </Layout.Section>
       </Layout>
