@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import {
     Banner,
     Button,
@@ -12,6 +12,7 @@ import {
 import {
     ClipboardMinor
   } from "@shopify/polaris-icons"
+import { Toast } from "@shopify/app-bridge-react"
 import { gql, useQuery } from "@apollo/client"
 
 const SHOP_DOMAIN_QUERY = gql`
@@ -41,6 +42,8 @@ export function CheckoutLinkCard({
     const [generatedUrl, setUrl] = useState("")
     const [useAccessToken, setUseAccessToken] = useState(false)
     const [accessToken, setAccessToken] = useState("")
+    const textAreaRef = useRef(null)
+    const [toast, setToast] = useState({})
 
     useEffect(() => {
         // Let's clear the access token whenever it's disabled
@@ -134,6 +137,29 @@ export function CheckoutLinkCard({
         setUrl(`https://${shopDomain.replace("https://", "")}/cart/${productString}?${urlParameters}`)
     }, [products, customer, order, accessToken])
 
+    const handleCopyCheckoutLink = useCallback((e) => {
+        const textarea = document.getElementById("generated-link")
+
+        if (!textarea) {
+            setToast({
+                show: true,
+                content: "Failed to copy link. Please try again",
+                error: true
+            })
+            return
+        }
+        
+        // Select the text link contents and copy to clipboard
+        textarea.select()
+        document.execCommand("copy")
+
+        // Show success message
+        setToast({
+            show: true,
+            content: "Copied to clipboard",
+        })
+    }, [])
+
     // Show loading indicator while we fetch shop domain
     if (loading) {
         return (
@@ -144,51 +170,54 @@ export function CheckoutLinkCard({
     }
 
     return (
-        <CardContainer>
-            <Card.Section>
-                {!generatedUrl ? (
-                    <Banner>Please add a product in order to generate a link.</Banner>
-                ) : (
-                    <Stack vertical>
-                        <TextField 
-                            label="Generated checkout link"
-                            labelHidden
-                            multiline={3}
-                            value={generatedUrl} 
-                            //disabled
-                            selectTextOnFocus
+        <>
+            {toast && toast.show ? <Toast content={toast.content} onDismiss={() => setToast({})} /> : null}
+            <CardContainer>
+                <Card.Section>
+                    {!generatedUrl ? (
+                        <Banner>Please add a product in order to generate a link.</Banner>
+                    ) : (
+                        <Stack vertical>
+                            <div ref={textAreaRef}>
+                                <TextField 
+                                    id="generated-link"
+                                    label="Generated checkout link"
+                                    labelHidden
+                                    multiline={3}
+                                    value={generatedUrl} 
+                                    //disabled
+                                    selectTextOnFocus
+                                />
+                            </div>
+                            <Button 
+                                primary
+                                fullWidth
+                                icon={ClipboardMinor} 
+                                onClick={handleCopyCheckoutLink}
+                            >Copy link</Button>
+                        </Stack>
+                    )}
+                </Card.Section>
+                <Card.Section title="Advanced settings" subdued>
+                    <FormLayout>
+                        <Checkbox 
+                            label="Use access token" 
+                            checked={useAccessToken}
+                            onChange={(checked) => setUseAccessToken(checked)} 
                         />
-                        {/* 
-                            Since Shopify loads the app within an iframe, we don't have access to the Clipboard API 
-                            TODO: find a way around this?
-                        */}
-                        {/* <Button 
-                            fullWidth
-                            icon={ClipboardMinor} 
-                            onClick={() => navigator.clipboard.writeText(generatedUrl)}
-                        >Copy link</Button> */}
-                    </Stack>
-                )}
-            </Card.Section>
-            <Card.Section title="Advanced settings" subdued>
-                <FormLayout>
-                    <Checkbox 
-                        label="Use access token" 
-                        checked={useAccessToken}
-                        onChange={(checked) => setUseAccessToken(checked)} 
-                    />
-                    {useAccessToken ? (
-                        <TextField 
-                            type="text" 
-                            label="Access token" 
-                            labelHidden 
-                            helpText="Attributes order to a specific sales channel. This is not normally needed."
-                            value={accessToken}
-                            onChange={(newValue) => setAccessToken(newValue)} 
-                        />
-                    ) : null}
-                </FormLayout>
-            </Card.Section>         
-        </CardContainer>
+                        {useAccessToken ? (
+                            <TextField 
+                                type="text" 
+                                label="Access token" 
+                                labelHidden 
+                                helpText="Attributes order to a specific sales channel. This is not normally needed."
+                                value={accessToken}
+                                onChange={(newValue) => setAccessToken(newValue)} 
+                            />
+                        ) : null}
+                    </FormLayout>
+                </Card.Section>         
+            </CardContainer>
+        </>
     )
 }
