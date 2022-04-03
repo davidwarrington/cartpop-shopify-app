@@ -57,11 +57,17 @@ export function CheckoutLinkCard({
         // Get actual shop url from API
         const shopDomain = data?.shop?.primaryDomain?.host || new URL(location).searchParams.get("shop")
 
-        // Build parameters
-        // `${variants.map(variant => `${variant.id}:${variant.quantity}`).join(",")}?`
-        const productString = products.map(product => product.id).join(",")
+        // Build Product String
+        const productString = products.map(product => 
+            product.variants.map(variant => 
+                `${variant.id.replace("gid://shopify/ProductVariant/", "")}:${variant.quantity || 1}`
+            ).join(",")
+        ).join(",")
 
-        setUrl(`https://${shopDomain.replace("https://", "")}/cart?${productString}`)
+        // Build Remainder of Parameters
+        // TODO:
+
+        setUrl(`https://${shopDomain.replace("https://", "")}/cart/${productString}?`)
     }, [products])
 
     // Show loading indicator while we fetch shop domain
@@ -83,11 +89,20 @@ export function CheckoutLinkCard({
                         <TextField 
                             label="Generated checkout link"
                             labelHidden
+                            multiline={3}
                             value={generatedUrl} 
-                            disabled
+                            //disabled
                             selectTextOnFocus
                         />
-                        <Button fullWidth icon={ClipboardMinor}>Copy link</Button>
+                        {/* 
+                            Since Shopify loads the app within an iframe, we don't have access to the Clipboard API 
+                            TODO: find a way around this?
+                        */}
+                        {/* <Button 
+                            fullWidth
+                            icon={ClipboardMinor} 
+                            onClick={() => navigator.clipboard.writeText(generatedUrl)}
+                        >Copy link</Button> */}
                     </Stack>
                 )}
             </Card.Section>
