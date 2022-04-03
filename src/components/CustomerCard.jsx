@@ -15,7 +15,7 @@ export function CustomerCard({
     const [customer, setCustomer] = useState({})
 
     const toggleModalVisibility = useCallback(() => {
-        setShowModal(showModal => !showModal)
+        setShowModal(status => !status)
     }, [])
 
     const hasCustomerInfo = customer && Object.keys(customer).length

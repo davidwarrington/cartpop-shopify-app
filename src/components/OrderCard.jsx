@@ -21,7 +21,7 @@ export function OrderCard({
     const [useShopPay, setShopPay] = useState(false)
     
     const toggleModalVisibility = useCallback(() => {
-        setShowModal(showModal => !showModal)
+        setShowModal(status => !status)
     }, [])
 
     const hasOrderInfo = discountCode || note || ref
