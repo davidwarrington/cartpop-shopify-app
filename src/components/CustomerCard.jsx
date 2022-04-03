@@ -4,7 +4,6 @@ import {
     Card,
     FormLayout,
     Icon,
-    Layout,
     Modal,
     Stack,
     Subheading,
@@ -54,7 +53,7 @@ export function CustomerCard({
                                 <div style={iconStyles}>
                                     <Icon source={EmailMajor} color="base" />
                                 </div>
-                                <Stack vertical spacing="extraTight">
+                                <Stack vertical spacing="none">
                                     <Subheading><TextStyle variation="subdued">Email</TextStyle></Subheading>
                                     <Stack.Item>{customer.email}</Stack.Item>
                                 </Stack>
@@ -65,7 +64,7 @@ export function CustomerCard({
                                 <div style={iconStyles}>
                                     <Icon source={CustomersMajor} color="base" />
                                 </div>
-                                <Stack vertical spacing="extraTight">
+                                <Stack vertical spacing="none">
                                     <Subheading><TextStyle variation="subdued">Name</TextStyle></Subheading>
                                     <Stack.Item>{customer.first_name + " "}{customer.last_name}</Stack.Item>
                                 </Stack>
@@ -76,7 +75,7 @@ export function CustomerCard({
                                 <div style={iconStyles}>
                                     <Icon source={LocationMajor} color="base" />
                                 </div>
-                                <Stack vertical spacing="extraTight">
+                                <Stack vertical spacing="none">
                                     <Subheading><TextStyle variation="subdued">Shipping address</TextStyle></Subheading>
                                     <Stack.Item>{customer.address1}{customer.address2 && ", " + customer.address2}{customer.city && ", " + customer.city}{customer.province && ", " + customer.province}</Stack.Item>
                                     <Stack.Item>{customer.zipcode && customer.zipcode}{customer.country && ", " + customer.country}</Stack.Item>
