@@ -12,11 +12,7 @@ export function ProductsCard({
     const [showPicker, setShowPicker] = useState(false)
     
     const togglePickerVisibility = useCallback(() => {
-        setShowPicker(showPicker => !showPicker)
-    }, [])
-
-    const handleClosePicker = useCallback(() => {
-        setShowPicker(false)
+        setShowPicker(status => !status)
     }, [])
 
     const handleProductSelection = useCallback(({ selection }) => {
@@ -38,10 +34,15 @@ export function ProductsCard({
                 && cachedProducts[productIndex].variants[variantIndex]
                 && cachedProducts[productIndex].variants.splice(variantIndex, 1)
 
-            if (cachedProducts[productIndex].variants 
+            if (!cachedProducts[productIndex].variants 
                 || cachedProducts[productIndex].variants.length === 0) {
                 cachedProducts.splice(productIndex, 1)
             }
+
+            if (!cachedProducts || !cachedProducts.length) {
+                return []
+            }
+
             return cachedProducts
         })
     }, [])
@@ -80,7 +81,7 @@ export function ProductsCard({
                 showHidden={false}
                 showArchived={false}
                 allowMultiple={true}
-                onCancel={handleClosePicker}
+                onCancel={togglePickerVisibility}
                 onSelection={handleProductSelection}
             />
         </>
