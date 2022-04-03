@@ -80,6 +80,11 @@ export function OrderCard({
         <>
             <Card 
                 title="Order information"
+                primaryFooterAction={!hasOrderInfo ? {
+                    content: "Add",
+                    onAction: toggleModalVisibility,
+                    accessibilityLabel: "Add order information"
+                } : null}
                 actions={hasOrderInfo && [
                     {
                         content: "Edit",
@@ -165,7 +170,7 @@ export function OrderCard({
                     </>
                 ) : (
                     <Card.Section>
-                        <Button primary onClick={toggleModalVisibility}>Add order information</Button>
+                        <TextStyle variation="subdued">No order information included on checkout link.</TextStyle>
                     </Card.Section>
                 )}
             </Card>

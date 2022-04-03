@@ -75,6 +75,11 @@ export function ProductsCard({
             <Card 
                 sectioned
                 title="Products"
+                primaryFooterAction={!hasProducts ? {
+                    content: "Add",
+                    onAction: togglePickerVisibility,
+                    accessibilityLabel: "Add a product"
+                } : null}
                 actions={hasProducts && [
                     {
                         content: "Edit products",
@@ -86,7 +91,6 @@ export function ProductsCard({
                     products={products} 
                     handleVariantRemove={handleVariantRemove}
                     handleVariantQuantity={handleVariantQuantity}
-                    togglePickerVisibility={togglePickerVisibility}
                 />
             </Card>
             {/* Learn more: https://shopify.dev/apps/tools/app-bridge/react-components/resourcepicker */}
