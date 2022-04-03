@@ -15,19 +15,19 @@ export function ProductsCard({
         setShowPicker(status => !status)
     }, [])
 
+    // Set all selected products (overrides existing)
     const handleProductSelection = useCallback(({ selection }) => {
-        // Set all selected products (overrides existing)
         console.log("selection", selection)
         // TODO: prevent overwriting Quantity
         setProducts(selection)
     }, [])
 
+    // Remove variant at specified indexes
     const handleVariantRemove = useCallback((productIndex, variantIndex) => {
         if (productIndex < 0 || variantIndex < 0) {
             return
         }
 
-        // Remove product at specified index
         return setProducts(products => {
             const cachedProducts = [...products]
             cachedProducts[productIndex] 
@@ -43,6 +43,29 @@ export function ProductsCard({
                 return []
             }
 
+            return cachedProducts
+        })
+    }, [])
+
+    // Change variant quantity
+    const handleVariantQuantity = useCallback((productIndex, variantIndex, newQuantity) => {
+        console.log("handleVariantQuantity", {productIndex, variantIndex, newQuantity})
+        if (productIndex < 0 || variantIndex < 0) {
+            return
+        }
+
+        return setProducts(products => {
+            const cachedProducts = [...products]
+
+            // We need to make sure the indexes are valid
+            if (!cachedProducts[productIndex]
+                || !cachedProducts[productIndex].variants 
+                || !cachedProducts[productIndex].variants.length
+                || !cachedProducts[productIndex].variants[variantIndex]) {
+                return cachedProducts
+            }
+
+            cachedProducts[productIndex].variants[variantIndex].quantity = newQuantity
             return cachedProducts
         })
     }, [])
@@ -64,6 +87,7 @@ export function ProductsCard({
                 <ProductList 
                     products={products} 
                     handleVariantRemove={handleVariantRemove}
+                    handleVariantQuantity={handleVariantQuantity}
                     togglePickerVisibility={togglePickerVisibility}
                 />
             </Card>

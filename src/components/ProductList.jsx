@@ -4,6 +4,7 @@ import { RemoveProductMajor } from "@shopify/polaris-icons"
 export function ProductList({
     products,
     handleVariantRemove,
+    handleVariantQuantity,
     togglePickerVisibility,
 }) {
     // Return message when no product is selected
@@ -34,7 +35,8 @@ export function ProductList({
                                 type="number" 
                                 labelHidden 
                                 min={1}
-                                value={product.quantity || "1"}
+                                value={variant.quantity || "1"}
+                                onChange={(newQuantity) => handleVariantQuantity(productIndex, variantIndex, newQuantity)}
                             />
                         </Stack>
                     </Stack>
