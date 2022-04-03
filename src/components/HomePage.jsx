@@ -11,16 +11,16 @@ import {
 
 import trophyImgUrl from "../assets/home-trophy.png";
 import { CheckoutLinkCard } from "./CheckoutLinkCard";
+import { ProductsCard } from "./ProductsCard";
 import { CustomerCard } from "./CustomerCard";
 import { OrderCard } from "./OrderCard";
-
-import { ProductsCard } from "./ProductsCard";
 
 export function HomePage() {
   return (
     <Page fullWidth>
       <Layout>
         <Layout.Section>
+          <ProductsCard />
           <CustomerCard />
           <OrderCard />
           <Card sectioned>
@@ -82,7 +82,6 @@ export function HomePage() {
         </Layout.Section>
         <Layout.Section secondary>
           <CheckoutLinkCard products={[]} />
-          {/* <ProductsCard /> */}
         </Layout.Section>
       </Layout>
     </Page>
