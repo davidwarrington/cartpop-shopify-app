@@ -1,4 +1,5 @@
-import { Button, Card, Heading, Stack, Subheading, TextStyle, Thumbnail } from "@shopify/polaris"
+import { Button, Card, Heading, Stack, Subheading, TextField, TextStyle, Thumbnail } from "@shopify/polaris"
+import { RemoveProductMajor } from "@shopify/polaris-icons"
 
 export function ProductList({
     products,
@@ -18,19 +19,35 @@ export function ProductList({
     // Return product list
     return products.map((product, productIndex) => product.variants.map((variant, variantIndex) => (
         <Card.Subsection key={variant.id}>
-            <Stack alignment="center" distribution="fillEvenly">
+            <Stack distribution="equalSpacing" wrap={false}>
                 <Stack.Item>
-                    <Stack alignment="center">
+                    <Stack>
                         {product.images && product.images.length ? (
-                            <Thumbnail source={product.images[0].originalSrc} /> 
+                            <Thumbnail size="medium" source={product.images[0].originalSrc} /> 
                         ): null}
                         <Stack vertical spacing="extraTight">
-                            <Heading>{product.title}</Heading>
+                            <TextStyle variation="strong">{product.title}</TextStyle>
                             <Subheading><TextStyle variation="subdued">{variant.title}</TextStyle></Subheading>
+                            <TextStyle variation="subdued">{variant.sku}</TextStyle>
+                            <TextField 
+                                label="Quantity" 
+                                type="number" 
+                                labelHidden 
+                                min={1}
+                                value={product.quantity || "1"}
+                            />
                         </Stack>
                     </Stack>
                 </Stack.Item>
-                <Button onClick={() => handleVariantRemove(productIndex, variantIndex)}>Remove</Button>
+                <Stack.Item>
+                    <Stack>
+                        <Button 
+                            //icon={RemoveProductMajor} 
+                            onClick={() => handleVariantRemove(productIndex, variantIndex)}
+                            accessibilityLabel="Remove product"
+                        >Remove</Button>
+                    </Stack>
+                </Stack.Item>
             </Stack>
         </Card.Subsection>
     )))
