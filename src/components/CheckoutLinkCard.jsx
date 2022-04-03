@@ -22,7 +22,7 @@ const SHOP_DOMAIN_QUERY = gql`
             }
         }
     }
-`;
+`
 
 const CardContainer = ({ sectioned, children }) => {
     return (
@@ -123,7 +123,7 @@ export function CheckoutLinkCard({
             }
 
             if (order.attributes && order.attributes.length) {
-                // TODO: computedUrlString += `&${attributes.map(attribute => attribute.label && `attributes[${attribute.label}]=${attribute.value}`).join("&")}`       
+                urlParameters += `&${order.attributes.map(attribute => attribute.label && `attributes[${attribute.label}]=${attribute.value}`).join("&")}`       
             }
         }
 

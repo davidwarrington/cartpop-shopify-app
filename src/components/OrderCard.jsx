@@ -10,8 +10,10 @@ import {
     Subheading,
     TextStyle,
     Icon,
+    Truncate,
+    TextContainer,
 } from "@shopify/polaris"
-import { DiscountsMajor, NoteMajor, PaymentsMajor, ReferralMajor } from "@shopify/polaris-icons"
+import { DiscountsMajor, NoteMajor, PaymentsMajor, ReferralMajor, TickMinor } from "@shopify/polaris-icons"
 import { iconStyles } from "../constants"
 import { CardGrid } from "./CardGrid"
 
@@ -29,7 +31,46 @@ export function OrderCard({
         setOrder(order => {
             const cachedOrder = {...order}
             cachedOrder[field] = value
-            return cachedOrder;
+            return cachedOrder
+        })
+    ))
+
+    const handleAttributeAdd = useCallback(() => (
+        setOrder(order => {
+            const cachedOrder = {...order}
+
+            if (!cachedOrder.attributes) {
+                cachedOrder.attributes = []
+            }
+            
+            cachedOrder.attributes.push({ label: "", value: "" })
+            return cachedOrder
+        })
+    ), [])
+
+    const handleAttributeRemove = useCallback((attributeIndex) => (
+        setOrder(order => {
+            const cachedOrder = {...order}
+
+            if (!cachedOrder.attributes || !cachedOrder.attributes[attributeIndex]) {
+                return cachedOrder
+            }
+
+            cachedOrder.attributes.splice(attributeIndex, 1)
+            return cachedOrder
+        })
+    ), [])
+
+    const handleAttributeChange = useCallback(({ index, field, newValue }) => (
+        setOrder(order => {
+            const cachedOrder = {...order}
+
+            if (!cachedOrder.attributes || !cachedOrder.attributes[index]) {
+                return cachedOrder
+            }
+
+            cachedOrder.attributes[index][field] = newValue
+            return cachedOrder
         })
     ))
 
@@ -48,59 +89,77 @@ export function OrderCard({
             >
                 {hasOrderInfo ? (
                     <>
-                        <Card.Section>
-                            <CardGrid>
-                                {order.discountCode ? (
-                                    <Stack alignment="center" spacing="tight" wrap={false}>
-                                        <div style={iconStyles}>
-                                            <Icon source={DiscountsMajor} color="base" />
-                                        </div>
-                                        <Stack vertical spacing="none">
-                                            <Subheading><TextStyle variation="subdued">Discount code</TextStyle></Subheading>
-                                            <Stack.Item>{order.discountCode}</Stack.Item>
+                        {order.discountCode || order.ref || order.useShopPay ? (
+                            <Card.Section>
+                                <CardGrid>
+                                    {order.discountCode ? (
+                                        <Stack alignment="center" spacing="tight" wrap={false}>
+                                            <div style={iconStyles}>
+                                                <Icon source={DiscountsMajor} color="base" />
+                                            </div>
+                                            <Stack.Item fill>
+                                                <Stack vertical spacing="none">
+                                                    <Subheading><TextStyle variation="subdued">Discount code</TextStyle></Subheading>
+                                                    <Stack.Item>{order.discountCode}</Stack.Item>
+                                                </Stack>
+                                            </Stack.Item>
                                         </Stack>
-                                    </Stack>
-                                ) : null}
-                                {order.ref ? (
-                                    <Stack alignment="center" spacing="tight" wrap={false}>
-                                        <div style={iconStyles}>
-                                            <Icon source={ReferralMajor} color="base" />
-                                        </div>
-                                        <Stack vertical spacing="none">
-                                            <Subheading><TextStyle variation="subdued">Ref</TextStyle></Subheading>
-                                            <Stack.Item>{order.ref}</Stack.Item>
+                                    ) : null}
+                                    {order.note ? (
+                                        <Stack alignment="center" spacing="tight" wrap={false}>
+                                            <div style={iconStyles}>
+                                                <Icon source={NoteMajor} color="base" />
+                                            </div>
+                                            <Stack.Item fill>
+                                                <Stack vertical spacing="none">
+                                                    <Subheading><TextStyle variation="subdued">Order note</TextStyle></Subheading>
+                                                    <Stack.Item>
+                                                        <TextContainer>
+                                                            {order.note && order.note.length > 50 ? order.note.substring(0, 50) + "..." : order.note}
+                                                        </TextContainer>
+                                                    </Stack.Item>
+                                                </Stack>
+                                            </Stack.Item>
                                         </Stack>
-                                    </Stack>
-                                ) : null}
-                                {order.useShopPay ? (
-                                    <Stack alignment="center" spacing="tight" wrap={false}>
-                                        <div style={iconStyles}>
-                                            <Icon source={PaymentsMajor} color="base" />
-                                        </div>
-                                        <Stack vertical spacing="none">
-                                            <Subheading><TextStyle variation="subdued">Redirect to Shop Pay</TextStyle></Subheading>
-                                            <Stack.Item>{order.useShopPay}</Stack.Item>
+                                    ) : null}
+                                    {order.ref ? (
+                                        <Stack alignment="center" spacing="tight" wrap={false}>
+                                            <div style={iconStyles}>
+                                                <Icon source={ReferralMajor} color="base" />
+                                            </div>
+                                            <Stack.Item fill>
+                                                <Stack vertical spacing="none">
+                                                    <Subheading><TextStyle variation="subdued">Ref</TextStyle></Subheading>
+                                                    <Stack.Item>{order.ref}</Stack.Item>
+                                                </Stack>
+                                            </Stack.Item>
                                         </Stack>
-                                    </Stack>
-                                ) : null}
-                            </CardGrid>
-                        </Card.Section>
-                        {order.note ? (
-                            <Card.Section>        
-                                <Stack alignment="center" spacing="tight" wrap={false}>
-                                    <div style={iconStyles}>
-                                        <Icon source={NoteMajor} color="base" />
-                                    </div>
-                                    <Stack vertical spacing="none">
-                                        <Subheading><TextStyle variation="subdued">Order note</TextStyle></Subheading>
-                                        <Stack.Item>{order.note}</Stack.Item>
-                                    </Stack>
-                                </Stack>
+                                    ) : null}
+                                    {order.useShopPay ? (
+                                        <Stack alignment="center" spacing="tight" wrap={false}>
+                                            <div style={iconStyles}>
+                                                <Icon source={PaymentsMajor} color="base" />
+                                            </div>
+                                            <Stack vertical spacing="none">
+                                                <Stack spacing="extraTight">
+                                                    <Icon color="success" source={TickMinor} /> 
+                                                    <Stack.Item>Redirect to Shop Pay</Stack.Item>
+                                                </Stack>
+                                            </Stack>
+                                        </Stack>
+                                    ) : null}
+                                </CardGrid>
                             </Card.Section>
                         ) : null}
                         {order.attributes && order.attributes.length ? (
-                            <Card.Section>
-                                // TODO:
+                            <Card.Section title={(
+                                <Subheading><TextStyle variation="subdued">Order note attributes</TextStyle></Subheading>
+                            )}>
+                                {order.attributes.map((attribute, attributeIndex) => (
+                                    <Card.Subsection key={attributeIndex}>
+                                        <TextStyle variation="strong">{attribute.label || <TextStyle variation="negative">Missing attribute label</TextStyle>}:</TextStyle> {attribute.value || <TextStyle variation="negative">Missing attribute value</TextStyle>}
+                                    </Card.Subsection>
+                                ))}
                             </Card.Section>
                         ) : null}
                     </>
@@ -124,17 +183,19 @@ export function OrderCard({
                 <Modal.Section>
                     <FormLayout>
                         <TextField
+                            showCharacterCount
                             type="text"
                             label="Discount code" 
+                            maxLength={255}
                             value={order && order.discountCode}
                             onChange={(value) => handleOrderChange({ field: "discountCode", value })}
                         />
                         <TextField
+                            showCharacterCount
                             type="text"
                             label="Note" 
                             multiline={3}
                             maxLength={5000}
-                            showCharacterCount
                             value={order && order.note} 
                             onChange={(value) => handleOrderChange({ field: "note", value })}
                         />
@@ -147,19 +208,44 @@ export function OrderCard({
                     </FormLayout>
                 </Modal.Section>
                 <Modal.Section>
-                    <Subheading>Order attributes</Subheading>
                     <FormLayout>
-                        <TextStyle>None specified</TextStyle>
+                        <Subheading>Order attributes</Subheading>
+                        {order.attributes && order.attributes.length ? order.attributes.map((attribute, attributeIndex) => (
+                            <Stack alignment="trailing" key={attributeIndex}>
+                                <TextField 
+                                    requiredIndicator
+                                    label="Label" 
+                                    value={attribute.label}
+                                    onChange={(newValue) => handleAttributeChange({ index: attributeIndex, field: "label", newValue })}
+                                />
+                                <TextField 
+                                    requiredIndicator
+                                    label="Value"
+                                    value={attribute.value}
+                                    onChange={(newValue) => handleAttributeChange({ index: attributeIndex, field: "value", newValue })}
+                                />
+                                <Button 
+                                    accessibilityLabel="Remove attribute"
+                                    onClick={() => handleAttributeRemove(attributeIndex)}
+                                >Remove</Button>
+                            </Stack>
+                        )): (
+                            <TextStyle variation="subdued">No order note attributes specified.</TextStyle>
+                        )}
                     
-                        <Button>Add attribute</Button>
+                        <Button 
+                            primary
+                            onClick={handleAttributeAdd} 
+                            disabled={order.attributes && order.attributes.length === 10}
+                        >{!order.attributes || order.attributes.length !== 10 ? "Add attribute" : "10/10 attributes reached"}</Button>
                     </FormLayout>
                 </Modal.Section>
                 <Modal.Section>
                     <FormLayout>
                         <Checkbox
                             label="Redirect to Shop Pay"
-                            checked={order && order.useShopPay}
-                            onChange={(checked) => handleOrderChange({ field: "useShopPay", checked })}
+                            checked={order.useShopPay}
+                            onChange={(checked) => handleOrderChange({ field: "useShopPay", value: checked })}
                         />
                     </FormLayout>
                 </Modal.Section>
