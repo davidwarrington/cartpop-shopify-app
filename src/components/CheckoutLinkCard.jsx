@@ -105,6 +105,32 @@ export function CheckoutLinkCard({
             }
         }
 
+        if (order) {
+            if (order.discountCode) {
+                urlParameters += `&discount=${order.discountCode}`
+            }
+
+            if (order.note) {
+                urlParameters += `&note=${encodeURIComponent(order.note)}`
+            }
+
+            if (order.ref) {
+                urlParameters += `&ref=${encodeURIComponent(order.ref)}`
+            }
+
+            if (order.useShopPay) {
+                urlParameters += `&payment=shop_pay`
+            }
+
+            if (order.attributes && order.attributes.length) {
+                // TODO: computedUrlString += `&${attributes.map(attribute => attribute.label && `attributes[${attribute.label}]=${attribute.value}`).join("&")}`       
+            }
+        }
+
+        if (accessToken) {
+            urlParameters += `&access_token=${accessToken}`
+        }
+
         setUrl(`https://${shopDomain.replace("https://", "")}/cart/${productString}?${urlParameters}`)
     }, [products, customer, order, accessToken])
 
