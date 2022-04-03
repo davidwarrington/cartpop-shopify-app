@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react"
 import {
-    Banner,
     Button,
     Card,
     Checkbox,
@@ -10,38 +9,164 @@ import {
     Modal,
     Subheading,
     TextStyle,
+    Icon,
+    Truncate,
+    TextContainer,
 } from "@shopify/polaris"
+import { DiscountsMajor, NoteMajor, PaymentsMajor, ReferralMajor, TickMinor } from "@shopify/polaris-icons"
+import { iconStyles } from "../constants"
+import { CardGrid } from "./CardGrid"
 
 export function OrderCard({
-
+    order,
+    setOrder,
 }) {
     const [showModal, setShowModal] = useState(false)
-    const [discountCode, setDiscount] = useState("")
-    const [note, setNote] = useState("")
-    const [ref, setRef] = useState("")
-    const [useShopPay, setShopPay] = useState(false)
     
     const toggleModalVisibility = useCallback(() => {
-        setShowModal(showModal => !showModal)
+        setShowModal(status => !status)
     }, [])
 
-    const hasOrderInfo = discountCode || note || ref
+    const handleOrderChange = useCallback(({ field, value }) => (
+        setOrder(order => {
+            const cachedOrder = {...order}
+            cachedOrder[field] = value
+            return cachedOrder
+        })
+    ))
+
+    const handleAttributeAdd = useCallback(() => (
+        setOrder(order => {
+            const cachedOrder = {...order}
+
+            if (!cachedOrder.attributes) {
+                cachedOrder.attributes = []
+            }
+            
+            cachedOrder.attributes.push({ label: "", value: "" })
+            return cachedOrder
+        })
+    ), [])
+
+    const handleAttributeRemove = useCallback((attributeIndex) => (
+        setOrder(order => {
+            const cachedOrder = {...order}
+
+            if (!cachedOrder.attributes || !cachedOrder.attributes[attributeIndex]) {
+                return cachedOrder
+            }
+
+            cachedOrder.attributes.splice(attributeIndex, 1)
+            return cachedOrder
+        })
+    ), [])
+
+    const handleAttributeChange = useCallback(({ index, field, newValue }) => (
+        setOrder(order => {
+            const cachedOrder = {...order}
+
+            if (!cachedOrder.attributes || !cachedOrder.attributes[index]) {
+                return cachedOrder
+            }
+
+            cachedOrder.attributes[index][field] = newValue
+            return cachedOrder
+        })
+    ))
+
+    const hasOrderInfo = order && Object.keys(order).length
 
     return (
         <>
             <Card 
-                sectioned
                 title="Order information"
                 actions={hasOrderInfo && [
                     {
-                        content: "Edit"
+                        content: "Edit",
+                        onAction: toggleModalVisibility,
                     }
                 ]}
             >
                 {hasOrderInfo ? (
-                    <>Order information goes here</>
+                    <>
+                        {order.discountCode || order.ref || order.useShopPay ? (
+                            <Card.Section>
+                                <CardGrid>
+                                    {order.discountCode ? (
+                                        <Stack alignment="center" spacing="tight" wrap={false}>
+                                            <div style={iconStyles}>
+                                                <Icon source={DiscountsMajor} color="base" />
+                                            </div>
+                                            <Stack.Item fill>
+                                                <Stack vertical spacing="none">
+                                                    <Subheading><TextStyle variation="subdued">Discount code</TextStyle></Subheading>
+                                                    <Stack.Item>{order.discountCode}</Stack.Item>
+                                                </Stack>
+                                            </Stack.Item>
+                                        </Stack>
+                                    ) : null}
+                                    {order.note ? (
+                                        <Stack alignment="center" spacing="tight" wrap={false}>
+                                            <div style={iconStyles}>
+                                                <Icon source={NoteMajor} color="base" />
+                                            </div>
+                                            <Stack.Item fill>
+                                                <Stack vertical spacing="none">
+                                                    <Subheading><TextStyle variation="subdued">Order note</TextStyle></Subheading>
+                                                    <Stack.Item>
+                                                        <TextContainer>
+                                                            {order.note && order.note.length > 50 ? order.note.substring(0, 50) + "..." : order.note}
+                                                        </TextContainer>
+                                                    </Stack.Item>
+                                                </Stack>
+                                            </Stack.Item>
+                                        </Stack>
+                                    ) : null}
+                                    {order.ref ? (
+                                        <Stack alignment="center" spacing="tight" wrap={false}>
+                                            <div style={iconStyles}>
+                                                <Icon source={ReferralMajor} color="base" />
+                                            </div>
+                                            <Stack.Item fill>
+                                                <Stack vertical spacing="none">
+                                                    <Subheading><TextStyle variation="subdued">Ref</TextStyle></Subheading>
+                                                    <Stack.Item>{order.ref}</Stack.Item>
+                                                </Stack>
+                                            </Stack.Item>
+                                        </Stack>
+                                    ) : null}
+                                    {order.useShopPay ? (
+                                        <Stack alignment="center" spacing="tight" wrap={false}>
+                                            <div style={iconStyles}>
+                                                <Icon source={PaymentsMajor} color="base" />
+                                            </div>
+                                            <Stack vertical spacing="none">
+                                                <Stack spacing="extraTight">
+                                                    <Icon color="success" source={TickMinor} /> 
+                                                    <Stack.Item>Redirect to Shop Pay</Stack.Item>
+                                                </Stack>
+                                            </Stack>
+                                        </Stack>
+                                    ) : null}
+                                </CardGrid>
+                            </Card.Section>
+                        ) : null}
+                        {order.attributes && order.attributes.length ? (
+                            <Card.Section title={(
+                                <Subheading><TextStyle variation="subdued">Order note attributes</TextStyle></Subheading>
+                            )}>
+                                {order.attributes.map((attribute, attributeIndex) => (
+                                    <Card.Subsection key={attributeIndex}>
+                                        <TextStyle variation="strong">{attribute.label || <TextStyle variation="negative">Missing attribute label</TextStyle>}:</TextStyle> {attribute.value || <TextStyle variation="negative">Missing attribute value</TextStyle>}
+                                    </Card.Subsection>
+                                ))}
+                            </Card.Section>
+                        ) : null}
+                    </>
                 ) : (
-                    <Button primary onClick={toggleModalVisibility}>Add order information</Button>
+                    <Card.Section>
+                        <Button primary onClick={toggleModalVisibility}>Add order information</Button>
+                    </Card.Section>
                 )}
             </Card>
             <Modal 
@@ -58,38 +183,69 @@ export function OrderCard({
                 <Modal.Section>
                     <FormLayout>
                         <TextField
+                            showCharacterCount
                             type="text"
                             label="Discount code" 
-                            value={discountCode} 
+                            maxLength={255}
+                            value={order && order.discountCode}
+                            onChange={(value) => handleOrderChange({ field: "discountCode", value })}
                         />
                         <TextField
+                            showCharacterCount
                             type="text"
                             label="Note" 
-                            value={note} 
                             multiline={3}
                             maxLength={5000}
-                            showCharacterCount
+                            value={order && order.note} 
+                            onChange={(value) => handleOrderChange({ field: "note", value })}
                         />
                         <TextField
                             type="text"
                             label="Ref" 
-                            value={ref} 
+                            value={order && order.ref} 
+                            onChange={(value) => handleOrderChange({ field: "ref", value })}
                         />
                     </FormLayout>
                 </Modal.Section>
                 <Modal.Section>
-                    <Subheading>Order attributes</Subheading>
                     <FormLayout>
-                        <TextStyle>None specified</TextStyle>
+                        <Subheading>Order attributes</Subheading>
+                        {order.attributes && order.attributes.length ? order.attributes.map((attribute, attributeIndex) => (
+                            <Stack alignment="trailing" key={attributeIndex}>
+                                <TextField 
+                                    requiredIndicator
+                                    label="Label" 
+                                    value={attribute.label}
+                                    onChange={(newValue) => handleAttributeChange({ index: attributeIndex, field: "label", newValue })}
+                                />
+                                <TextField 
+                                    requiredIndicator
+                                    label="Value"
+                                    value={attribute.value}
+                                    onChange={(newValue) => handleAttributeChange({ index: attributeIndex, field: "value", newValue })}
+                                />
+                                <Button 
+                                    accessibilityLabel="Remove attribute"
+                                    onClick={() => handleAttributeRemove(attributeIndex)}
+                                >Remove</Button>
+                            </Stack>
+                        )): (
+                            <TextStyle variation="subdued">No order note attributes specified.</TextStyle>
+                        )}
                     
-                        <Button>Add attribute</Button>
+                        <Button 
+                            primary
+                            onClick={handleAttributeAdd} 
+                            disabled={order.attributes && order.attributes.length === 10}
+                        >{!order.attributes || order.attributes.length !== 10 ? "Add attribute" : "10/10 attributes reached"}</Button>
                     </FormLayout>
                 </Modal.Section>
                 <Modal.Section>
                     <FormLayout>
                         <Checkbox
                             label="Redirect to Shop Pay"
-                            checked={useShopPay}
+                            checked={order.useShopPay}
+                            onChange={(checked) => handleOrderChange({ field: "useShopPay", value: checked })}
                         />
                     </FormLayout>
                 </Modal.Section>

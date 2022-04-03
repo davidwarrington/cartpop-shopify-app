@@ -22,7 +22,7 @@ const SHOP_DOMAIN_QUERY = gql`
             }
         }
     }
-`;
+`
 
 const CardContainer = ({ sectioned, children }) => {
     return (
@@ -34,6 +34,8 @@ const CardContainer = ({ sectioned, children }) => {
 
 export function CheckoutLinkCard({
     products,
+    customer,
+    order,
 }) {
     const { error, data, loading } = useQuery(SHOP_DOMAIN_QUERY)
     const [generatedUrl, setUrl] = useState("")
@@ -51,14 +53,86 @@ export function CheckoutLinkCard({
     useEffect(() => {
         // Return early if no products. Only required parameter
         if (!products || !products.length) {
-            return;
+            // Clear url if it's set
+            generatedUrl && setUrl('')
+            return
         }
 
         // Get actual shop url from API
         const shopDomain = data?.shop?.primaryDomain?.host || new URL(location).searchParams.get("shop")
 
-        setUrl(`${shopDomain}/`)
-    }, [products])
+        // Build Product String
+        const productString = products.map(product => 
+            product.variants.map(variant => 
+                `${variant.id.replace("gid://shopify/ProductVariant/", "")}:${variant.quantity || 1}`
+            ).join(",")
+        ).join(",")
+
+        // Build Remainder of Parameters
+        let urlParameters = ""
+        
+        if (customer) {
+            if (customer.email) {
+                urlParameters += `&checkout[email]=${customer.email}`
+            }
+
+            if (customer.first_name) {
+                urlParameters += `&checkout[shipping_address][first_name]=${customer.first_name}`
+            }
+
+            if (customer.last_name) {
+                urlParameters += `&checkout[shipping_address][last_name]=${customer.last_name}`
+            }
+
+            if (customer.address1) {
+                urlParameters += `&checkout[shipping_address][address1]=${customer.address1}`
+            }
+
+            if (customer.address2) {
+                urlParameters += `&checkout[shipping_address][address2]=${customer.address2}`
+            }
+
+            if (customer.city) {
+                urlParameters += `&checkout[shipping_address][city]=${customer.city}`
+            }
+
+            if (customer.province) {
+                urlParameters += `&checkout[shipping_address][province]=${customer.province}`
+            }
+
+            if (customer.zipcode) {
+                urlParameters += `&checkout[shipping_address][zip]=${customer.zipcode}`
+            }
+        }
+
+        if (order) {
+            if (order.discountCode) {
+                urlParameters += `&discount=${order.discountCode}`
+            }
+
+            if (order.note) {
+                urlParameters += `&note=${encodeURIComponent(order.note)}`
+            }
+
+            if (order.ref) {
+                urlParameters += `&ref=${encodeURIComponent(order.ref)}`
+            }
+
+            if (order.useShopPay) {
+                urlParameters += `&payment=shop_pay`
+            }
+
+            if (order.attributes && order.attributes.length) {
+                urlParameters += `&${order.attributes.map(attribute => attribute.label && `attributes[${attribute.label}]=${attribute.value}`).join("&")}`       
+            }
+        }
+
+        if (accessToken) {
+            urlParameters += `&access_token=${accessToken}`
+        }
+
+        setUrl(`https://${shopDomain.replace("https://", "")}/cart/${productString}?${urlParameters}`)
+    }, [products, customer, order, accessToken])
 
     // Show loading indicator while we fetch shop domain
     if (loading) {
@@ -79,11 +153,20 @@ export function CheckoutLinkCard({
                         <TextField 
                             label="Generated checkout link"
                             labelHidden
+                            multiline={3}
                             value={generatedUrl} 
-                            disabled
+                            //disabled
                             selectTextOnFocus
                         />
-                        <Button fullWidth icon={ClipboardMinor}>Copy link</Button>
+                        {/* 
+                            Since Shopify loads the app within an iframe, we don't have access to the Clipboard API 
+                            TODO: find a way around this?
+                        */}
+                        {/* <Button 
+                            fullWidth
+                            icon={ClipboardMinor} 
+                            onClick={() => navigator.clipboard.writeText(generatedUrl)}
+                        >Copy link</Button> */}
                     </Stack>
                 )}
             </Card.Section>
