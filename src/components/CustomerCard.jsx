@@ -12,23 +12,14 @@ import {
     TextStyle,
 } from "@shopify/polaris"
 import { CustomersMajor, EmailMajor, LocationMajor } from "@shopify/polaris-icons"
-
-const iconStyles = {
-    position: "relative",
-    display: "flex",
-    flex: "0 0 auto",
-    height: "2.5rem",
-    width: "2.5rem",
-    marginRight: "0.75rem",
-    background: "var(--p-surface-neutral)",
-    borderRadius: "50%",
-}
+import { iconStyles } from "../constants"
+import { CardGrid } from "./CardGrid"
 
 export function CustomerCard({
-    
+    customer,
+    setCustomer
 }) {
     const [showModal, setShowModal] = useState(false)
-    const [customer, setCustomer] = useState({})
 
     const toggleModalVisibility = useCallback(() => {
         setShowModal(status => !status)
@@ -57,49 +48,42 @@ export function CustomerCard({
                 ]}
             >
                 {hasCustomerInfo ? (
-                    <Stack distribution="fillEvenly">
+                    <CardGrid>
                         {customer.email ? (
-                            <Layout.Section oneHalf>
-                                <Stack alignment="center" spacing="tight">
-                                    <div style={iconStyles}>
-                                        <Icon source={EmailMajor} color="base" />
-                                    </div>
-                                    <Stack vertical spacing="extraTight">
-                                        <Subheading><TextStyle variation="subdued">Email</TextStyle></Subheading>
-                                        <Stack.Item>{customer.email}</Stack.Item>
-                                    </Stack>
+                            <Stack alignment="center" spacing="tight" wrap={false}>
+                                <div style={iconStyles}>
+                                    <Icon source={EmailMajor} color="base" />
+                                </div>
+                                <Stack vertical spacing="extraTight">
+                                    <Subheading><TextStyle variation="subdued">Email</TextStyle></Subheading>
+                                    <Stack.Item>{customer.email}</Stack.Item>
                                 </Stack>
-                            </Layout.Section>
+                            </Stack>
                         ) : null}
                         {customer.first_name || customer.last_name ? (
-                            <Layout.Section oneHalf>
-                                <Stack alignment="center" spacing="tight">
-                                    <div style={iconStyles}>
-                                        <Icon source={CustomersMajor} color="base" />
-                                    </div>
-                                    <Stack vertical spacing="extraTight">
-                                        <Subheading><TextStyle variation="subdued">Name</TextStyle></Subheading>
-                                        <Stack.Item>{customer.first_name + " "}{customer.last_name}</Stack.Item>
-                                    </Stack>
+                            <Stack alignment="center" spacing="tight" wrap={false}>
+                                <div style={iconStyles}>
+                                    <Icon source={CustomersMajor} color="base" />
+                                </div>
+                                <Stack vertical spacing="extraTight">
+                                    <Subheading><TextStyle variation="subdued">Name</TextStyle></Subheading>
+                                    <Stack.Item>{customer.first_name + " "}{customer.last_name}</Stack.Item>
                                 </Stack>
-                            </Layout.Section>
+                            </Stack>
                         ) : null}
                         {(customer.address1 || customer.address2 || customer.city || customer.province || customer.zipcode) ? (
-                            <Layout.Section oneHalf>
-                                <Stack alignment="center" spacing="tight">
-                                    <div style={iconStyles}>
-                                        <Icon source={LocationMajor} color="base" />
-                                    </div>
-                                    <Stack vertical spacing="extraTight">
-                                        <Subheading><TextStyle variation="subdued">Shipping address</TextStyle></Subheading>
-                                        <Stack.Item>{customer.address1}{customer.address2 && ", " + customer.address2}{customer.city && ", " + customer.city}{customer.province && ", " + customer.province}</Stack.Item>
-                                        <Stack.Item>{customer.zipcode && customer.zipcode}{customer.country && ", " + customer.country}</Stack.Item>
-                                    </Stack>
+                            <Stack alignment="center" spacing="tight" wrap={false}>
+                                <div style={iconStyles}>
+                                    <Icon source={LocationMajor} color="base" />
+                                </div>
+                                <Stack vertical spacing="extraTight">
+                                    <Subheading><TextStyle variation="subdued">Shipping address</TextStyle></Subheading>
+                                    <Stack.Item>{customer.address1}{customer.address2 && ", " + customer.address2}{customer.city && ", " + customer.city}{customer.province && ", " + customer.province}</Stack.Item>
+                                    <Stack.Item>{customer.zipcode && customer.zipcode}{customer.country && ", " + customer.country}</Stack.Item>
                                 </Stack>
-                            </Layout.Section>
+                            </Stack>
                         ) : null}
-
-                    </Stack>
+                    </CardGrid>
                 ) : (
                     <Button primary onClick={toggleModalVisibility}>Add customer information</Button>
                 )}
@@ -168,10 +152,14 @@ export function CustomerCard({
                             <TextField 
                                 label="State/Province"
                                 placeholder="New York"
+                                value={customer && customer.province}
+                                onChange={(value) => handleCustomerChange({ field: "province", value })}
                             />
                             <TextField 
                                 label="Zipcode"
                                 placeholder="10022"
+                                value={customer && customer.zipcode}
+                                onChange={(value) => handleCustomerChange({ field: "zipcode", value })}
                             />
                         </Stack>
                     </FormLayout>
