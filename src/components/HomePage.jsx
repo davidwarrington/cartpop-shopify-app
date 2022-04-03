@@ -90,7 +90,7 @@ export function HomePage() {
           </Card>
           <br />
           <Banner>
-            Created by <Link url="https://www.checkoutpromotions.com" external>Checkout Promotions</Link> in NYC
+            Made in New York City by <Link url="https://www.checkoutpromotions.com" external>Checkout Promotions</Link>.
           </Banner>
         </Layout.Section>
         <Layout.Section secondary>
