@@ -8,6 +8,8 @@ import {
   Stack,
   Link,
   Heading,
+  FooterHelp,
+  Banner,
 } from "@shopify/polaris"
 
 import trophyImgUrl from "../assets/home-trophy.png"
@@ -86,6 +88,10 @@ export function HomePage() {
               </Stack.Item>
             </Stack>
           </Card>
+          <br />
+          <Banner>
+            Created by <Link url="https://www.checkoutpromotions.com" external>Checkout Promotions</Link> in NYC
+          </Banner>
         </Layout.Section>
         <Layout.Section secondary>
           <CheckoutLinkCard 
