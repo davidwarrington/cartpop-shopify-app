@@ -41,7 +41,7 @@ export function CustomerCard({
                 title="Customer information" 
                 actions={hasCustomerInfo && [
                     {
-                        content: "Edit",
+                        content: "Edit customer",
                         onAction: toggleModalVisibility,
                     }
                 ]}
