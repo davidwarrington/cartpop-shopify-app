@@ -325,10 +325,10 @@
   "resolved" "https://registry.npmjs.org/@shopify/network/-/network-1.6.4.tgz"
   "version" "1.6.4"
 
-"@shopify/polaris-icons@^4.17.0":
-  "integrity" "sha512-Vd6APDtyrCV+RkexqlzJ62iY3pInilGiClknpeK8wBq1suAZBa9A9g7WA0JM0RrjPHCGpG+W7Rb8iJitYYfOuQ=="
-  "resolved" "https://registry.npmjs.org/@shopify/polaris-icons/-/polaris-icons-4.17.0.tgz"
-  "version" "4.17.0"
+"@shopify/polaris-icons@^4.17.0", "@shopify/polaris-icons@^4.18.3":
+  "integrity" "sha512-iuQaCcDoBYhu6Fnk5y03EBoafil7tUEA6ItpF5GrbwhpzqKUu4amB87lW8nQKZloGEbIIxaBwJT7ZQyO5U1X7Q=="
+  "resolved" "https://registry.npmjs.org/@shopify/polaris-icons/-/polaris-icons-4.18.3.tgz"
+  "version" "4.18.3"
 
 "@shopify/polaris@^9.2.2":
   "integrity" "sha512-AerqBMV3NcRa9efH6BubM2oKubkjA9Or8B4w4otTmW8SCYR0cPbFE+u6ZH16ty3cqS3xeZ7UlJv/4Z8jEXYlEw=="
