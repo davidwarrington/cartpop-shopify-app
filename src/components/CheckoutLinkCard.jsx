@@ -5,6 +5,7 @@ import {
     Card,
     Checkbox,
     FormLayout,
+    Link,
     Spinner,
     Stack,
     TextField
@@ -173,27 +174,32 @@ export function CheckoutLinkCard({
             {toast && toast.show ? <Toast content={toast.content} onDismiss={() => setToast({})} /> : null}
             <CardContainer>
                 <Card.Section>
-                    {!generatedUrl ? (
-                        <Banner>Please add a product in order to generate a link.</Banner>
-                    ) : (
-                        <Stack vertical>
-                            <TextField 
-                                id="generated-link"
-                                label="Generated checkout link"
-                                labelHidden
-                                multiline={3}
-                                value={generatedUrl} 
-                                //disabled
-                                selectTextOnFocus
-                            />
-                            <Button 
-                                primary
-                                fullWidth
-                                icon={ClipboardMinor} 
-                                onClick={handleCopyCheckoutLink}
-                            >Copy link</Button>
+                    <Stack vertical>
+                        {!generatedUrl ? (
+                            <Banner>Please add a product in order to generate a link.</Banner>
+                        ) : (
+                            <Stack vertical>
+                                <TextField 
+                                    id="generated-link"
+                                    label="Generated checkout link"
+                                    labelHidden
+                                    multiline={3}
+                                    value={generatedUrl} 
+                                    //disabled
+                                    selectTextOnFocus
+                                />
+                                <Button 
+                                    primary
+                                    fullWidth
+                                    icon={ClipboardMinor} 
+                                    onClick={handleCopyCheckoutLink}
+                                >Copy link</Button>
+                            </Stack>
+                        )}
+                        <Stack distribution="center">
+                            <Link external url="https://help.shopify.com/en/manual/products/details/checkout-link">Learn about checkout links</Link>
                         </Stack>
-                    )}
+                    </Stack>
                 </Card.Section>
                 <Card.Section title="Advanced settings" subdued>
                     <FormLayout>
@@ -213,7 +219,7 @@ export function CheckoutLinkCard({
                             />
                         ) : null}
                     </FormLayout>
-                </Card.Section>         
+                </Card.Section>     
             </CardContainer>
         </>
     )
