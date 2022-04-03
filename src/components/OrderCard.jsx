@@ -57,6 +57,11 @@ export function OrderCard({
             }
 
             cachedOrder.attributes.splice(attributeIndex, 1)
+
+            if (!cachedOrder.attributes.length) {
+                delete cachedOrder.attributes
+            }
+
             return cachedOrder
         })
     ), [])

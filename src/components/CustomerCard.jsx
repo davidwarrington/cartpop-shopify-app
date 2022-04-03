@@ -28,7 +28,12 @@ export function CustomerCard({
         setCustomer(customer => {
             const cachedCustomer = {...customer}
             cachedCustomer[field] = value
-            return cachedCustomer;
+
+            if (!cachedCustomer[field]) {
+                delete cachedCustomer[field]
+            }
+
+            return cachedCustomer
         })
     ))
 
