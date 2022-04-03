@@ -45,6 +45,11 @@ export function CustomerCard({
                         onAction: toggleModalVisibility,
                     }
                 ]}
+                primaryFooterAction={!hasCustomerInfo ? {
+                    content: "Add",
+                    onAction: toggleModalVisibility,
+                    accessibilityLabel: "Add customer information"
+                } : null}
             >
                 {hasCustomerInfo ? (
                     <CardGrid>
@@ -84,7 +89,7 @@ export function CustomerCard({
                         ) : null}
                     </CardGrid>
                 ) : (
-                    <Button primary onClick={toggleModalVisibility}>Add customer information</Button>
+                    <TextStyle variation="subdued">No customer specific information included on checkout link.</TextStyle>
                 )}
             </Card>
             <Modal 

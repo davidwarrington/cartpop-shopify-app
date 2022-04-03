@@ -17,7 +17,6 @@ export function ProductsCard({
 
     // Set all selected products (overrides existing)
     const handleProductSelection = useCallback(({ selection }) => {
-        console.log("selection", selection)
         // TODO: prevent overwriting Quantity
         setProducts(selection)
     }, [])
@@ -49,7 +48,6 @@ export function ProductsCard({
 
     // Change variant quantity
     const handleVariantQuantity = useCallback((productIndex, variantIndex, newQuantity) => {
-        console.log("handleVariantQuantity", {productIndex, variantIndex, newQuantity})
         if (productIndex < 0 || variantIndex < 0) {
             return
         }
@@ -77,6 +75,11 @@ export function ProductsCard({
             <Card 
                 sectioned
                 title="Products"
+                primaryFooterAction={!hasProducts ? {
+                    content: "Add",
+                    onAction: togglePickerVisibility,
+                    accessibilityLabel: "Add a product"
+                } : null}
                 actions={hasProducts && [
                     {
                         content: "Edit products",
@@ -88,7 +91,6 @@ export function ProductsCard({
                     products={products} 
                     handleVariantRemove={handleVariantRemove}
                     handleVariantQuantity={handleVariantQuantity}
-                    togglePickerVisibility={togglePickerVisibility}
                 />
             </Card>
             {/* Learn more: https://shopify.dev/apps/tools/app-bridge/react-components/resourcepicker */}
