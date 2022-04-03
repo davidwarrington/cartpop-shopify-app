@@ -57,7 +57,11 @@ export function CheckoutLinkCard({
         // Get actual shop url from API
         const shopDomain = data?.shop?.primaryDomain?.host || new URL(location).searchParams.get("shop")
 
-        setUrl(`${shopDomain}/`)
+        // Build parameters
+        // `${variants.map(variant => `${variant.id}:${variant.quantity}`).join(",")}?`
+        const productString = products.map(product => product.id).join(",")
+
+        setUrl(`https://${shopDomain.replace("https://", "")}/cart?${productString}`)
     }, [products])
 
     // Show loading indicator while we fetch shop domain

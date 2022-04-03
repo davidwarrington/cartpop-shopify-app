@@ -6,10 +6,10 @@ import { ResourcePicker } from "@shopify/app-bridge-react"
 import { ProductList } from "./ProductList"
 
 export function ProductsCard({
-
+    products,
+    setProducts
 }) {
     const [showPicker, setShowPicker] = useState(false)
-    const [products, setProducts] = useState([])
     
     const togglePickerVisibility = useCallback(() => {
         setShowPicker(showPicker => !showPicker)

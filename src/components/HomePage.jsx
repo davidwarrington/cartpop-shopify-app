@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {
   Card,
   Page,
@@ -7,20 +8,24 @@ import {
   Stack,
   Link,
   Heading,
-} from "@shopify/polaris";
+} from "@shopify/polaris"
 
-import trophyImgUrl from "../assets/home-trophy.png";
-import { CheckoutLinkCard } from "./CheckoutLinkCard";
-import { ProductsCard } from "./ProductsCard";
-import { CustomerCard } from "./CustomerCard";
-import { OrderCard } from "./OrderCard";
+import trophyImgUrl from "../assets/home-trophy.png"
+
+import { CheckoutLinkCard } from "./CheckoutLinkCard"
+import { ProductsCard } from "./ProductsCard"
+import { CustomerCard } from "./CustomerCard"
+import { OrderCard } from "./OrderCard"
+
 
 export function HomePage() {
+  const [products, setProducts] = useState([])
+
   return (
-    <Page fullWidth>
+    <Page>
       <Layout>
         <Layout.Section>
-          <ProductsCard />
+          <ProductsCard products={products} setProducts={setProducts} />
           <CustomerCard />
           <OrderCard />
           <Card sectioned>
@@ -81,9 +86,11 @@ export function HomePage() {
           </Card>
         </Layout.Section>
         <Layout.Section secondary>
-          <CheckoutLinkCard products={[]} />
+          <CheckoutLinkCard 
+            products={products}
+          />
         </Layout.Section>
       </Layout>
     </Page>
-  );
+  )
 }
