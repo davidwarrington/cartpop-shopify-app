@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react"
 import {
-    Banner,
     Button,
     Card,
     Checkbox,
@@ -34,7 +33,8 @@ export function OrderCard({
                 title="Order information"
                 actions={hasOrderInfo && [
                     {
-                        content: "Edit"
+                        content: "Edit",
+                        onAction: toggleModalVisibility,
                     }
                 ]}
             >
