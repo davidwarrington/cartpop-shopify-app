@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
     Banner,
     Button,
@@ -42,7 +42,6 @@ export function CheckoutLinkCard({
     const [generatedUrl, setUrl] = useState("")
     const [useAccessToken, setUseAccessToken] = useState(false)
     const [accessToken, setAccessToken] = useState("")
-    const textAreaRef = useRef(null)
     const [toast, setToast] = useState({})
 
     useEffect(() => {
@@ -178,17 +177,15 @@ export function CheckoutLinkCard({
                         <Banner>Please add a product in order to generate a link.</Banner>
                     ) : (
                         <Stack vertical>
-                            <div ref={textAreaRef}>
-                                <TextField 
-                                    id="generated-link"
-                                    label="Generated checkout link"
-                                    labelHidden
-                                    multiline={3}
-                                    value={generatedUrl} 
-                                    //disabled
-                                    selectTextOnFocus
-                                />
-                            </div>
+                            <TextField 
+                                id="generated-link"
+                                label="Generated checkout link"
+                                labelHidden
+                                multiline={3}
+                                value={generatedUrl} 
+                                //disabled
+                                selectTextOnFocus
+                            />
                             <Button 
                                 primary
                                 fullWidth
