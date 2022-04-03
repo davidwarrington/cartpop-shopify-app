@@ -17,7 +17,6 @@ export function ProductsCard({
 
     // Set all selected products (overrides existing)
     const handleProductSelection = useCallback(({ selection }) => {
-        console.log("selection", selection)
         // TODO: prevent overwriting Quantity
         setProducts(selection)
     }, [])
@@ -49,7 +48,6 @@ export function ProductsCard({
 
     // Change variant quantity
     const handleVariantQuantity = useCallback((productIndex, variantIndex, newQuantity) => {
-        console.log("handleVariantQuantity", {productIndex, variantIndex, newQuantity})
         if (productIndex < 0 || variantIndex < 0) {
             return
         }
