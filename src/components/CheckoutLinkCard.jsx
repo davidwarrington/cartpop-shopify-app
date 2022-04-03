@@ -3,16 +3,37 @@ import {
     Banner,
     Button,
     Card,
+    Spinner,
     Stack,
     TextField
 } from "@shopify/polaris"
 import {
     ClipboardMinor
   } from "@shopify/polaris-icons"
+import { gql, useQuery } from "@apollo/client"
+
+const SHOP_DOMAIN_QUERY = gql`
+    query shopInfo {
+        shop {
+            primaryDomain {
+                host
+            }
+        }
+    }
+`;
+
+const CardContainer = ({ children }) => {
+    return (
+        <Card sectioned title="Checkout Link">
+            {children}
+        </Card>
+    )
+}
 
 export function CheckoutLinkCard({
     products,
 }) {
+    const { error, data, loading } = useQuery(SHOP_DOMAIN_QUERY)
     const [generatedUrl, setUrl] = useState("")
 
     // Compute url whenever a parameter changes
@@ -22,14 +43,23 @@ export function CheckoutLinkCard({
             return;
         }
 
-        // TODO: get actual shop url from API
-        const shopDomain = new URL(location).searchParams.get("shop")
+        // Get actual shop url from API
+        const shopDomain = data?.shop?.primaryDomain?.host || new URL(location).searchParams.get("shop")
 
         setUrl(`${shopDomain}/`)
     }, [products])
 
+    // Show loading indicator while we fetch shop domain
+    if (loading) {
+        return (
+            <CardContainer>
+                <Spinner />
+            </CardContainer>
+        )
+    }
+
     return (
-        <Card sectioned title="Checkout Link">
+        <CardContainer>
             {!generatedUrl ? (
                 <Banner>Please add a product in order to generate a link.</Banner>
             ) : (
@@ -44,6 +74,6 @@ export function CheckoutLinkCard({
                     <Button fullWidth icon={ClipboardMinor}>Copy link</Button>
                 </Stack>
             )}           
-        </Card>
+        </CardContainer>
     )
 }
