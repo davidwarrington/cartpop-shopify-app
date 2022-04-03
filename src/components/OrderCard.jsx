@@ -58,17 +58,20 @@ export function OrderCard({
                 <Modal.Section>
                     <FormLayout>
                         <TextField
+                            type="text"
                             label="Discount code" 
                             value={discountCode} 
                         />
                         <TextField
+                            type="text"
                             label="Note" 
                             value={note} 
                             multiline={3}
-                            //maxLength={}
+                            maxLength={5000}
                             showCharacterCount
                         />
                         <TextField
+                            type="text"
                             label="Ref" 
                             value={ref} 
                         />
