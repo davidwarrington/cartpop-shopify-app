@@ -1,5 +1,7 @@
-const apiRoutePrefix = `/api/links`;
+import verifyRequest from "../../middleware/verify-request.js";
 import Links from "./helpers/index.js";
+
+const apiRoutePrefix = `/api/links`;
 
 export default function apiLinks(app) {
   /*
@@ -7,7 +9,7 @@ export default function apiLinks(app) {
         
         > Create & save a new link for store of session shop
     */
-  app.post(`${apiRoutePrefix}`, async (req, res) => {
+  app.post(`${apiRoutePrefix}`, verifyRequest(app), async (req, res) => {
     try {
       console.log("CREATE ENDPOINT");
       await Links.create(req, res);
@@ -23,7 +25,7 @@ export default function apiLinks(app) {
         
         > Update link of id for store of session shop
     */
-  app.put(`${apiRoutePrefix}/:id`, async (req, res) => {
+  app.put(`${apiRoutePrefix}/:id`, verifyRequest(app), async (req, res) => {
     try {
       const linkId = req.params.id;
       console.log(`UPDATE LINK ${linkId} ENDPOINT`);
@@ -40,7 +42,7 @@ export default function apiLinks(app) {
         
         > Return all links for store of session shop
     */
-  app.get(`${apiRoutePrefix}`, async (req, res) => {
+  app.get(`${apiRoutePrefix}`, verifyRequest(app), async (req, res) => {
     try {
       console.log("GET ALL LINKS ENDPOINT");
       await Links.all(req, res);
@@ -56,7 +58,7 @@ export default function apiLinks(app) {
         
         > Return link of id for store of session shop
     */
-  app.get(`${apiRoutePrefix}/:id`, async (req, res) => {
+  app.get(`${apiRoutePrefix}/:id`, verifyRequest(app), async (req, res) => {
     try {
       const linkId = req.params.id;
       console.log(`GET LINK ${linkId} ENDPOINT`);
@@ -73,7 +75,7 @@ export default function apiLinks(app) {
         
         > Delete link with id for store of session shop
     */
-  app.delete(`${apiRoutePrefix}/:id`, async (req, res) => {
+  app.delete(`${apiRoutePrefix}/:id`, verifyRequest(app), async (req, res) => {
     try {
       const linkId = req.params.id;
       console.log(`DELETE LINK ${linkId} ENDPOINT`);
