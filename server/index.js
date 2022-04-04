@@ -2,19 +2,35 @@
 import { resolve } from "path";
 import express from "express";
 import cookieParser from "cookie-parser";
+import { MongoClient } from "mongodb";
 import { Shopify, ApiVersion } from "@shopify/shopify-api";
 import "dotenv/config";
 
 import webhookGdprRoutes from "./webhooks/gdpr.js";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
+import MongoStore from "./middleware/mongo-store.js";
 
 const USE_ONLINE_TOKENS = true;
 const TOP_LEVEL_OAUTH_COOKIE = "shopify_top_level_oauth";
 
 const PORT = parseInt(process.env.PORT || "8081", 10);
 const isTest = process.env.NODE_ENV === "test" || !!process.env.VITE_TEST_BUILD;
+const { MONGODB_DB, MONGODB_URI } = process.env;
 
+// Connect to Mongodb and set to common connection variable for pooling
+const mongodb = await MongoClient.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(async (connection) => {
+  console.log(`Successfully connected to ${MONGODB_DB}`);
+  return connection;
+});
+
+// Create new isntance of session storage via Mongodb
+const sessionStorage = new MongoStore(mongodb);
+
+// Create Shopify API instance
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY,
   API_SECRET_KEY: process.env.SHOPIFY_API_SECRET,
@@ -22,17 +38,36 @@ Shopify.Context.initialize({
   HOST_NAME: process.env.HOST.replace(/https:\/\//, ""),
   API_VERSION: ApiVersion.April22,
   IS_EMBEDDED_APP: true,
-  // This should be replaced with your preferred storage strategy
-  SESSION_STORAGE: new Shopify.Session.MemorySessionStorage(),
+  SESSION_STORAGE: new Shopify.Session.CustomSessionStorage(
+    sessionStorage.storeCallback.bind(sessionStorage),
+    sessionStorage.loadCallback.bind(sessionStorage),
+    sessionStorage.deleteCallback.bind(sessionStorage)
+  ),
 });
 
-// Storing the currently active shops in memory will force them to re-login when your server restarts. You should
-// persist this object in your app.
-const ACTIVE_SHOPIFY_SHOPS = {};
 Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
   path: "/webhooks",
   webhookHandler: async (topic, shop, body) => {
-    delete ACTIVE_SHOPIFY_SHOPS[shop]
+    // Update shop to show as uninstalled
+    await mongodb
+      .db(MONGODB_DB)
+      .collection("shops")
+      .updateOne(
+        { shop: shop },
+        {
+          $set: {
+            isInstalled: false,
+            uninstalledAt: new Date(),
+            subscription: null,
+          },
+        }
+      );
+
+    // Remove all sessions tied to shop
+    await mongodb
+      .db(MONGODB_DB)
+      .collection("__session")
+      .deleteMany({ shop: shop });
   },
 });
 
@@ -42,8 +77,18 @@ export async function createServer(
   isProd = process.env.NODE_ENV === "production"
 ) {
   const app = express();
+  /**
+   * @type {import('vite').ViteDevServer}
+   */
+  let vite;
+
+  // Expose mongodb on req
+  app.use((req, res, next) => {
+    req.db = mongodb.db(MONGODB_DB);
+    next();
+  });
+
   app.set("top-level-oauth-cookie", TOP_LEVEL_OAUTH_COOKIE);
-  app.set("active-shopify-shops", ACTIVE_SHOPIFY_SHOPS);
   app.set("use-online-tokens", USE_ONLINE_TOKENS);
 
   app.use(cookieParser(Shopify.Context.API_SECRET_KEY));
@@ -60,15 +105,16 @@ export async function createServer(
     }
   });
 
-  app.get("/products-count", verifyRequest(app), async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, true);
-    const { Product } = await import(
-      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
-    );
+  // TODO: Remove old starter api.
+  // app.get("/products-count", verifyRequest(app), async (req, res) => {
+  //   const session = await Shopify.Utils.loadCurrentSession(req, res, true);
+  //   const { Product } = await import(
+  //     `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+  //   );
 
-    const countData = await Product.count({ session });
-    res.status(200).send(countData);
-  });
+  //   const countData = await Product.count({ session });
+  //   res.status(200).send(countData);
+  // });
 
   app.post("/graphql", verifyRequest(app), async (req, res) => {
     try {
@@ -83,6 +129,8 @@ export async function createServer(
 
   webhookGdprRoutes(app);
 
+  // iFrame Security headers
+  // See: https://shopify.dev/apps/store/security/iframe-protection
   app.use((req, res, next) => {
     const shop = req.query.shop;
     if (Shopify.Context.IS_EMBEDDED_APP && shop) {
@@ -96,23 +144,49 @@ export async function createServer(
     next();
   });
 
-  app.use("/*", (req, res, next) => {
+  // Make sure shop is installed
+  app.use("/*", async (req, res, next) => {
+    const { db } = req;
     const shop = req.query.shop;
 
-    // Detect whether we need to reinstall the app, any request from Shopify will
-    // include a shop in the query parameters.
-    if (app.get("active-shopify-shops")[shop] === undefined && shop) {
-      res.redirect(`/auth?shop=${shop}`);
-    } else {
+    try {
+      // If no shop then we continue
+      if (!shop) {
+        next();
+        return;
+      }
+
+      // Check if shop is installed, otherwise redirect to oauth process
+      const shopDoc = await db
+        .collection("shops")
+        .findOne({ shop: shop, isInstalled: true });
+      if (!shopDoc) {
+        res.redirect(`/auth?shop=${shop}`);
+        return;
+      }
+
+      // Check if active session, otherwise redirect to oauth process
+      const session = await Shopify.Utils.loadCurrentSession(req, res);
+
+      // BROKEN SESSION LOGIC
+      console.log("session", session);
+
+      // if (!session && shop) {
+      //   res.redirect(`/auth?shop=${shop}`);
+      //   return;
+      // }
+
+      // This is the way...
       next();
+    } catch (err) {
+      console.warn(JSON.stringify(err));
+      res.send("An error occured on the server");
+      return;
     }
   });
 
-  /**
-   * @type {import('vite').ViteDevServer}
-   */
-  let vite;
   if (!isProd) {
+    // DEV ONLY - Hot module reload
     vite = await import("vite").then(({ createServer }) =>
       createServer({
         root,
@@ -131,6 +205,7 @@ export async function createServer(
     );
     app.use(vite.middlewares);
   } else {
+    // PROD ONLY - Compress Output
     const compression = await import("compression").then(
       ({ default: fn }) => fn
     );
