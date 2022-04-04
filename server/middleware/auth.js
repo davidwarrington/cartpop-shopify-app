@@ -1,10 +1,4 @@
 import { Shopify } from "@shopify/shopify-api";
-import Analytics from "analytics-node";
-
-// Segment Client
-const analyticsClient = process.env.SEGMENT_WRITE_KEY
-  ? new Analytics(process.env.SEGMENT_WRITE_KEY)
-  : false;
 
 import topLevelAuthRedirect from "../helpers/top-level-auth-redirect.js";
 
@@ -87,8 +81,8 @@ export default function applyAuthMiddleware(app) {
         });
 
         // Fire install event
-        analyticsClient &&
-          analyticsClient.track({
+        req.analytics &&
+          req.analytics.track({
             event: "install",
             userId: session.shop,
           });
@@ -107,15 +101,15 @@ export default function applyAuthMiddleware(app) {
         );
 
         // Fire reinstall event
-        analyticsClient &&
-          analyticsClient.track({
+        req.analytics &&
+          req.analytics.track({
             event: "reinstall",
             userId: session.shop,
           });
       } else {
         // Fire reauth event
-        analyticsClient &&
-          analyticsClient.track({
+        req.analytics &&
+          req.analytics.track({
             event: "reauth",
             userId: session.shop,
           });

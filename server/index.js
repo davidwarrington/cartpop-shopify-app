@@ -101,6 +101,14 @@ export async function createServer(
     next();
   });
 
+  // Expose segment analytics on req
+  if (analyticsClient) {
+    app.use((req, res, next) => {
+      req.analytics = analyticsClient;
+      next();
+    });
+  }
+
   app.set("top-level-oauth-cookie", TOP_LEVEL_OAUTH_COOKIE);
   app.set("use-online-tokens", USE_ONLINE_TOKENS);
 
