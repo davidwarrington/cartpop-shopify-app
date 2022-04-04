@@ -65,6 +65,7 @@ export async function createServer(
    */
   let vite;
 
+  // Expose mongodb on req
   app.use((req, res, next) => {
     req.db = mongodb.db(MONGODB_DB);
     next();
@@ -90,15 +91,16 @@ export async function createServer(
     }
   });
 
-  app.get("/products-count", verifyRequest(app), async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, true);
-    const { Product } = await import(
-      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
-    );
+  // TODO: Remove old starter api.
+  // app.get("/products-count", verifyRequest(app), async (req, res) => {
+  //   const session = await Shopify.Utils.loadCurrentSession(req, res, true);
+  //   const { Product } = await import(
+  //     `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+  //   );
 
-    const countData = await Product.count({ session });
-    res.status(200).send(countData);
-  });
+  //   const countData = await Product.count({ session });
+  //   res.status(200).send(countData);
+  // });
 
   app.post("/graphql", verifyRequest(app), async (req, res) => {
     try {
