@@ -1,29 +1,29 @@
-import { useState } from "react"
-import {
-  Card,
-  Page,
-  Layout,
-  TextContainer,
-  Image,
-  Stack,
-  Link,
-  Heading,
-  FooterHelp,
-  Banner,
-} from "@shopify/polaris"
+import { useEffect, useState } from "react";
+import { Page, Layout, Link, Banner } from "@shopify/polaris";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import { authenticatedFetch } from "@shopify/app-bridge-utils";
 
-import trophyImgUrl from "../assets/home-trophy.png"
-
-import { CheckoutLinkCard } from "./CheckoutLinkCard"
-import { ProductsCard } from "./ProductsCard"
-import { CustomerCard } from "./CustomerCard"
-import { OrderCard } from "./OrderCard"
-
+import { CheckoutLinkCard } from "./CheckoutLinkCard";
+import { ProductsCard } from "./ProductsCard";
+import { CustomerCard } from "./CustomerCard";
+import { OrderCard } from "./OrderCard";
 
 export function HomePage() {
-  const [products, setProducts] = useState([])
-  const [customer, setCustomer] = useState({})
-  const [order, setOrder] = useState({})
+  const app = useAppBridge();
+
+  const [products, setProducts] = useState([]);
+  const [customer, setCustomer] = useState({});
+  const [order, setOrder] = useState({});
+
+  async function getLinks() {
+    const fetchFunction = authenticatedFetch(app);
+    const apiRes = await fetchFunction("/api/links").then((res) => res.json());
+    console.log("apiRes", apiRes);
+  }
+
+  useEffect(() => {
+    getLinks();
+  }, []);
 
   return (
     <Page>
@@ -34,11 +34,15 @@ export function HomePage() {
           <OrderCard order={order} setOrder={setOrder} />
           <br />
           <Banner>
-            Made in New York City by <Link url="https://www.checkoutpromotions.com" external>Checkout Promotions</Link>.
+            Made in New York City by{" "}
+            <Link url="https://www.checkoutpromotions.com" external>
+              Checkout Promotions
+            </Link>
+            .
           </Banner>
         </Layout.Section>
         <Layout.Section secondary>
-          <CheckoutLinkCard 
+          <CheckoutLinkCard
             products={products}
             customer={customer}
             order={order}
@@ -46,5 +50,5 @@ export function HomePage() {
         </Layout.Section>
       </Layout>
     </Page>
-  )
+  );
 }
