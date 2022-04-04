@@ -90,8 +90,10 @@ export default function applyAuthMiddleware(app) {
             shop: session.shop,
           },
           {
-            isInstalled: true,
-            installedAt: new Date(),
+            $set: {
+              isInstalled: true,
+              installedAt: new Date(),
+            },
           }
         );
 

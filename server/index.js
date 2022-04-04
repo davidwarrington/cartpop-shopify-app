@@ -52,9 +52,11 @@ Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
     await mongodb.db(MONGODB_DB).collection("shops").updateOne(
       { shop: shop },
       {
-        isInstalled: false,
-        uninstalledAt: new Date(),
-        subscription: null,
+        $set: {
+          isInstalled: false,
+          uninstalledAt: new Date(),
+          subscription: null,
+        }
       }
     );
 
