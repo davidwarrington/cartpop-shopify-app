@@ -49,16 +49,19 @@ Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
   path: "/webhooks",
   webhookHandler: async (topic, shop, body) => {
     // Update shop to show as uninstalled
-    await mongodb.db(MONGODB_DB).collection("shops").updateOne(
-      { shop: shop },
-      {
-        $set: {
-          isInstalled: false,
-          uninstalledAt: new Date(),
-          subscription: null,
+    await mongodb
+      .db(MONGODB_DB)
+      .collection("shops")
+      .updateOne(
+        { shop: shop },
+        {
+          $set: {
+            isInstalled: false,
+            uninstalledAt: new Date(),
+            subscription: null,
+          },
         }
-      }
-    );
+      );
 
     // Remove all sessions tied to shop
     await mongodb
@@ -94,11 +97,8 @@ export async function createServer(
 
   app.post("/webhooks", async (req, res) => {
     try {
-      const webhookResponse = await Shopify.Webhooks.Registry.process(req, res);
-      console.log(
-        `Webhook processed, returned status code 200`,
-        webhookResponse
-      );
+      await Shopify.Webhooks.Registry.process(req, res);
+      console.log(`Webhook processed, returned status code 200`);
     } catch (error) {
       console.log(`Failed to process webhook: ${error}`);
       res.status(500).send(error.message);
