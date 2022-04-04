@@ -1,3 +1,4 @@
-export const copy = ({ req, res }) => {
+export const copy = async (req, res) => {
+  const { db } = req;
   console.log("Inside copy function");
 };
