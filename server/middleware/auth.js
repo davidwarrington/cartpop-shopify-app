@@ -1,4 +1,10 @@
 import { Shopify } from "@shopify/shopify-api";
+import Analytics from "analytics-node";
+
+// Segment Client
+const analyticsClient = process.env.SEGMENT_WRITE_KEY
+  ? new Analytics(process.env.SEGMENT_WRITE_KEY)
+  : false;
 
 import topLevelAuthRedirect from "../helpers/top-level-auth-redirect.js";
 
@@ -80,10 +86,13 @@ export default function applyAuthMiddleware(app) {
           uninstalledAt: null,
         });
 
-        // TODO: fire Segment event INSTALL
-        console.log("INSTALL", session.shop);
+        // Fire install event
+        analyticsClient &&
+          analyticsClient.track({
+            event: "install",
+            userId: session.shop,
+          });
       } else if (!shopDoc.isInstalled) {
-        console.log("REINSTALL");
         // This is a REINSTALL
         await db.collection("shops").updateOne(
           {
@@ -97,10 +106,19 @@ export default function applyAuthMiddleware(app) {
           }
         );
 
-        // TODO: fire Segment event REINSTALL
-        console.log("REINSTALL", session.shop);
+        // Fire reinstall event
+        analyticsClient &&
+          analyticsClient.track({
+            event: "reinstall",
+            userId: session.shop,
+          });
       } else {
-        console.log("REAUTH", session.shop);
+        // Fire reauth event
+        analyticsClient &&
+          analyticsClient.track({
+            event: "reauth",
+            userId: session.shop,
+          });
       }
 
       // Redirect to app with shop parameter upon auth
