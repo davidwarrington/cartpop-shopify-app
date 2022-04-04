@@ -149,9 +149,9 @@ export async function createServer(
 
   app.use(express.json());
 
-  webhookGdprRoutes(app);
-
   apiLinks(app);
+
+  webhookGdprRoutes(app);
 
   // iFrame Security headers
   // See: https://shopify.dev/apps/store/security/iframe-protection
