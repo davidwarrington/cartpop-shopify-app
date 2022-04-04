@@ -80,10 +80,13 @@ export default function applyAuthMiddleware(app) {
           uninstalledAt: null,
         });
 
-        // TODO: fire Segment event INSTALL
-        console.log("INSTALL", session.shop);
+        // Fire install event
+        req.analytics &&
+          req.analytics.track({
+            event: "install",
+            userId: session.shop,
+          });
       } else if (!shopDoc.isInstalled) {
-        console.log("REINSTALL");
         // This is a REINSTALL
         await db.collection("shops").updateOne(
           {
@@ -97,10 +100,19 @@ export default function applyAuthMiddleware(app) {
           }
         );
 
-        // TODO: fire Segment event REINSTALL
-        console.log("REINSTALL", session.shop);
+        // Fire reinstall event
+        req.analytics &&
+          req.analytics.track({
+            event: "reinstall",
+            userId: session.shop,
+          });
       } else {
-        console.log("REAUTH", session.shop);
+        // Fire reauth event
+        req.analytics &&
+          req.analytics.track({
+            event: "reauth",
+            userId: session.shop,
+          });
       }
 
       // Redirect to app with shop parameter upon auth

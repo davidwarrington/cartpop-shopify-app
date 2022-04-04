@@ -4,12 +4,18 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { MongoClient } from "mongodb";
 import { Shopify, ApiVersion } from "@shopify/shopify-api";
+import Analytics from "analytics-node";
 import "dotenv/config";
 
 import webhookGdprRoutes from "./webhooks/gdpr.js";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 import MongoStore from "./middleware/mongo-store.js";
+
+// Segment Client
+const analyticsClient = process.env.SEGMENT_WRITE_KEY
+  ? new Analytics(process.env.SEGMENT_WRITE_KEY)
+  : false;
 
 const USE_ONLINE_TOKENS = true;
 const TOP_LEVEL_OAUTH_COOKIE = "shopify_top_level_oauth";
@@ -68,6 +74,13 @@ Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
       .db(MONGODB_DB)
       .collection("__session")
       .deleteMany({ shop: shop });
+
+    // Fire reinstall event
+    analyticsClient &&
+      analyticsClient.track({
+        event: "uninstall",
+        userId: shop,
+      });
   },
 });
 
@@ -87,6 +100,14 @@ export async function createServer(
     req.db = mongodb.db(MONGODB_DB);
     next();
   });
+
+  // Expose segment analytics on req
+  if (analyticsClient) {
+    app.use((req, res, next) => {
+      req.analytics = analyticsClient;
+      next();
+    });
+  }
 
   app.set("top-level-oauth-cookie", TOP_LEVEL_OAUTH_COOKIE);
   app.set("use-online-tokens", USE_ONLINE_TOKENS);
