@@ -79,11 +79,9 @@ Shopify.Context.initialize({
 Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
   path: "/webhooks",
   webhookHandler: async (topic, shop, body) => {
-
     // TODO: isInstalled: false,
     // TODO: uninstalledAt: new Date(),
     // TODO: delete all mongodb sessions for store
-
   },
 });
 
@@ -120,8 +118,14 @@ export async function createServer(
 
     app.post("/webhooks", async (req, res) => {
       try {
-        await Shopify.Webhooks.Registry.process(req, res);
-        console.log(`Webhook processed, returned status code 200`);
+        const webhookResponse = await Shopify.Webhooks.Registry.process(
+          req,
+          res
+        );
+        console.log(
+          `Webhook processed, returned status code 200`,
+          webhookResponse
+        );
       } catch (error) {
         console.log(`Failed to process webhook: ${error}`);
         res.status(500).send(error.message);
@@ -174,28 +178,19 @@ export async function createServer(
       try {
         // If no shop then we continue
         if (!shop) {
-          next()
+          next();
           return;
         }
-  
-        // Check if shop is installed, otherwise redirect to oauth process
-        const shopDoc = await db.collection("shops").findOne({ shopDomain: shop, isInstalled: true })
-        if (!shopDoc) { 
-          res.redirect(`/auth?shop=${shop}`);
-          return; 
-        }
-  
-        // Check if active session, otherwise redirect to oauth process
-        const session = await Shopify.Utils.loadCurrentSession(req, res);
-        
-        // BROKEN SESSION LOGIC
-        // console.log("session", session);
 
-        // if (!session && shop) {
-        //   res.redirect(`/auth?shop=${shop}`);
-        //   return;
-        // } 
-          
+        // Check if shop is installed, otherwise redirect to oauth process
+        const shopDoc = await db
+          .collection("shops")
+          .findOne({ shopDomain: shop, isInstalled: true });
+        if (!shopDoc) {
+          res.redirect(`/auth?shop=${shop}`);
+          return;
+        }
+
         // This is the way...
         next();
       } catch (err) {
