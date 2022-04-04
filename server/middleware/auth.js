@@ -38,6 +38,8 @@ export default function applyAuthMiddleware(app) {
   });
 
   app.get("/auth/callback", async (req, res) => {
+    const { db } = req;
+
     try {
       const session = await Shopify.Auth.validateAuthCallback(
         req,
@@ -46,12 +48,6 @@ export default function applyAuthMiddleware(app) {
       );
 
       const host = req.query.host;
-      app.set(
-        "active-shopify-shops",
-        Object.assign(app.get("active-shopify-shops"), {
-          [session.shop]: session.scope,
-        })
-      );
 
       const response = await Shopify.Webhooks.Registry.register({
         shop: session.shop,
@@ -64,6 +60,45 @@ export default function applyAuthMiddleware(app) {
         console.log(
           `Failed to register APP_UNINSTALLED webhook: ${response.result}`
         );
+      }
+
+      // Check if Shop has app installed
+      let shopDoc = await db.collection("shops").findOne({
+        shopDomain: session.shop,
+      });
+
+      if (!shopDoc) {
+        // This shop has never been installed
+        await db.collection("shops").insertOne({
+          shopId: null, // TODO:
+          shopDomain: session.shop,
+          scopes: session.scope,
+          isInstalled: true,
+          subscription: null,
+          settings: null,
+          installedAt: new Date(),
+          uninstalledAt: null,
+        });
+
+        // TODO: fire Segment event INSTALL
+        console.log("INSTALL", session.shop);
+      } else if (!shopDoc.isInstalled) {
+        console.log("REINSTALL");
+        // This is a REINSTALL
+        await db.collection("shops").updateOne(
+          {
+            shopDomain: session.shop,
+          },
+          {
+            isInstalled: true,
+            installedAt: new Date(),
+          }
+        );
+
+        // TODO: fire Segment event REINSTALL
+        console.log("REINSTALL", session.shop);
+      } else {
+        console.log("REAUTH", session.shop);
       }
 
       // Redirect to app with shop parameter upon auth
