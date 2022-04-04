@@ -64,14 +64,14 @@ export default function applyAuthMiddleware(app) {
 
       // Check if Shop has app installed
       let shopDoc = await db.collection("shops").findOne({
-        shopDomain: session.shop,
+        shop: session.shop,
       });
 
       if (!shopDoc) {
         // This shop has never been installed
         await db.collection("shops").insertOne({
           shopId: null, // TODO:
-          shopDomain: session.shop,
+          shop: session.shop,
           scopes: session.scope,
           isInstalled: true,
           subscription: null,
@@ -87,7 +87,7 @@ export default function applyAuthMiddleware(app) {
         // This is a REINSTALL
         await db.collection("shops").updateOne(
           {
-            shopDomain: session.shop,
+            shop: session.shop,
           },
           {
             isInstalled: true,

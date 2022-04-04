@@ -48,9 +48,21 @@ Shopify.Context.initialize({
 Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
   path: "/webhooks",
   webhookHandler: async (topic, shop, body) => {
-    // TODO: isInstalled: false,
-    // TODO: uninstalledAt: new Date(),
-    // TODO: delete all mongodb sessions for store
+    // Update shop to show as uninstalled
+    await mongodb.db(MONGODB_DB).collection("shops").updateOne(
+      { shop: shop },
+      {
+        isInstalled: false,
+        uninstalledAt: new Date(),
+        subscription: null,
+      }
+    );
+
+    // Remove all sessions tied to shop
+    await mongodb
+      .db(MONGODB_DB)
+      .collection("__session")
+      .deleteMany({ shop: shop });
   },
 });
 
@@ -145,7 +157,7 @@ export async function createServer(
       // Check if shop is installed, otherwise redirect to oauth process
       const shopDoc = await db
         .collection("shops")
-        .findOne({ shopDomain: shop, isInstalled: true });
+        .findOne({ shop: shop, isInstalled: true });
       if (!shopDoc) {
         res.redirect(`/auth?shop=${shop}`);
         return;
