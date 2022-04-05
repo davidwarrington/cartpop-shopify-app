@@ -229,7 +229,7 @@ const EditLink = () => {
               helpText="Customers will not be able to check out with this link."
               id="optional"
               name="visibility"
-              checked={link.active}
+              checked={!link.active}
               //onChange={handleChange}
             />
           </Card>
