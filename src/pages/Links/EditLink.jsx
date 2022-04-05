@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  Card,
+  Badge,
   Button,
+  Card,
   Layout,
   Page,
   TextField,
   PageActions,
+  TextStyle,
 } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
@@ -54,6 +56,36 @@ const EditLink = () => {
     getLinks();
   }, []);
 
+  const handleUpdate = useCallback(async () => {
+    setPageState(PAGE_STATES.submitting);
+
+    const apiRes = await fetchFunction(`/api/links/${id}`, {
+      method: "PUT",
+      payload: {
+        // TODO:
+      },
+    }).then((res) => res.json());
+
+    // Check if update failed
+    if (apiRes !== true) {
+      setToast({
+        show: true,
+        content: "Failed to update link. Please try again or contact support",
+        error: true,
+      });
+      setPageState(PAGE_STATES.idle);
+      return;
+    }
+
+    // Show success toast
+    setToast({
+      show: true,
+      content: "Link successfully updated",
+    });
+
+    setPageState(PAGE_STATES.idle);
+  }, []);
+
   const handleDelete = useCallback(async () => {
     setPageState(PAGE_STATES.submitting);
 
@@ -63,12 +95,13 @@ const EditLink = () => {
     }).then((res) => res.json());
 
     // Check if delete failed
-    if (!apiRes) {
+    if (apiRes !== true) {
       setToast({
         show: true,
         content: "Failed to create link. Please try again or contact support",
         error: true,
       });
+      setPageState(PAGE_STATES.idle);
       return;
     }
 
@@ -97,10 +130,44 @@ const EditLink = () => {
   }
 
   return (
-    <Page breadcrumbs={[{ content: "Home", url: "/" }]} title="Edit link">
+    <Page
+      breadcrumbs={[{ content: "Home", url: "/" }]}
+      title="Edit link"
+      subtitle={
+        <TextStyle variation="subdued">
+          Last updated on{" "}
+          {new Date(link.updatedAt || link.createdAt).toLocaleString()}
+        </TextStyle>
+      }
+      primaryAction={{
+        content: "Save",
+        disabled: pageState === PAGE_STATES.submitting,
+        loading: pageState === PAGE_STATES.submitting,
+        onAction: handleUpdate,
+      }}
+      secondaryActions={
+        pageState !== PAGE_STATES.submitting
+          ? [
+              {
+                content: "Duplicate",
+                onAction: () => alert("TODO:"),
+                disabled: false, // TODO:
+              },
+              {
+                content: "Preview",
+                onAction: () => alert("TODO:"),
+              },
+            ]
+          : []
+      }
+    >
       <TitleBar title="Edit link" />
       {toast && toast.show ? (
-        <Toast content={toast.content} onDismiss={() => setToast({})} />
+        <Toast
+          content={toast.content}
+          onDismiss={() => setToast({})}
+          error={toast.error}
+        />
       ) : null}
       <Layout>
         <Layout.Section>

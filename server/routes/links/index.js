@@ -39,10 +39,9 @@ export default function apiLinks(app) {
     apiSession(app),
     async (req, res) => {
       try {
-        const linkId = req.params.id;
-        console.log(`UPDATE LINK ${linkId} ENDPOINT`);
-        await Links.update(req, res);
-        res.status(200).send();
+        console.log(`UPDATE LINK ENDPOINT`);
+        const success = await Links.update(req, res);
+        res.status(200).send(success);
       } catch (error) {
         console.log(`Failed to process api request: ${error}`);
         res.status(500).send(error.message);
