@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Banner, Button, Layout, Link, Page } from "@shopify/polaris";
-import { useAppBridge } from "@shopify/app-bridge-react";
+import { useAppBridge, TitleBar } from "@shopify/app-bridge-react";
 import { authenticatedFetch } from "@shopify/app-bridge-utils";
 
 import { CheckoutLinkCard } from "../components/CheckoutLinkCard";
@@ -27,11 +27,11 @@ const Home = () => {
 
   return (
     <Page>
+      {/* Empty TitleBar to reset when navigating from other pages like Settings */}
+      <TitleBar />
       <Layout>
-        <Layout.Section>
-          <ProductsCard products={products} setProducts={setProducts} />
-          <CustomerCard customer={customer} setCustomer={setCustomer} />
-          <OrderCard order={order} setOrder={setOrder} />
+        <Layout.Section fullWidth>
+          Links here...
           <br />
           <Banner>
             Made in New York City by{" "}
@@ -41,14 +41,9 @@ const Home = () => {
             .
           </Banner>
         </Layout.Section>
-        <Layout.Section secondary>
-          <CheckoutLinkCard
-            products={products}
-            customer={customer}
-            order={order}
-          />
-        </Layout.Section>
         <Layout.Section fullWidth>
+          <Button url="/links/new">New link</Button>
+          <Button url="/links/123">123 Link</Button>
           <Button url="/settings">Settings</Button>
         </Layout.Section>
       </Layout>
