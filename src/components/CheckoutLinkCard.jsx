@@ -186,7 +186,11 @@ export function CheckoutLinkCard({ products, customer, order }) {
   return (
     <>
       {toast && toast.show ? (
-        <Toast content={toast.content} onDismiss={() => setToast({})} />
+        <Toast
+          content={toast.content}
+          onDismiss={() => setToast({})}
+          error={toast.error}
+        />
       ) : null}
       <CardContainer>
         <Card.Section>

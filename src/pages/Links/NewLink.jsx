@@ -88,7 +88,11 @@ const NewLink = () => {
     >
       <TitleBar title={pageTitle} />
       {toast && toast.show ? (
-        <Toast content={toast.content} onDismiss={() => setToast({})} />
+        <Toast
+          content={toast.content}
+          onDismiss={() => setToast({})}
+          error={toast.error}
+        />
       ) : null}
       <Layout>
         <Layout.Section>
