@@ -34,6 +34,8 @@ const EditLink = () => {
   );
   const [link, setLink] = useState(null);
 
+  const pageTitle = link ? link.name || link._id : "Edit link";
+
   async function getLinks() {
     if (pageState !== PAGE_STATES.loading) {
       setPageState(PAGE_STATES.loading);
@@ -132,7 +134,7 @@ const EditLink = () => {
   return (
     <Page
       breadcrumbs={[{ content: "Home", url: "/" }]}
-      title="Edit link"
+      title={pageTitle}
       subtitle={
         <TextStyle variation="subdued">
           Last updated on{" "}
@@ -161,7 +163,7 @@ const EditLink = () => {
           : []
       }
     >
-      <TitleBar title="Edit link" />
+      <TitleBar title={pageTitle} />
       {toast && toast.show ? (
         <Toast
           content={toast.content}
@@ -178,7 +180,7 @@ const EditLink = () => {
           </Layout.Section>
         ) : null}
         <Layout.Section>
-          <NameCard name={link.name} setName={null} />
+          <NameCard id={link._id} name={link.name} setName={null} />
           <ProductsCard products={link.products || []} setProducts={null} />
           <CustomerCard customer={link.customer || {}} setCustomer={null} />
           <OrderCard order={link.order || {}} setOrder={null} />

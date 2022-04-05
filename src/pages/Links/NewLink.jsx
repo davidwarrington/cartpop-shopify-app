@@ -24,7 +24,7 @@ const NewLink = () => {
   const [order, setOrder] = useState({});
   const [linkName, setName] = useState(null);
 
-  const canSubmit = linkName && products && products.length;
+  const canSubmit = products && products.length;
   const pageTitle = linkName || "Create checkout link";
 
   const handleSubmit = useCallback(async () => {
