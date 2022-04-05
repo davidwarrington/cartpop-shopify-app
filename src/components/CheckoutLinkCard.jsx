@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   Banner,
   Button,
+  ButtonGroup,
   Card,
   Checkbox,
   FormLayout,
@@ -161,27 +162,36 @@ export function CheckoutLinkCard({ products, customer, order }) {
     setShowQrModal((visibility) => !visibility);
   }, []);
 
-  const handleDownloadQrCode = useCallback(() => {
-    console.log("Download");
+  const handleDownloadQrCode = useCallback(
+    (fileType) => {
+      const svg = document.getElementById("qr-code-link");
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
 
-    const svg = document.getElementById("qr-code-link");
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const img = new Image();
-    img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-      const pngFile = canvas.toDataURL("image/png");
-      const downloadLink = document.createElement("a");
-      downloadLink.download = "QRCode";
-      downloadLink.href = `${pngFile}`;
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-    };
-  }, [generatedUrl]);
+      const dataImageUrl = `data:image/svg+xml;base64,${btoa(svgData)}`;
+
+      const img = new Image();
+      img.src = dataImageUrl;
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const downloadLink = document.createElement("a");
+        downloadLink.download = "QRCode";
+        if (fileType === "svg") {
+          downloadLink.href = `${dataImageUrl}`;
+        } else {
+          const pngFile = canvas.toDataURL("image/png");
+          downloadLink.href = `${pngFile}`;
+        }
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      };
+    },
+    [generatedUrl]
+  );
 
   const handleCopyCheckoutLink = useCallback((e) => {
     const textarea = document.getElementById("generated-link");
@@ -298,38 +308,37 @@ export function CheckoutLinkCard({ products, customer, order }) {
         }}
       >
         <Modal.Section subdued>
+          <Stack distribution="center">
+            <p>
+              Leverage QR Codes for repeat orders and marketing campaigns to
+              enable true one click buying experiences!
+            </p>
+            <br />
+          </Stack>
           <Stack vertical alignment="center">
             <Card>
               <Card.Section>
                 <QRCode id="qr-code-link" value={generatedUrl} />
               </Card.Section>
               <Card.Section>
-                <Button
-                  fullWidth
-                  download
-                  primary
-                  onClick={handleDownloadQrCode}
-                  connectedDisclosure={{
-                    actions: [
-                      {
-                        content: "Download PNG",
-                      },
-                      {
-                        content: "Download SVG",
-                      },
-                    ],
-                  }}
-                >
-                  Download QR Code
-                </Button>
+                <ButtonGroup fullWidth>
+                  <Button
+                    download
+                    primary
+                    onClick={() => handleDownloadQrCode("png")}
+                  >
+                    Download PNG
+                  </Button>
+                  <Button
+                    download
+                    primary
+                    onClick={() => handleDownloadQrCode("svg")}
+                  >
+                    Download SVG
+                  </Button>
+                </ButtonGroup>
               </Card.Section>
             </Card>
-            <TextContainer>
-              <TextStyle variation="">
-                Leverage QR Codes for repeat orders and marketing campaigns to
-                enable true one click buying experiences!
-              </TextStyle>
-            </TextContainer>
           </Stack>
         </Modal.Section>
       </Modal>
