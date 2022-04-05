@@ -6,7 +6,7 @@ export function NameCard({ name, setName }) {
       <TextField
         requiredIndicator
         label="Link name"
-        placeholder="BFCM 1 Marketing campaign"
+        placeholder="BFCM Marketing Campaign"
         helpText="Internal only. Not shown to customers."
         value={name}
         onChange={(value) => setName(value)}
