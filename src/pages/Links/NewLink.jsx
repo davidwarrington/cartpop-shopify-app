@@ -84,7 +84,7 @@ const NewLink = () => {
         },
       ]}
       primaryAction={{
-        content: "Save",
+        content: "Create link",
         disabled: !canSubmit || pageState === PAGE_STATES.submitting,
         onAction: handleSubmit,
         loading: pageState === PAGE_STATES.loading,
