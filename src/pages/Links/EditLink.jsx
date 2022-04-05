@@ -120,10 +120,6 @@ const EditLink = () => {
     navigate(`/`);
   }, []);
 
-  if (pageState === PAGE_STATES.loading) {
-    return <SkeletonLinkPage />;
-  }
-
   if (pageState === PAGE_STATES.not_found) {
     return (
       <Page narrowWidth>
@@ -132,6 +128,10 @@ const EditLink = () => {
         </Card>
       </Page>
     );
+  }
+
+  if (!link || pageState === PAGE_STATES.loading) {
+    return <SkeletonLinkPage />;
   }
 
   return (
