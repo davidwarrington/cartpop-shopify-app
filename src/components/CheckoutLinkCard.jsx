@@ -250,21 +250,23 @@ export function CheckoutLinkCard({ products, customer, order }) {
                   //disabled
                   selectTextOnFocus
                 />
-                <Button
-                  primary
-                  fullWidth
-                  icon={ClipboardMinor}
-                  onClick={handleCopyCheckoutLink}
-                >
-                  Copy link
-                </Button>
-                <Button
-                  icon={ShopcodesMajor}
-                  fullWidth
-                  onClick={handleToggleQRModal}
-                >
-                  View QR Code
-                </Button>
+                <Stack vertical spacing="tight">
+                  <Button
+                    primary
+                    fullWidth
+                    icon={ClipboardMinor}
+                    onClick={handleCopyCheckoutLink}
+                  >
+                    Copy link
+                  </Button>
+                  <Button
+                    icon={ShopcodesMajor}
+                    fullWidth
+                    onClick={handleToggleQRModal}
+                  >
+                    View QR Code
+                  </Button>
+                </Stack>
               </Stack>
             )}
           </Stack>
