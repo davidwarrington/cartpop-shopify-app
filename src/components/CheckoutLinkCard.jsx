@@ -6,12 +6,16 @@ import {
   Checkbox,
   FormLayout,
   Link,
+  Modal,
   Spinner,
   Stack,
+  TextContainer,
   TextField,
+  TextStyle,
 } from "@shopify/polaris";
-import { ClipboardMinor } from "@shopify/polaris-icons";
+import { ClipboardMinor, ShopcodesMajor } from "@shopify/polaris-icons";
 import { Toast } from "@shopify/app-bridge-react";
+import QRCode from "react-qr-code";
 import { gql, useQuery } from "@apollo/client";
 
 const SHOP_DOMAIN_QUERY = gql`
@@ -34,6 +38,8 @@ const CardContainer = ({ sectioned, children }) => {
 
 export function CheckoutLinkCard({ products, customer, order }) {
   const { error, data, loading } = useQuery(SHOP_DOMAIN_QUERY);
+
+  const [showQrModal, setShowQrModal] = useState(false);
   const [generatedUrl, setUrl] = useState("");
   const [useAccessToken, setUseAccessToken] = useState(false);
   const [accessToken, setAccessToken] = useState("");
@@ -151,6 +157,32 @@ export function CheckoutLinkCard({ products, customer, order }) {
     );
   }, [products, customer, order, accessToken]);
 
+  const handleToggleQRModal = useCallback(() => {
+    setShowQrModal((visibility) => !visibility);
+  }, []);
+
+  const handleDownloadQrCode = useCallback(() => {
+    console.log("Download");
+
+    const svg = document.getElementById("qr-code-link");
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.download = "QRCode";
+      downloadLink.href = `${pngFile}`;
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    };
+  }, [generatedUrl]);
+
   const handleCopyCheckoutLink = useCallback((e) => {
     const textarea = document.getElementById("generated-link");
 
@@ -216,6 +248,13 @@ export function CheckoutLinkCard({ products, customer, order }) {
                 >
                   Copy link
                 </Button>
+                <Button
+                  icon={ShopcodesMajor}
+                  fullWidth
+                  onClick={handleToggleQRModal}
+                >
+                  View QR Code
+                </Button>
               </Stack>
             )}
           </Stack>
@@ -249,6 +288,51 @@ export function CheckoutLinkCard({ products, customer, order }) {
           Learn about checkout links
         </Link>
       </Stack>
+      <Modal
+        open={showQrModal}
+        onClose={handleToggleQRModal}
+        title="QR Code"
+        secondaryActions={{
+          content: "Close",
+          onAction: handleToggleQRModal,
+        }}
+      >
+        <Modal.Section subdued>
+          <Stack vertical alignment="center">
+            <Card>
+              <Card.Section>
+                <QRCode id="qr-code-link" value={generatedUrl} />
+              </Card.Section>
+              <Card.Section>
+                <Button
+                  fullWidth
+                  download
+                  primary
+                  onClick={handleDownloadQrCode}
+                  connectedDisclosure={{
+                    actions: [
+                      {
+                        content: "Download PNG",
+                      },
+                      {
+                        content: "Download SVG",
+                      },
+                    ],
+                  }}
+                >
+                  Download QR Code
+                </Button>
+              </Card.Section>
+            </Card>
+            <TextContainer>
+              <TextStyle variation="">
+                Leverage QR Codes for repeat orders and marketing campaigns to
+                enable true one click buying experiences!
+              </TextStyle>
+            </TextContainer>
+          </Stack>
+        </Modal.Section>
+      </Modal>
     </>
   );
 }
