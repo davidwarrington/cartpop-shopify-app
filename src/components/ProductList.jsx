@@ -49,7 +49,7 @@ export function ProductList({
                 <TextStyle variation="strong">
                   <Link
                     monochrome
-                    url={`https://${getShop().replace(
+                    url={`https://${getShop()?.replace(
                       "https://",
                       ""
                     )}/admin/products/${getIdFromGid("Product", product.id)}`}
