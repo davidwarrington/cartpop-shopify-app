@@ -6,8 +6,10 @@ import {
   EmptyState,
   Layout,
   Link,
+  TextStyle,
   Page,
   Spinner,
+  Stack,
 } from "@shopify/polaris";
 import { useAppBridge, TitleBar } from "@shopify/app-bridge-react";
 import { authenticatedFetch } from "@shopify/app-bridge-utils";
@@ -48,7 +50,17 @@ const Home = () => {
   }
 
   return (
-    <Page>
+    <Page
+      title={links && links.length ? "Checkout links" : ""}
+      primaryAction={
+        links && links.length
+          ? {
+              content: "Create link",
+              url: "/links/new",
+            }
+          : null
+      }
+    >
       {/* Empty TitleBar to reset when navigating from other pages like Settings */}
       <TitleBar />
       <Layout>
@@ -58,22 +70,35 @@ const Home = () => {
           </Layout.Section>
         ) : (
           <Layout.Section fullWidth>
-            <Card>
-              <EmptyState
-                image={cashRegister}
-                heading="Create checkout links"
-                action={{
-                  content: "Create new link",
-                  url: "/links/new",
-                }}
-              >
-                <p>
-                  Create and manage one click checkout links that automatically
-                  add products to a customer's cart and navigate directly to
-                  checkout.
-                </p>
-              </EmptyState>
-            </Card>
+            <Stack vertical spacing="tight">
+              <Card>
+                <EmptyState
+                  image={cashRegister}
+                  heading="Create checkout links"
+                  action={{
+                    content: "Create new checkout link",
+                    url: "/links/new",
+                  }}
+                >
+                  <p>
+                    Create and manage one click checkout links that
+                    automatically add products to a customer's cart and navigate
+                    directly to checkout.
+                  </p>
+                </EmptyState>
+              </Card>
+              <Stack distribution="center">
+                <TextStyle>
+                  Learn more about{" "}
+                  <Link
+                    external
+                    url="https://help.shopify.com/en/manual/products/details/checkout-link"
+                  >
+                    checkout links
+                  </Link>
+                </TextStyle>
+              </Stack>
+            </Stack>
           </Layout.Section>
         )}
         <Layout.Section>
