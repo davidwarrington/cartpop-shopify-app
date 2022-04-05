@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Link,
   Stack,
   Subheading,
   TextContainer,
@@ -8,6 +9,7 @@ import {
   TextStyle,
   Thumbnail,
 } from "@shopify/polaris";
+import { getIdFromGid, getShop } from "../helpers";
 
 export function ProductList({
   products,
@@ -44,7 +46,18 @@ export function ProductList({
                 />
               ) : null}
               <Stack vertical spacing="extraTight">
-                <TextStyle variation="strong">{product.title}</TextStyle>
+                <TextStyle variation="strong">
+                  <Link
+                    monochrome
+                    url={`https://${getShop().replace(
+                      "https://",
+                      ""
+                    )}/admin/products/${getIdFromGid("Product", product.id)}`}
+                    external
+                  >
+                    {product.title}
+                  </Link>
+                </TextStyle>
                 <Subheading>
                   <TextStyle variation="subdued">{variant.title}</TextStyle>
                 </Subheading>
