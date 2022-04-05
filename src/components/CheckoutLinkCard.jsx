@@ -293,12 +293,15 @@ export function CheckoutLinkCard({ products, customer, order }) {
       </CardContainer>
       <Stack vertical alignment="center">
         <Stack.Item />
-        <Link
-          external
-          url="https://help.shopify.com/en/manual/products/details/checkout-link"
-        >
-          Learn about checkout links
-        </Link>
+        <Stack.Item>
+          Learn more about{" "}
+          <Link
+            external
+            url="https://help.shopify.com/en/manual/products/details/checkout-link"
+          >
+            checkout links
+          </Link>
+        </Stack.Item>
       </Stack>
       <Modal
         open={showQrModal}
