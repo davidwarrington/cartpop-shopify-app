@@ -46,7 +46,11 @@ const Home = () => {
   }, []);
 
   if (pageState === PAGE_STATES.loading) {
-    return <Spinner accessibilityLabel="Loading links" />;
+    return (
+      <Page>
+        <Spinner accessibilityLabel="Loading links" />
+      </Page>
+    );
   }
 
   return (
