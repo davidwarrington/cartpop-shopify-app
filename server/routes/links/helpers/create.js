@@ -16,6 +16,7 @@ export const create = async (req, res) => {
       products, // required
       customer: customer || null,
       order: order || null,
+      createdAt: new Date(),
     });
 
     if (!newLink || !newLink.acknowledged) {
