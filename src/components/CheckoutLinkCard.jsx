@@ -10,14 +10,13 @@ import {
   Modal,
   Spinner,
   Stack,
-  TextContainer,
   TextField,
-  TextStyle,
 } from "@shopify/polaris";
 import { ClipboardMinor, ShopcodesMajor } from "@shopify/polaris-icons";
 import { Toast } from "@shopify/app-bridge-react";
 import QRCode from "react-qr-code";
 import { gql, useQuery } from "@apollo/client";
+import { getIdFromGid } from "../helpers";
 
 const SHOP_DOMAIN_QUERY = gql`
   query shopInfo {
@@ -73,7 +72,7 @@ export function CheckoutLinkCard({ products, customer, order }) {
         product.variants
           .map(
             (variant) =>
-              `${variant.id.replace("gid://shopify/ProductVariant/", "")}:${
+              `${getIdFromGid("ProductVariant", variant.id)}:${
                 variant.quantity || 1
               }`
           )
