@@ -1,43 +1,55 @@
 import { useEffect, useState } from "react";
-import { Card, Button, Page } from "@shopify/polaris";
+import { Card, Button, Layout, Page, TextField } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticatedFetch } from "@shopify/app-bridge-utils";
 
 import { SkeletonLinkPage } from "../../components/SkeletonLinkPage";
+import { PAGE_STATES } from "../../constants";
+import { NameCard } from "../../components/NameCard";
+import { ProductsCard } from "../../components/ProductsCard";
+import { CustomerCard } from "../../components/CustomerCard";
+import { OrderCard } from "../../components/OrderCard";
+import { CheckoutLinkCard } from "../../components/CheckoutLinkCard";
 
 const EditLink = () => {
   const app = useAppBridge();
+  const { id } = useParams();
 
-  const linkId = 1; // TODO:
-
+  const [pageState, setPageState] = useState(
+    id ? PAGE_STATES.loading : PAGE_STATES.not_found
+  );
   const [link, setLink] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   async function getLinks() {
-    if (!loading) {
-      setLoading(true);
+    if (pageState !== PAGE_STATES.loading) {
+      setPageState(PAGE_STATES.loading);
     }
 
-    //const fetchFunction = authenticatedFetch(app);
-    // const apiRes = await fetchFunction(`/api/links/${linkId}`)
-    //     .then((res) => res.json());
-    //console.log("apiRes", apiRes);
+    const fetchFunction = authenticatedFetch(app);
+    const apiRes = await fetchFunction(`/api/links/${id}`).then((res) =>
+      res.json()
+    );
 
-    //setLink(apiRes.link)
+    if (!apiRes) {
+      setPageState(PAGE_STATES.not_found);
+      return;
+    }
 
-    setLoading(false);
+    setLink(apiRes);
+    setPageState(PAGE_STATES.idle);
   }
 
   useEffect(() => {
     getLinks();
   }, []);
 
-  if (loading) {
+  if (pageState === PAGE_STATES.loading) {
     return <SkeletonLinkPage />;
   }
 
-  if (!link) {
+  if (pageState === PAGE_STATES.not_found) {
     return (
       <Page narrowWidth>
         <Card sectioned title="Could not find specified link">
@@ -54,15 +66,30 @@ const EditLink = () => {
       <Layout>
         <Layout.Section>
           <NameCard name={link.name} setName={null} />
-          <ProductsCard products={link.products} setProducts={null} />
-          <CustomerCard customer={link.customer} setCustomer={null} />
-          <OrderCard order={link.order} setOrder={null} />
+          <ProductsCard products={link.products || []} setProducts={null} />
+          <CustomerCard customer={link.customer || {}} setCustomer={null} />
+          <OrderCard order={link.order || {}} setOrder={null} />
+          <Card sectioned title="Customer url">
+            <TextField
+              labelHidden
+              label="Checkout link"
+              prefix="https://example.com/"
+              value={link.alias || ""}
+              //onChange
+              connectedRight={
+                <Button onClick={() => alert("TODO:")}>Copy</Button>
+              }
+            />
+          </Card>
         </Layout.Section>
         <Layout.Section secondary>
+          <Card sectioned title="Visibility">
+            // TODO:
+          </Card>
           <CheckoutLinkCard
-            products={link.products}
-            customer={link.customer}
-            order={link.order}
+            products={link.products || []}
+            customer={link.customer || {}}
+            order={link.order || {}}
           />
         </Layout.Section>
       </Layout>

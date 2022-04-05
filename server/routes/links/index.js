@@ -16,10 +16,11 @@ export default function apiLinks(app) {
     apiSession(app),
     async (req, res) => {
       try {
-        console.log("POST api/links session", req.session);
         console.log("CREATE ENDPOINT");
-        await Links.create(req, res);
-        res.status(200).send();
+        const newLinkId = await Links.create(req, res);
+        res.status(200).send({
+          id: newLinkId,
+        });
       } catch (error) {
         console.log(`Failed to process webhook: ${error}`);
         res.status(500).send(error.message);
@@ -81,10 +82,9 @@ export default function apiLinks(app) {
     apiSession(app),
     async (req, res) => {
       try {
-        const linkId = req.params.id;
-        console.log(`GET LINK ${linkId} ENDPOINT`);
-        await Links.get(req, res);
-        res.status(200).send();
+        console.log(`GET LINK ENDPOINT`);
+        const link = await Links.get(req, res);
+        res.status(200).send(link);
       } catch (error) {
         console.log(`Failed to process webhook: ${error}`);
         res.status(500).send(error.message);

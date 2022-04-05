@@ -2,18 +2,26 @@
 export const create = async (req, res) => {
   const { db, analytics, session } = req;
   const shop = session.shop;
+  const payload = req.body;
 
   try {
-    await db.collection("links").insertOne({
-      shop: shop,
-      name: "example link",
-      alias: "123abc", // TODO: unique index
-      type: "checkout", // ["cart", "checkout"]
-      // TODO: add payload
-    });
-    console.log("Inside create function");
+    // TODO: sanitize input
+    const { name, products, customer, order } = payload;
 
-    // TODO: check if created successfully otherwise throw
+    const newLink = await db.collection("links").insertOne({
+      shop: shop,
+      alias: "123abc", // TODO: unique index
+      name, // required
+      type: "checkout", // TODO: ["cart", "checkout"]
+      products, // required
+      customer: customer || null,
+      order: order || null,
+    });
+
+    if (!newLink || !newLink.acknowledged) {
+      // TODO: improve error
+      throw "Link creation failed";
+    }
 
     analytics &&
       analytics.track({
@@ -21,9 +29,9 @@ export const create = async (req, res) => {
         userId: shop,
       });
 
-    // TODO: fire event? analytics.create({ })
+    return newLink.insertedId;
   } catch (err) {
-    // TODO:
-    res.status(500).send("");
+    // TODO: improve
+    throw err;
   }
 };
