@@ -149,12 +149,13 @@ export function CheckoutLinkCard({ products, customer, order }) {
       urlParameters += `&access_token=${accessToken}`;
     }
 
-    setUrl(
-      `https://${shopDomain.replace(
-        "https://",
-        ""
-      )}/cart/${productString}?${urlParameters}`
-    );
+    shopDomain &&
+      setUrl(
+        `https://${shopDomain.replace(
+          "https://",
+          ""
+        )}/cart/${productString}?${urlParameters}`
+      );
   }, [products, customer, order, accessToken]);
 
   const handleToggleQRModal = useCallback(() => {
