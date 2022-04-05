@@ -170,6 +170,13 @@ const EditLink = () => {
         />
       ) : null}
       <Layout>
+        {link.isEnabled || link.analytics?.views ? (
+          <Layout.Section fullWidth>
+            <Card title="Analytics" sectioned>
+              // TODO: add analytics card
+            </Card>
+          </Layout.Section>
+        ) : null}
         <Layout.Section>
           <NameCard name={link.name} setName={null} />
           <ProductsCard products={link.products || []} setProducts={null} />
@@ -178,8 +185,10 @@ const EditLink = () => {
           <Card sectioned title="Customer url">
             <TextField
               labelHidden
-              label="Checkout link"
-              prefix="https://example.com/"
+              label="Customer checkout link"
+              // TODO: replace example with primary domain
+              // TODO: how do we get the correct proxy route since merchants can change this?
+              prefix="https://example.com/a/cart/"
               value={link.alias || ""}
               //onChange
               connectedRight={
