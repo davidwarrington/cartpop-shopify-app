@@ -1,8 +1,15 @@
-import { useEffect, useState } from "react";
-import { Card, Button, Layout, Page, TextField } from "@shopify/polaris";
+import { useCallback, useEffect, useState } from "react";
+import {
+  Card,
+  Button,
+  Layout,
+  Page,
+  TextField,
+  PageActions,
+} from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
-import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
+import { TitleBar, Toast, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticatedFetch } from "@shopify/app-bridge-utils";
 
 import { SkeletonLinkPage } from "../../components/SkeletonLinkPage";
@@ -14,9 +21,12 @@ import { OrderCard } from "../../components/OrderCard";
 import { CheckoutLinkCard } from "../../components/CheckoutLinkCard";
 
 const EditLink = () => {
-  const app = useAppBridge();
   const { id } = useParams();
+  const navigate = useNavigate();
+  const app = useAppBridge();
+  const fetchFunction = authenticatedFetch(app);
 
+  const [toast, setToast] = useState(null);
   const [pageState, setPageState] = useState(
     id ? PAGE_STATES.loading : PAGE_STATES.not_found
   );
@@ -27,7 +37,6 @@ const EditLink = () => {
       setPageState(PAGE_STATES.loading);
     }
 
-    const fetchFunction = authenticatedFetch(app);
     const apiRes = await fetchFunction(`/api/links/${id}`).then((res) =>
       res.json()
     );
@@ -43,6 +52,34 @@ const EditLink = () => {
 
   useEffect(() => {
     getLinks();
+  }, []);
+
+  const handleDelete = useCallback(async () => {
+    setPageState(PAGE_STATES.submitting);
+
+    // Send delete request to api
+    const apiRes = await fetchFunction(`/api/links/${id}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+
+    // Check if delete failed
+    if (!apiRes) {
+      setToast({
+        show: true,
+        content: "Failed to create link. Please try again or contact support",
+        error: true,
+      });
+      return;
+    }
+
+    // Show success toast
+    setToast({
+      show: true,
+      content: "Link successfully deleted",
+    });
+
+    // Redirect to home
+    navigate(`/`);
   }, []);
 
   if (pageState === PAGE_STATES.loading) {
@@ -62,7 +99,9 @@ const EditLink = () => {
   return (
     <Page breadcrumbs={[{ content: "Home", url: "/" }]} title="Edit link">
       <TitleBar title="Edit link" />
-
+      {toast && toast.show ? (
+        <Toast content={toast.content} onDismiss={() => setToast({})} />
+      ) : null}
       <Layout>
         <Layout.Section>
           <NameCard name={link.name} setName={null} />
@@ -91,6 +130,18 @@ const EditLink = () => {
             customer={link.customer || {}}
             order={link.order || {}}
           />
+        </Layout.Section>
+        <Layout.Section>
+          <PageActions
+            secondaryActions={[
+              {
+                content: "Delete",
+                destructive: true,
+                loading: pageState === PAGE_STATES.submitting,
+                onAction: handleDelete,
+              },
+            ]}
+          ></PageActions>
         </Layout.Section>
       </Layout>
     </Page>

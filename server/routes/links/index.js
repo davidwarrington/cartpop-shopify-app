@@ -22,7 +22,7 @@ export default function apiLinks(app) {
           id: newLinkId,
         });
       } catch (error) {
-        console.log(`Failed to process webhook: ${error}`);
+        console.log(`Failed to process api request: ${error}`);
         res.status(500).send(error.message);
       }
     }
@@ -44,7 +44,7 @@ export default function apiLinks(app) {
         await Links.update(req, res);
         res.status(200).send();
       } catch (error) {
-        console.log(`Failed to process webhook: ${error}`);
+        console.log(`Failed to process api request: ${error}`);
         res.status(500).send(error.message);
       }
     }
@@ -65,7 +65,7 @@ export default function apiLinks(app) {
         const links = await Links.all(req, res);
         res.status(200).send(links);
       } catch (error) {
-        console.log(`Failed to process webhook: ${error}`);
+        console.log(`Failed to process api request: ${error}`);
         res.status(500).send(error.message);
       }
     }
@@ -86,7 +86,7 @@ export default function apiLinks(app) {
         const link = await Links.get(req, res);
         res.status(200).send(link);
       } catch (error) {
-        console.log(`Failed to process webhook: ${error}`);
+        console.log(`Failed to process api request: ${error}`);
         res.status(500).send(error.message);
       }
     }
@@ -103,12 +103,11 @@ export default function apiLinks(app) {
     apiSession(app),
     async (req, res) => {
       try {
-        const linkId = req.params.id;
-        console.log(`DELETE LINK ${linkId} ENDPOINT`);
-        await Links.delete(req, res);
-        res.status(200).send();
+        console.log(`DELETE LINK ENDPOINT`);
+        const success = await Links.remove(req, res);
+        res.status(200).send(success);
       } catch (error) {
-        console.log(`Failed to process webhook: ${error}`);
+        console.log(`Failed to process api request: ${error}`);
         res.status(500).send(error.message);
       }
     }
