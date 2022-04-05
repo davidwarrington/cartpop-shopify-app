@@ -8,6 +8,9 @@ import {
   TextField,
   PageActions,
   TextStyle,
+  RadioButton,
+  Heading,
+  Stack,
 } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
@@ -200,8 +203,35 @@ const EditLink = () => {
           </Card>
         </Layout.Section>
         <Layout.Section secondary>
-          <Card sectioned title="Visibility">
-            // TODO:
+          <Card
+            sectioned
+            title={
+              <Stack alignment="center">
+                <Heading>Visibility</Heading>
+                {link.active ? (
+                  <Badge status="success">Live</Badge>
+                ) : (
+                  <Badge>Disabled</Badge>
+                )}
+              </Stack>
+            }
+          >
+            <RadioButton
+              label="Enabled"
+              helpText="Customers will be able to check out with this link."
+              checked={link.active}
+              id="disabled"
+              name="visibility"
+              // onChange={handleChange}
+            />
+            <RadioButton
+              label="Disabled"
+              helpText="Customers will not be able to check out with this link."
+              id="optional"
+              name="visibility"
+              checked={link.active}
+              //onChange={handleChange}
+            />
           </Card>
           <CheckoutLinkCard
             products={link.products || []}
