@@ -40,7 +40,11 @@ const NewLink = () => {
     // Create link
     const apiRes = await fetchFunction(`/api/links`, {
       method: "POST",
-      payload: payload,
+      body: JSON.stringify(payload),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
     }).then((res) => res.json());
 
     // Make sure successful API
