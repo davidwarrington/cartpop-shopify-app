@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import { Layout, Page } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { TitleBar, Toast, useAppBridge } from "@shopify/app-bridge-react";
-import { authenticatedFetch } from "@shopify/app-bridge-utils";
 
 import { CheckoutLinkCard } from "../../components/CheckoutLinkCard";
 import { ProductsCard } from "../../components/ProductsCard";
@@ -11,11 +10,12 @@ import { OrderCard } from "../../components/OrderCard";
 import { NameCard } from "../../components/NameCard";
 import { PAGE_STATES } from "../../constants";
 import { SkeletonLinkPage } from "../../components/SkeletonLinkPage";
+import { userLoggedInFetch } from "../../helpers";
 
 const NewLink = () => {
   const navigate = useNavigate();
   const app = useAppBridge();
-  const fetchFunction = authenticatedFetch(app);
+  const fetchFunction = userLoggedInFetch(app);
 
   const [toast, setToast] = useState(null);
   const [pageState, setPageState] = useState(PAGE_STATES.idle);

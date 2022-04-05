@@ -12,11 +12,11 @@ import {
   Stack,
 } from "@shopify/polaris";
 import { useAppBridge, TitleBar } from "@shopify/app-bridge-react";
-import { authenticatedFetch } from "@shopify/app-bridge-utils";
 
 import { PAGE_STATES } from "../constants";
 import cashRegister from "../assets/cash_register_128.png";
 import { AllLinksCard } from "../components/AllLinksTable";
+import { userLoggedInFetch } from "../helpers";
 
 const Home = () => {
   const app = useAppBridge();
@@ -25,7 +25,7 @@ const Home = () => {
   const [links, setLinks] = useState([]);
 
   async function getLinks() {
-    const fetchFunction = authenticatedFetch(app);
+    const fetchFunction = userLoggedInFetch(app);
     const apiRes = await fetchFunction("/api/links").then((res) => res.json());
     console.log("apiRes links", apiRes.links);
 

@@ -15,7 +15,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
 import { TitleBar, Toast, useAppBridge } from "@shopify/app-bridge-react";
-import { authenticatedFetch } from "@shopify/app-bridge-utils";
 
 import { SkeletonLinkPage } from "../../components/SkeletonLinkPage";
 import { PAGE_STATES } from "../../constants";
@@ -24,42 +23,69 @@ import { ProductsCard } from "../../components/ProductsCard";
 import { CustomerCard } from "../../components/CustomerCard";
 import { OrderCard } from "../../components/OrderCard";
 import { CheckoutLinkCard } from "../../components/CheckoutLinkCard";
+import { userLoggedInFetch } from "../../helpers";
 
 const EditLink = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const app = useAppBridge();
-  const fetchFunction = authenticatedFetch(app);
+  const fetchFunction = userLoggedInFetch(app);
 
   const [toast, setToast] = useState(null);
   const [pageState, setPageState] = useState(
     id ? PAGE_STATES.loading : PAGE_STATES.not_found
   );
   const [link, setLink] = useState(null);
+  const [linkName, setName] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [customer, setCustomer] = useState({});
+  const [order, setOrder] = useState({});
 
-  const pageTitle = link ? link.name || link._id : "Edit link";
+  const pageTitle = linkName || (link && link._id) || "Edit link";
 
   async function getLinks() {
     if (pageState !== PAGE_STATES.loading) {
       setPageState(PAGE_STATES.loading);
     }
 
-    const apiRes = await fetchFunction(`/api/links/${id}`).then((res) =>
+    const linkRes = await fetchFunction(`/api/links/${id}`).then((res) =>
       res.json()
     );
 
-    if (!apiRes) {
+    if (!linkRes) {
       setPageState(PAGE_STATES.not_found);
       return;
     }
 
-    setLink(apiRes);
+    setLink(linkRes);
+    setName(linkRes.name);
+    setProducts(linkRes.products);
+    setCustomer(linkRes.customer);
+    setOrder(linkRes.order);
     setPageState(PAGE_STATES.idle);
   }
 
   useEffect(() => {
     getLinks();
   }, []);
+
+  const handleChange = useCallback(
+    (property, field, value) =>
+      setLink((currentLink) => {
+        const cachedLink = { ...link };
+
+        if (!property || !field) {
+          return cachedLinked;
+        }
+
+        if (link[property]) {
+          link[property][field] = value;
+        }
+
+        return cachedLink;
+      }),
+    []
+  );
 
   const handleUpdate = useCallback(async () => {
     setPageState(PAGE_STATES.submitting);
@@ -183,10 +209,10 @@ const EditLink = () => {
           </Layout.Section>
         ) : null}
         <Layout.Section>
-          <NameCard id={link._id} name={link.name} setName={null} />
-          <ProductsCard products={link.products || []} setProducts={null} />
-          <CustomerCard customer={link.customer || {}} setCustomer={null} />
-          <OrderCard order={link.order || {}} setOrder={null} />
+          <NameCard id={link._id} name={linkName} setName={setName} />
+          <ProductsCard products={products} setProducts={setProducts} />
+          <CustomerCard customer={customer} setCustomer={setCustomer} />
+          <OrderCard order={order} setOrder={setOrder} />
           <Card sectioned title="Customer url">
             <TextField
               labelHidden
