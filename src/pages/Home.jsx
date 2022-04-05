@@ -55,7 +55,7 @@ const Home = () => {
 
   return (
     <Page
-      title={links && links.length ? "Checkout links" : ""}
+      title={links && links.length ? "Dashboard" : ""}
       primaryAction={
         links && links.length
           ? {
@@ -78,7 +78,7 @@ const Home = () => {
               <Card>
                 <EmptyState
                   image={cashRegister}
-                  heading="Create checkout links"
+                  heading="Create a checkout link to get started"
                   action={{
                     content: "Create new checkout link",
                     url: "/links/new",
