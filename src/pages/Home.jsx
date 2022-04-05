@@ -7,29 +7,45 @@ import {
   Layout,
   Link,
   Page,
+  Spinner,
 } from "@shopify/polaris";
 import { useAppBridge, TitleBar } from "@shopify/app-bridge-react";
 import { authenticatedFetch } from "@shopify/app-bridge-utils";
 
+import { PAGE_STATES } from "../constants";
 import cashRegister from "../assets/cash_register_128.png";
+import { AllLinksCard } from "../components/AllLinksTable";
 
 const Home = () => {
   const app = useAppBridge();
 
-  const [pageState, setPageState] = useState(); // TODO:
+  const [pageState, setPageState] = useState(PAGE_STATES.loading);
   const [links, setLinks] = useState([]);
 
   async function getLinks() {
     const fetchFunction = authenticatedFetch(app);
     const apiRes = await fetchFunction("/api/links").then((res) => res.json());
-    console.log("apiRes", apiRes);
+    console.log("apiRes links", apiRes.links);
 
-    //setLinks()
+    if (!apiRes) {
+      // TODO: fail
+      setPageState(PAGE_STATES.idle);
+      return;
+    }
+
+    // Set links
+    const links = apiRes.links;
+    setLinks(links);
+    setPageState(PAGE_STATES.idle);
   }
 
   useEffect(() => {
     getLinks();
   }, []);
+
+  if (pageState === PAGE_STATES.loading) {
+    return <Spinner accessibilityLabel="Loading links" />;
+  }
 
   return (
     <Page>
@@ -38,7 +54,7 @@ const Home = () => {
       <Layout>
         {links && links.length ? (
           <Layout.Section fullWidth>
-            <Button url="/links/123">123 Link</Button>
+            <AllLinksCard links={links} />
           </Layout.Section>
         ) : (
           <Layout.Section fullWidth>
