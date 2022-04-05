@@ -38,31 +38,33 @@ export function ProductList({
       <Card.Subsection key={variant.id}>
         <Stack distribution="equalSpacing" wrap={false}>
           <Stack.Item fill>
-            <Stack>
+            <Stack wrap={false}>
               {product.images && product.images.length ? (
                 <Thumbnail
-                  size="medium"
+                  size="large"
                   source={product.images[0].originalSrc}
                 />
               ) : null}
-              <Stack vertical spacing="extraTight">
-                <TextStyle variation="strong">
-                  <Link
-                    monochrome
-                    url={`https://${getShop()?.replace(
-                      "https://",
-                      ""
-                    )}/admin/products/${getIdFromGid("Product", product.id)}`}
-                    external
-                  >
-                    {product.title}
-                  </Link>
-                </TextStyle>
-                <Subheading>
-                  <TextStyle variation="subdued">{variant.title}</TextStyle>
-                </Subheading>
-                <TextStyle variation="subdued">{variant.sku}</TextStyle>
-              </Stack>
+              <Stack.Item fill>
+                <Stack vertical spacing="extraTight">
+                  <TextStyle variation="strong">
+                    <Link
+                      monochrome
+                      url={`https://${getShop()?.replace(
+                        "https://",
+                        ""
+                      )}/admin/products/${getIdFromGid("Product", product.id)}`}
+                      external
+                    >
+                      {product.title}
+                    </Link>
+                  </TextStyle>
+                  <Subheading>
+                    <TextStyle variation="subdued">{variant.title}</TextStyle>
+                  </Subheading>
+                  <TextStyle variation="subdued">{variant.sku}</TextStyle>
+                </Stack>
+              </Stack.Item>
             </Stack>
           </Stack.Item>
           <Stack.Item>
@@ -71,7 +73,6 @@ export function ProductList({
                 label="Quantity"
                 type="number"
                 labelHidden
-                prefix="Quantity"
                 min={1}
                 value={variant.quantity || "1"}
                 onChange={(newQuantity) =>
