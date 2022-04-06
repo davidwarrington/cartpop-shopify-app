@@ -6,10 +6,10 @@ import {
   Card,
   Checkbox,
   FormLayout,
-  Link,
   Modal,
   Spinner,
   Stack,
+  Tabs,
   TextField,
 } from "@shopify/polaris";
 import { ClipboardMinor, ShopcodesMajor } from "@shopify/polaris-icons";
@@ -28,22 +28,53 @@ const SHOP_DOMAIN_QUERY = gql`
   }
 `;
 
-const CardContainer = ({ sectioned, children }) => {
-  return (
-    <Card sectioned={sectioned} title="Checkout Link">
-      {children}
-    </Card>
-  );
-};
+const CardContainer = ({ showTitle, sectioned, children }) => (
+  <Card sectioned={sectioned} title={showTitle ? "Checkout Link" : ""}>
+    {children}
+  </Card>
+);
 
-export function CheckoutLinkCard({ products, customer, order }) {
+const QRCodeSection = ({ generatedUrl, handleDownloadQrCode }) => (
+  <Card>
+    <Card.Section subdued>
+      <Stack distribution="center">
+        <QRCode id="qr-code-link" value={generatedUrl} />
+      </Stack>
+    </Card.Section>
+    <Card.Section>
+      <ButtonGroup fullWidth>
+        <Button download primary onClick={() => handleDownloadQrCode("png")}>
+          Download PNG
+        </Button>
+        <Button download primary onClick={() => handleDownloadQrCode("svg")}>
+          Download SVG
+        </Button>
+      </ButtonGroup>
+    </Card.Section>
+  </Card>
+);
+
+export function CheckoutLinkCard({
+  link,
+  alias,
+  setAlias,
+  products,
+  customer,
+  order,
+}) {
   const { error, data, loading } = useQuery(SHOP_DOMAIN_QUERY);
+
+  // Get actual shop url from API
+  const shopDomain =
+    data?.shop?.primaryDomain?.host ||
+    new URL(location).searchParams.get("shop");
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [generatedUrl, setUrl] = useState("");
   const [useAccessToken, setUseAccessToken] = useState(false);
   const [accessToken, setAccessToken] = useState("");
   const [toast, setToast] = useState({});
+  const [selectedIndex, setIndex] = useState(0);
 
   useEffect(() => {
     // Let's clear the access token whenever it's disabled
@@ -60,11 +91,6 @@ export function CheckoutLinkCard({ products, customer, order }) {
       generatedUrl && setUrl("");
       return;
     }
-
-    // Get actual shop url from API
-    const shopDomain =
-      data?.shop?.primaryDomain?.host ||
-      new URL(location).searchParams.get("shop");
 
     // Build Product String
     const productString = products
@@ -158,6 +184,8 @@ export function CheckoutLinkCard({ products, customer, order }) {
       );
   }, [products, customer, order, accessToken]);
 
+  const handleSelectTab = useCallback((index) => setIndex(index), []);
+
   const handleToggleQRModal = useCallback(() => {
     setShowQrModal((visibility) => !visibility);
   }, []);
@@ -234,42 +262,81 @@ export function CheckoutLinkCard({ products, customer, order }) {
           error={toast.error}
         />
       ) : null}
-      <CardContainer>
+      <CardContainer showTitle={link ? false : true}>
+        {link ? (
+          <Tabs
+            tabs={[
+              { id: "alias", content: "Short link" },
+              { id: "raw", content: "Checkout link" },
+              { id: "qrcode", content: "QR Code" },
+            ]}
+            selected={selectedIndex}
+            onSelect={handleSelectTab}
+          />
+        ) : null}
         <Card.Section>
-          <Stack vertical>
-            {!generatedUrl ? (
-              <Banner>Please add a product in order to generate a link.</Banner>
-            ) : (
-              <Stack vertical>
-                <TextField
-                  id="generated-link"
-                  label="Generated checkout link"
-                  labelHidden
-                  multiline={3}
-                  value={generatedUrl}
-                  //disabled
-                  selectTextOnFocus
-                />
-                <Stack vertical spacing="tight">
-                  <Button
-                    primary
-                    fullWidth
-                    icon={ClipboardMinor}
-                    onClick={handleCopyCheckoutLink}
-                  >
-                    Copy link
-                  </Button>
-                  <Button
-                    icon={ShopcodesMajor}
-                    fullWidth
-                    onClick={handleToggleQRModal}
-                  >
-                    View QR Code
-                  </Button>
+          {link && selectedIndex == 0 ? (
+            <TextField
+              labelHidden
+              label="Customer checkout link"
+              // TODO: how do we get the correct proxy route since merchants can change this?
+              prefix={`https://${shopDomain}/a/cart/`}
+              value={(link && link.alias) || ""}
+              //onChange
+              connectedRight={
+                <Button onClick={() => alert("TODO:")}>Copy</Button>
+              }
+            />
+          ) : null}
+          {!link || selectedIndex == 1 ? (
+            <Stack vertical>
+              {!generatedUrl ? (
+                <Banner>
+                  Please add a product in order to generate a link.
+                </Banner>
+              ) : (
+                <Stack vertical>
+                  <TextField
+                    id="generated-link"
+                    label="Generated checkout link"
+                    labelHidden
+                    multiline={1}
+                    value={generatedUrl}
+                    //disabled
+                    selectTextOnFocus
+                    connectedRight={
+                      <Button onClick={handleCopyCheckoutLink}>Copy</Button>
+                    }
+                  />
+                  {!link ? (
+                    <Stack vertical spacing="tight">
+                      <Button
+                        primary
+                        fullWidth
+                        icon={ClipboardMinor}
+                        onClick={handleCopyCheckoutLink}
+                      >
+                        Copy link
+                      </Button>
+                      <Button
+                        icon={ShopcodesMajor}
+                        fullWidth
+                        onClick={handleToggleQRModal}
+                      >
+                        View QR Code
+                      </Button>
+                    </Stack>
+                  ) : null}
                 </Stack>
-              </Stack>
-            )}
-          </Stack>
+              )}
+            </Stack>
+          ) : null}
+          {link && selectedIndex == 2 ? (
+            <QRCodeSection
+              generatedUrl={generatedUrl}
+              handleDownloadQrCode={handleDownloadQrCode}
+            />
+          ) : null}
         </Card.Section>
         <Card.Section title="Advanced settings" subdued>
           <FormLayout>
@@ -291,18 +358,6 @@ export function CheckoutLinkCard({ products, customer, order }) {
           </FormLayout>
         </Card.Section>
       </CardContainer>
-      <Stack vertical alignment="center">
-        <Stack.Item />
-        <Stack.Item>
-          Learn more about{" "}
-          <Link
-            external
-            url="https://help.shopify.com/en/manual/products/details/checkout-link"
-          >
-            checkout links
-          </Link>
-        </Stack.Item>
-      </Stack>
       <Modal
         open={showQrModal}
         onClose={handleToggleQRModal}
@@ -321,29 +376,10 @@ export function CheckoutLinkCard({ products, customer, order }) {
             <br />
           </Stack>
           <Stack vertical alignment="center">
-            <Card>
-              <Card.Section>
-                <QRCode id="qr-code-link" value={generatedUrl} />
-              </Card.Section>
-              <Card.Section>
-                <ButtonGroup fullWidth>
-                  <Button
-                    download
-                    primary
-                    onClick={() => handleDownloadQrCode("png")}
-                  >
-                    Download PNG
-                  </Button>
-                  <Button
-                    download
-                    primary
-                    onClick={() => handleDownloadQrCode("svg")}
-                  >
-                    Download SVG
-                  </Button>
-                </ButtonGroup>
-              </Card.Section>
-            </Card>
+            <QRCodeSection
+              generatedUrl={generatedUrl}
+              handleDownloadQrCode={handleDownloadQrCode}
+            />
           </Stack>
         </Modal.Section>
       </Modal>
