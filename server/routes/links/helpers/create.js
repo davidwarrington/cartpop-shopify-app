@@ -11,7 +11,7 @@ export const create = async (req, res) => {
     const newLink = await db.collection("links").insertOne({
       shop: shop,
       active: true,
-      alias: "123abc", // TODO: unique index
+      alias: "1", // TODO: unique index
       name, // required
       type: "checkout", // TODO: ["cart", "checkout", "reorder"]
       products, // required
