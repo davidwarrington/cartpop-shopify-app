@@ -1,4 +1,4 @@
-import { Card, DataTable, Link } from "@shopify/polaris";
+import { Badge, Card, DataTable, Link, TextStyle } from "@shopify/polaris";
 
 export function AllLinksCard({ links }) {
   if (!links || !links.length) {
@@ -9,7 +9,11 @@ export function AllLinksCard({ links }) {
     return [
       <Link url={`/links/${link._id}`}>{link.name || link._id}</Link>,
       link.type,
-      link.isActive ? "Enabled" : "Disabled",
+      link.active ? (
+        <Badge status="success">Enabled</Badge>
+      ) : (
+        <TextStyle variation="subdued">Disabled</TextStyle>
+      ),
     ];
   });
 
