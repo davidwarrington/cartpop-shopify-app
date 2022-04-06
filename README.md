@@ -1,6 +1,6 @@
 # CartPop - Shopify App
 
-This is a sample app to help developers bootstrap their Shopify app development.
+One click checkout links
 
 It leverages the [Shopify API Library](https://github.com/Shopify/shopify-node-api) on the backend to create [an embedded app](https://shopify.dev/apps/tools/app-bridge/getting-started#embed-your-app-in-the-shopify-admin), and [Polaris](https://github.com/Shopify/polaris-react) and [App Bridge React](https://shopify.dev/tools/app-bridge/react-components) on the frontend.
 
@@ -34,7 +34,3 @@ HOST={your app's host}              # Your app's host, without the protocol pref
   - [App authentication](https://shopify.dev/apps/auth)
 - [Shopify CLI command reference](https://shopify.dev/apps/tools/cli/app)
 - [Shopify API Library documentation](https://github.com/Shopify/shopify-node-api/tree/main/docs)
-
-## License
-
-This repository is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
