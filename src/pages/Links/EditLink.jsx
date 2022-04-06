@@ -11,6 +11,7 @@ import {
   RadioButton,
   Heading,
   Stack,
+  Link,
 } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
@@ -36,7 +37,9 @@ const EditLink = () => {
     id ? PAGE_STATES.loading : PAGE_STATES.not_found
   );
   const [link, setLink] = useState(null);
+  const [linkActive, setActive] = useState(false);
   const [linkName, setName] = useState(null);
+  const [linkAlias, setAlias] = useState(null);
   const [products, setProducts] = useState([]);
   const [customer, setCustomer] = useState({});
   const [order, setOrder] = useState({});
@@ -48,52 +51,48 @@ const EditLink = () => {
       setPageState(PAGE_STATES.loading);
     }
 
-    const linkRes = await fetchFunction(`/api/links/${id}`).then((res) =>
-      res.json()
-    );
+    try {
+      const linkRes = await fetchFunction(`/api/links/${id}`).then((res) =>
+        res.json()
+      );
 
-    if (!linkRes) {
+      if (!linkRes) {
+        throw `Link not found`;
+      }
+
+      setLink(linkRes);
+      setName(linkRes.name);
+      setAlias(linkRes.alias);
+      setProducts(linkRes.products);
+      setCustomer(linkRes.customer);
+      setOrder(linkRes.order);
+      setPageState(PAGE_STATES.idle);
+    } catch (e) {
+      console.warn(e);
       setPageState(PAGE_STATES.not_found);
-      return;
     }
-
-    setLink(linkRes);
-    setName(linkRes.name);
-    setProducts(linkRes.products);
-    setCustomer(linkRes.customer);
-    setOrder(linkRes.order);
-    setPageState(PAGE_STATES.idle);
   }
 
   useEffect(() => {
     getLinks();
   }, []);
 
-  const handleChange = useCallback(
-    (property, field, value) =>
-      setLink((currentLink) => {
-        const cachedLink = { ...link };
-
-        if (!property || !field) {
-          return cachedLinked;
-        }
-
-        if (link[property]) {
-          link[property][field] = value;
-        }
-
-        return cachedLink;
-      }),
-    []
-  );
-
   const handleUpdate = useCallback(async () => {
     setPageState(PAGE_STATES.submitting);
 
     const apiRes = await fetchFunction(`/api/links/${id}`, {
       method: "PUT",
-      payload: {
-        // TODO:
+      body: JSON.stringify({
+        name: linkName,
+        active: linkActive,
+        alias: linkAlias,
+        products,
+        customer,
+        order,
+      }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     }).then((res) => res.json());
 
@@ -115,7 +114,7 @@ const EditLink = () => {
     });
 
     setPageState(PAGE_STATES.idle);
-  }, []);
+  }, [linkName, linkActive, linkAlias, products, customer, order]);
 
   const handleDelete = useCallback(async () => {
     setPageState(PAGE_STATES.submitting);
@@ -213,20 +212,14 @@ const EditLink = () => {
           <ProductsCard products={products} setProducts={setProducts} />
           <CustomerCard customer={customer} setCustomer={setCustomer} />
           <OrderCard order={order} setOrder={setOrder} />
-          <Card sectioned title="Customer url">
-            <TextField
-              labelHidden
-              label="Customer checkout link"
-              // TODO: replace example with primary domain
-              // TODO: how do we get the correct proxy route since merchants can change this?
-              prefix="https://example.com/a/cart/"
-              value={link.alias || ""}
-              //onChange
-              connectedRight={
-                <Button onClick={() => alert("TODO:")}>Copy</Button>
-              }
-            />
-          </Card>
+          <CheckoutLinkCard
+            link={link}
+            alias={linkAlias}
+            setAlias={setAlias}
+            products={products}
+            customer={customer}
+            order={order}
+          />
         </Layout.Section>
         <Layout.Section secondary>
           <Card
@@ -234,7 +227,7 @@ const EditLink = () => {
             title={
               <Stack alignment="center">
                 <Heading>Visibility</Heading>
-                {link.active ? (
+                {linkActive ? (
                   <Badge status="success">Live</Badge>
                 ) : (
                   <Badge>Disabled</Badge>
@@ -245,25 +238,32 @@ const EditLink = () => {
             <RadioButton
               label="Enabled"
               helpText="Customers will be able to check out with this link."
-              checked={link.active}
+              checked={linkActive}
               id="disabled"
               name="visibility"
-              // onChange={handleChange}
+              onChange={(newValue) => setActive(newValue)}
             />
             <RadioButton
               label="Disabled"
               helpText="Customers will not be able to check out with this link."
               id="optional"
               name="visibility"
-              checked={!link.active}
-              //onChange={handleChange}
+              checked={!linkActive}
+              onChange={(newValue) => setActive(newValue)}
             />
           </Card>
-          <CheckoutLinkCard
-            products={link.products || []}
-            customer={link.customer || {}}
-            order={link.order || {}}
-          />
+          <Stack vertical alignment="center">
+            <Stack.Item />
+            <Stack.Item>
+              Learn more about{" "}
+              <Link
+                external
+                url="https://help.shopify.com/en/manual/products/details/checkout-link"
+              >
+                checkout links
+              </Link>
+            </Stack.Item>
+          </Stack>
         </Layout.Section>
         <Layout.Section>
           <PageActions
