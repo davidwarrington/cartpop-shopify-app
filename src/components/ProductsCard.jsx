@@ -3,7 +3,7 @@ import { Button, Card, Heading, Stack } from "@shopify/polaris";
 import { ResourcePicker } from "@shopify/app-bridge-react";
 import { ProductList } from "./ProductList";
 
-export function ProductsCard({ products, setProducts }) {
+export function ProductsCard({ products, onChange }) {
   const [showPicker, setShowPicker] = useState(false);
 
   const togglePickerShow = useCallback(() => {
@@ -17,7 +17,7 @@ export function ProductsCard({ products, setProducts }) {
   // Set all selected products (overrides existing)
   const handleProductSelection = useCallback(({ selection }) => {
     // TODO: prevent overwriting Quantity
-    setProducts(selection);
+    onChange(selection);
     togglePickerHide();
   }, []);
 
@@ -27,7 +27,7 @@ export function ProductsCard({ products, setProducts }) {
       return;
     }
 
-    return setProducts((products) => {
+    return onChange((products) => {
       const cachedProducts = [...products];
       cachedProducts[productIndex] &&
         cachedProducts[productIndex].variants[variantIndex] &&
@@ -55,7 +55,7 @@ export function ProductsCard({ products, setProducts }) {
         return;
       }
 
-      return setProducts((products) => {
+      return onChange((products) => {
         const cachedProducts = [...products];
 
         // We need to make sure the indexes are valid

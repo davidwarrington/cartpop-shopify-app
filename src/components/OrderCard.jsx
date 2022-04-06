@@ -31,18 +31,18 @@ export function OrderCard({ order, setOrder }) {
     setShowModal((status) => !status);
   }, []);
 
-  const handleOrderChange = useCallback(({ field, value }) =>
-    setOrder((order) => {
-      const cachedOrder = { ...order };
-      cachedOrder[field] = value;
+  // const handleOrderChange = useCallback(({ field, value }) =>
+  //   setOrder((order) => {
+  //     const cachedOrder = { ...order };
+  //     cachedOrder[field] = value;
 
-      if (!cachedOrder[field] && cachedOrder[field] !== 0) {
-        delete cachedOrder[field];
-      }
+  //     if (!cachedOrder[field] && cachedOrder[field] !== 0) {
+  //       delete cachedOrder[field];
+  //     }
 
-      return cachedOrder;
-    })
-  );
+  //     return cachedOrder;
+  //   })
+  // );
 
   const handleAttributeAdd = useCallback(
     () =>
@@ -95,7 +95,7 @@ export function OrderCard({ order, setOrder }) {
     })
   );
 
-  const hasOrderInfo = order && Object.keys(order).length;
+  const hasOrderInfo = false; //order && Object.keys(order).length;
 
   return (
     <>
@@ -258,10 +258,7 @@ export function OrderCard({ order, setOrder }) {
               type="text"
               label="Discount code"
               maxLength={255}
-              value={order && order.discountCode}
-              onChange={(value) =>
-                handleOrderChange({ field: "discountCode", value })
-              }
+              {...order.discountCode}
               helpText="Automatically applied at checkout."
             />
             <TextField
@@ -270,15 +267,13 @@ export function OrderCard({ order, setOrder }) {
               label="Note"
               multiline={3}
               maxLength={5000}
-              value={order && order.note}
-              onChange={(value) => handleOrderChange({ field: "note", value })}
+              {...order.note}
               helpText="Order notes are shown on the order details page."
             />
             <TextField
               type="text"
               label="Ref"
-              value={order && order.ref}
-              onChange={(value) => handleOrderChange({ field: "ref", value })}
+              {...order.ref}
               helpText={
                 <>
                   Not visibile to customers. Shown as the referral code in the{" "}
@@ -353,10 +348,7 @@ export function OrderCard({ order, setOrder }) {
           <FormLayout>
             <Checkbox
               label="Redirect to Shop Pay"
-              checked={order.useShopPay}
-              onChange={(checked) =>
-                handleOrderChange({ field: "useShopPay", value: checked })
-              }
+              {...order.useShopPay}
               helpText={
                 <>
                   Automatically redirect a customer to{" "}
