@@ -111,4 +111,27 @@ export default function apiLinks(app) {
       }
     }
   );
+
+  /*
+        api/links/:id/copy
+        
+        > Copy link with id for store of session shop
+    */
+  app.put(
+    `${apiRoutePrefix}/:id/copy`,
+    verifyRequest(app),
+    apiSession(app),
+    async (req, res) => {
+      try {
+        console.log(`COPY LINK ENDPOINT`);
+        const newLinkId = await Links.copy(req, res);
+        res.status(200).send({
+          id: newLinkId,
+        });
+      } catch (error) {
+        console.log(`Failed to process api request: ${error}`);
+        res.status(500).send(error.message);
+      }
+    }
+  );
 }

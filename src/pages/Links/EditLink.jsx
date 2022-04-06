@@ -5,7 +5,6 @@ import {
   Card,
   Layout,
   Page,
-  TextField,
   PageActions,
   TextStyle,
   RadioButton,
@@ -75,7 +74,7 @@ const EditLink = () => {
 
   useEffect(() => {
     getLinks();
-  }, []);
+  }, [id]);
 
   const handleUpdate = useCallback(async () => {
     setPageState(PAGE_STATES.submitting);
@@ -145,6 +144,36 @@ const EditLink = () => {
     navigate(`/`);
   }, []);
 
+  const handleCopy = useCallback(async () => {
+    setPageState(PAGE_STATES.submitting);
+
+    // Send copy request to api
+    const apiRes = await fetchFunction(`/api/links/${id}/copy`, {
+      method: "PUT",
+    }).then((res) => res.json());
+
+    // Check if copy failed
+    if (!apiRes || !apiRes.id) {
+      setToast({
+        show: true,
+        content: "Failed to copy link. Please try again or contact support",
+        error: true,
+      });
+      setPageState(PAGE_STATES.idle);
+      return;
+    }
+
+    // Show success toast
+    setToast({
+      show: true,
+      content: "Link successfully copied",
+    });
+
+    // Redirect to link edit page
+    const newLinkId = apiRes.id;
+    navigate(`/links/${newLinkId}`);
+  }, []);
+
   if (pageState === PAGE_STATES.not_found) {
     return (
       <Page narrowWidth>
@@ -180,7 +209,7 @@ const EditLink = () => {
           ? [
               {
                 content: "Duplicate",
-                onAction: () => alert("TODO:"),
+                onAction: handleCopy,
                 disabled: false, // TODO:
               },
               {
