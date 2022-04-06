@@ -37,15 +37,20 @@ const NewLink = () => {
       order,
     };
 
-    // Create link
-    const apiRes = await fetchFunction(`/api/links`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    }).then((res) => res.json());
+    let apiRes = null;
+    try {
+      // Create link
+      apiRes = await fetchFunction(`/api/links`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }).then((res) => res.json());
+    } catch (err) {
+      console.warn(err);
+    }
 
     // Make sure successful API
     if (!apiRes || !apiRes.id) {

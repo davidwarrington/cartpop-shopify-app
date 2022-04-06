@@ -82,21 +82,27 @@ const EditLink = () => {
   const handleUpdate = useCallback(async () => {
     setPageState(PAGE_STATES.submitting);
 
-    const apiRes = await fetchFunction(`/api/links/${id}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        name: linkName,
-        active: linkActive,
-        alias: linkAlias,
-        products,
-        customer,
-        order,
-      }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    }).then((res) => res.json());
+    let apiRes = null;
+    try {
+      // Edit link
+      apiRes = await fetchFunction(`/api/links/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          name: linkName,
+          active: linkActive,
+          alias: linkAlias,
+          products,
+          customer,
+          order,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }).then((res) => res.json());
+    } catch (err) {
+      console.warn(err);
+    }
 
     // Check if update failed
     if (apiRes !== true) {
