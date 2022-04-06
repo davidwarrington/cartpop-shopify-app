@@ -9,6 +9,7 @@ export function NameCard({ id, name, setName }) {
         helpText="Internal only. Not shown to customers."
         value={name || id}
         onChange={(value) => setName(value)}
+        autoComplete="off"
       />
     </Card>
   );
