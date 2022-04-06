@@ -11,6 +11,7 @@ import webhookGdprRoutes from "./webhooks/gdpr.js";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 import MongoStore from "./middleware/mongo-store.js";
+import apiLinks from "./routes/links/index.js";
 
 // Segment Client
 const analyticsClient = process.env.SEGMENT_WRITE_KEY
@@ -147,6 +148,8 @@ export async function createServer(
   });
 
   app.use(express.json());
+
+  apiLinks(app);
 
   webhookGdprRoutes(app);
 

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Card } from "@shopify/polaris";
+import { Button, Card, DisplayText, Heading, Stack } from "@shopify/polaris";
 import { ResourcePicker } from "@shopify/app-bridge-react";
 import { ProductList } from "./ProductList";
 
@@ -81,8 +81,7 @@ export function ProductsCard({ products, setProducts }) {
   return (
     <>
       <Card
-        sectioned
-        title="Products"
+        title={!hasProducts ? "Products" : ""}
         primaryFooterAction={
           !hasProducts
             ? {
@@ -92,20 +91,26 @@ export function ProductsCard({ products, setProducts }) {
               }
             : null
         }
-        actions={
-          hasProducts && [
-            {
-              content: "Edit products",
-              onAction: togglePickerShow,
-            },
-          ]
-        }
       >
-        <ProductList
-          products={products}
-          handleVariantRemove={handleVariantRemove}
-          handleVariantQuantity={handleVariantQuantity}
-        />
+        {hasProducts ? (
+          <Card.Section subdued>
+            <Stack distribution="equalSpacing" alignment="center">
+              <DisplayText>
+                <Heading element="h2">Products</Heading>
+              </DisplayText>
+              <Button removeUnderline onClick={togglePickerShow} plain>
+                Edit products
+              </Button>
+            </Stack>
+          </Card.Section>
+        ) : null}
+        <Card.Section>
+          <ProductList
+            products={products}
+            handleVariantRemove={handleVariantRemove}
+            handleVariantQuantity={handleVariantQuantity}
+          />
+        </Card.Section>
       </Card>
       {/* Learn more: https://shopify.dev/apps/tools/app-bridge/react-components/resourcepicker */}
       <ResourcePicker

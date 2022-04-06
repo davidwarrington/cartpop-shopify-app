@@ -102,7 +102,7 @@ describe("shopify-app-node server", async () => {
         .spyOn(Shopify.Auth, "validateAuthCallback")
         .mockImplementationOnce(() => ({
           shop: "test-shop",
-          scope: "write_products",
+          scope: "read_products",
         }));
       vi.spyOn(Shopify.Webhooks.Registry, "register").mockImplementationOnce(
         () => ({
@@ -125,7 +125,7 @@ describe("shopify-app-node server", async () => {
         }
       );
       expect(app.get("active-shopify-shops")).toEqual({
-        "test-shop": "write_products",
+        "test-shop": "read_products",
       });
       expect(response.status).toEqual(302);
       expect(response.headers.location).toEqual(
