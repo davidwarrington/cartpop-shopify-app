@@ -19,12 +19,13 @@ export const copy = async (req, res) => {
     delete linkToCopy._id;
     delete linkToCopy.createdAt;
     delete linkToCopy.updatedAt;
-    delete linkToCopy.alias; // TODO:
+    delete linkToCopy.analytics;
 
     const newLink = await db.collection("links").insertOne(
       {
         ...linkToCopy,
         name: linkToCopy.name ? `Copy of ${linkToCopy.name}` : null,
+        alis: linkToCopy.alias ? linkToCopy + "-copy" : "", // TODO: generate a new one if somehow an existing one does not exist.
         isEnabled: false,
         createdAt: new Date(),
         updatedAt: null,
