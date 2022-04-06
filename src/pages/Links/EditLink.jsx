@@ -60,6 +60,7 @@ const EditLink = () => {
       }
 
       setLink(linkRes);
+      setActive(linkRes.active);
       setName(linkRes.name);
       setAlias(linkRes.alias);
       setProducts(linkRes.products);
