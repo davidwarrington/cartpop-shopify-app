@@ -2,7 +2,7 @@
 import { resolve } from "path";
 import express from "express";
 import cookieParser from "cookie-parser";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import { Shopify, ApiVersion } from "@shopify/shopify-api";
 import Analytics from "analytics-node";
 import "dotenv/config";
@@ -12,6 +12,7 @@ import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 import MongoStore from "./middleware/mongo-store.js";
 import apiLinks from "./routes/links/index.js";
+import { generatedCheckoutLink } from "./proxy/helpers.js";
 
 // Segment Client
 const analyticsClient = process.env.SEGMENT_WRITE_KEY
@@ -166,6 +167,98 @@ export async function createServer(
       res.setHeader("Content-Security-Policy", `frame-ancestors 'none';`);
     }
     next();
+  });
+
+  // General such as repeat or dynamic
+  app.get("/proxy/links", async (req, res) => {
+    const { db } = req;
+    const shop = req.headers && req.headers["x-shop-domain"];
+    const shopifyRequestId = req.headers && req.headers["x-request-id"];
+
+    try {
+      res.status(200).send("Link proxy");
+    } catch (error) {
+      // TODO: better error handling
+      console.warn(JSON.stringify(error));
+
+      // Rredirect to shop homepage
+      if (shop) {
+        res.redirect(`https://${shop}`);
+        return;
+      }
+
+      // Fallback if somehow shop header is missing
+      res.set("Content-Type", "application/liquid");
+      res.status(200).send("There was an error.");
+    }
+  });
+
+  // Specific link
+  app.get("/proxy/links/:alias", async (req, res) => {
+    const { db } = req;
+    const shop = req.headers && req.headers["x-shop-domain"];
+    const shopifyRequestId = req.headers && req.headers["x-request-id"];
+    const linkAlias = req.params.alias;
+
+    try {
+      const link = await db.collection("links").findOne({
+        alias: linkAlias, // Fetch link by Mongo document id
+        shop, // Make sure link is from the same store proxy request originates
+        active: true, // Make sure link is enabled
+      });
+
+      if (!link) {
+        throw `Link ${linkAlias} on ${shop} not found or is not enabled`;
+      }
+
+      // TODO: increase click count on link doc
+      // Update total promotion analytics
+      await db.collection("links").updateOne(
+        {
+          _id: link._id,
+        },
+        {
+          $inc: {
+            [`analytics.clicks`]: 1,
+            // TODO: track mobile vs desktop
+          },
+        },
+        true
+      );
+
+      // Generate checkout link
+      const generatedLink = generatedCheckoutLink({
+        shop, // TODO: TEMP use primary domain. we need to save this to the shop doc
+        link,
+      });
+
+      console.log("generatedLink", generatedLink);
+
+      if (!generatedLink) {
+        throw `Checkout link generation failed on ${link} on ${shop}`;
+      }
+
+      // TODO: TEMP
+      res.redirect(generatedLink);
+
+      // TODO: RETURN HTML LOADER
+      //res.status(200).send("Link proxy");
+
+      return;
+    } catch (error) {
+      // TODO: better error handling
+      console.warn("error", error);
+
+      // Rredirect to shop homepage
+      if (shop) {
+        res.redirect(`https://${shop}`);
+        return;
+      }
+
+      // Fallback if somehow shop header is missing
+      res.set("Content-Type", "application/liquid");
+      res.status(200).send("There was an error.");
+    }
   });
 
   // Make sure shop is installed
