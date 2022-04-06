@@ -13,7 +13,7 @@ export const create = async (req, res) => {
       active: true,
       alias: "123abc", // TODO: unique index
       name, // required
-      type: "checkout", // TODO: ["cart", "checkout"]
+      type: "checkout", // TODO: ["cart", "checkout", "reorder"]
       products, // required
       customer: customer || null,
       order: order || null,

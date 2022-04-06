@@ -7,10 +7,8 @@ export const update = async (req, res) => {
   const payload = req.body;
 
   try {
-    // TODO: sanitize payload
-    const updatedPayload = {
-      name: "Banana",
-    };
+    // TODO: sanitize input
+    const { name, active, alias, products, customer, order } = payload;
 
     const updatedLinkDoc = await db.collection("links").findOneAndUpdate(
       {
@@ -19,7 +17,12 @@ export const update = async (req, res) => {
       },
       {
         $set: {
-          ...updatedPayload,
+          active,
+          name,
+          products,
+          customer,
+          order,
+          alias,
           updatedAt: new Date(),
         },
       },
@@ -27,8 +30,6 @@ export const update = async (req, res) => {
         returnNewDocument: true,
       }
     );
-
-    console.log("updatedLinkDoc", updatedLinkDoc);
 
     if (!updatedLinkDoc || !updatedLinkDoc.ok) {
       throw `Could not update link with id ${linkId}`;
