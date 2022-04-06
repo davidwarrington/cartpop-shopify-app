@@ -22,12 +22,9 @@ export function SkeletonLinkPage() {
           </Card>
         </Layout.Section>
         <Layout.Section oneThird>
-          <Card>
+          <Card title={<SkeletonDisplayText />}>
             <Card.Section>
-              <SkeletonBodyText />
-            </Card.Section>
-            <Card.Section subdued>
-              <SkeletonBodyText />
+              <SkeletonBodyText lines={5} />
             </Card.Section>
           </Card>
         </Layout.Section>
