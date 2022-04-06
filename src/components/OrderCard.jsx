@@ -14,6 +14,8 @@ import {
   TextContainer,
   DisplayText,
   Heading,
+  Link,
+  PageActions,
 } from "@shopify/polaris";
 import {
   DiscountsMajor,
@@ -180,7 +182,9 @@ export function OrderCard({ order, setOrder }) {
                       <Stack.Item fill>
                         <Stack vertical spacing="none">
                           <Subheading>
-                            <TextStyle variation="subdued">Ref</TextStyle>
+                            <TextStyle variation="subdued">
+                              Referral code
+                            </TextStyle>
                           </Subheading>
                           <Stack.Item>{order.ref}</Stack.Item>
                         </Stack>
@@ -263,6 +267,7 @@ export function OrderCard({ order, setOrder }) {
               onChange={(value) =>
                 handleOrderChange({ field: "discountCode", value })
               }
+              helpText="Automatically applied at checkout."
             />
             <TextField
               showCharacterCount
@@ -272,12 +277,25 @@ export function OrderCard({ order, setOrder }) {
               maxLength={5000}
               value={order && order.note}
               onChange={(value) => handleOrderChange({ field: "note", value })}
+              helpText="Order notes are shown on the order details page."
             />
             <TextField
               type="text"
               label="Ref"
               value={order && order.ref}
               onChange={(value) => handleOrderChange({ field: "ref", value })}
+              helpText={
+                <>
+                  Not visibile to customers. Shown as the referral code in the{" "}
+                  <Link
+                    external
+                    url="https://help.shopify.com/en/manual/orders/conversion-summary"
+                  >
+                    Conversion summary
+                  </Link>{" "}
+                  section on the details page.
+                </>
+              }
             />
           </FormLayout>
         </Modal.Section>
@@ -321,7 +339,7 @@ export function OrderCard({ order, setOrder }) {
               ))
             ) : (
               <TextStyle variation="subdued">
-                No order note attributes specified.
+                No order attributes specified.
               </TextStyle>
             )}
 
@@ -343,6 +361,15 @@ export function OrderCard({ order, setOrder }) {
               checked={order.useShopPay}
               onChange={(checked) =>
                 handleOrderChange({ field: "useShopPay", value: checked })
+              }
+              helpText={
+                <>
+                  Automatically redirect a customer to{" "}
+                  <Link external url="https://shop.app/what-shop-does">
+                    Shop Pay
+                  </Link>
+                  .
+                </>
               }
             />
           </FormLayout>
