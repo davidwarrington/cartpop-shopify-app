@@ -11,6 +11,8 @@ import {
   Heading,
   Stack,
   Link,
+  Subheading,
+  DisplayText,
 } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
@@ -230,14 +232,17 @@ const EditLink = () => {
         />
       ) : null}
       <Layout>
-        {link.isEnabled || link.analytics?.views ? (
-          <Layout.Section fullWidth>
-            <Card title="Analytics" sectioned>
-              // TODO: add analytics card
-            </Card>
-          </Layout.Section>
-        ) : null}
         <Layout.Section>
+          {link.isEnabled || link.analytics?.clicks ? (
+            <Card title="Analytics" sectioned>
+              <Stack vertical spacing="extraTight">
+                <Subheading>
+                  <TextStyle variation="subdued">Clicks</TextStyle>
+                </Subheading>
+                <DisplayText size="small">{link.analytics.clicks}</DisplayText>
+              </Stack>
+            </Card>
+          ) : null}
           <NameCard id={link._id} name={linkName} setName={setName} />
           <ProductsCard products={products} setProducts={setProducts} />
           <CustomerCard customer={customer} setCustomer={setCustomer} />
