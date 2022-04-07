@@ -20,9 +20,9 @@ import {
   lengthLessThan,
   useForm,
   notEmpty,
-  useChoiceField,
   submitSuccess,
   makeCleanFields,
+  useDynamicList,
 } from "@shopify/react-form";
 
 import { PAGE_STATES } from "../constants";
@@ -79,20 +79,16 @@ export function LinkForm({
       validates: [lengthLessThan("255")],
     }),
     ref: useField((link.order && link.order.ref) || ""),
-    useShopPay: useChoiceField((link.order && link.order.useShopPay) || false),
-    attributes: useField(""), // TODO:
+    useShopPay: useField((link.order && link.order.useShopPay) || false),
+    attributes: useDynamicList([], () => ({ label: "", value: "" })),
   };
+
+  const active = useField(link.active || false);
 
   const { fields, submit, submitting, dirty, reset, submitErrors, makeClean } =
     useForm({
       fields: {
-        active: useField({
-          value: false,
-          // validates: [
-          //   notEmpty('Title is required'),
-          //   lengthMoreThan(3, 'Title must be more than 3 characters'),
-          // ],
-        }),
+        active: active,
         alias: useField({
           value: link.alias,
           validates: [notEmpty("Link alias is required")],
@@ -247,7 +243,7 @@ export function LinkForm({
               title={
                 <Stack alignment="center">
                   <Heading>Visibility</Heading>
-                  {linkActive ? (
+                  {fields.active.value ? (
                     <Badge status="success">Live</Badge>
                   ) : (
                     <Badge>Disabled</Badge>
@@ -258,18 +254,18 @@ export function LinkForm({
               <RadioButton
                 label="Enabled"
                 helpText="Customers will be able to check out with this link."
-                checked={linkActive}
-                id="disabled"
+                id="enabled"
                 name="visibility"
-                onChange={(newValue) => setActive(newValue)}
+                checked={fields.active.value}
+                onChange={() => active.onChange(!fields.active.value)}
               />
               <RadioButton
                 label="Disabled"
                 helpText="Customers will not be able to check out with this link."
-                id="optional"
+                id="disabled"
                 name="visibility"
-                checked={!linkActive}
-                onChange={(newValue) => setActive(newValue)}
+                checked={fields.active.value === false}
+                onChange={() => active.onChange(!fields.active.value)}
               />
             </Card>
             <Stack vertical alignment="center">

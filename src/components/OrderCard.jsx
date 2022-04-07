@@ -21,79 +21,16 @@ import {
   ReferralMajor,
   TickMinor,
 } from "@shopify/polaris-icons";
+import { asChoiceField } from "@shopify/react-form";
 import { iconStyles } from "../constants";
 import { CardGrid } from "./CardGrid";
 
-export function OrderCard({ order, setOrder }) {
+export function OrderCard({ order }) {
   const [showModal, setShowModal] = useState(false);
 
   const toggleModalVisibility = useCallback(() => {
     setShowModal((status) => !status);
   }, []);
-
-  // const handleOrderChange = useCallback(({ field, value }) =>
-  //   setOrder((order) => {
-  //     const cachedOrder = { ...order };
-  //     cachedOrder[field] = value;
-
-  //     if (!cachedOrder[field] && cachedOrder[field] !== 0) {
-  //       delete cachedOrder[field];
-  //     }
-
-  //     return cachedOrder;
-  //   })
-  // );
-
-  const handleAttributeAdd = useCallback(
-    () =>
-      setOrder((order) => {
-        const cachedOrder = { ...order };
-
-        if (!cachedOrder.attributes) {
-          cachedOrder.attributes = [];
-        }
-
-        cachedOrder.attributes.push({ label: "", value: "" });
-        return cachedOrder;
-      }),
-    []
-  );
-
-  const handleAttributeRemove = useCallback(
-    (attributeIndex) =>
-      setOrder((order) => {
-        const cachedOrder = { ...order };
-
-        if (
-          !cachedOrder.attributes ||
-          !cachedOrder.attributes[attributeIndex]
-        ) {
-          return cachedOrder;
-        }
-
-        cachedOrder.attributes.splice(attributeIndex, 1);
-
-        if (!cachedOrder.attributes.length) {
-          delete cachedOrder.attributes;
-        }
-
-        return cachedOrder;
-      }),
-    []
-  );
-
-  const handleAttributeChange = useCallback(({ index, field, newValue }) =>
-    setOrder((order) => {
-      const cachedOrder = { ...order };
-
-      if (!cachedOrder.attributes || !cachedOrder.attributes[index]) {
-        return cachedOrder;
-      }
-
-      cachedOrder.attributes[index][field] = newValue;
-      return cachedOrder;
-    })
-  );
 
   const hasOrderInfo = Object.keys(order).some((key) =>
     order[key].value || order[key].checked ? true : false
@@ -204,7 +141,7 @@ export function OrderCard({ order, setOrder }) {
                 </CardGrid>
               </Card.Section>
             ) : null}
-            {order.attributes && order.attributes.length ? (
+            {order.attributes && order.attributes.fields.length ? (
               <Card.Section
                 title={
                   <Subheading>
@@ -214,17 +151,17 @@ export function OrderCard({ order, setOrder }) {
                   </Subheading>
                 }
               >
-                {order.attributes.map((attribute, attributeIndex) => (
+                {order.attributes.fields.map((attribute, attributeIndex) => (
                   <Card.Subsection key={attributeIndex}>
                     <TextStyle variation="strong">
-                      {attribute.label || (
+                      {attribute.label.value || (
                         <TextStyle variation="negative">
                           Missing attribute label
                         </TextStyle>
                       )}
                       :
                     </TextStyle>{" "}
-                    {attribute.value || (
+                    {attribute.value.value || (
                       <TextStyle variation="negative">
                         Missing attribute value
                       </TextStyle>
@@ -294,36 +231,24 @@ export function OrderCard({ order, setOrder }) {
         <Modal.Section>
           <FormLayout>
             <Subheading>Order attributes</Subheading>
-            {order.attributes && order.attributes.length ? (
-              order.attributes.map((attribute, attributeIndex) => (
+            {order.attributes.fields && order.attributes.fields.length ? (
+              order.attributes.fields.map((attribute, attributeIndex) => (
                 <Stack alignment="trailing" key={attributeIndex}>
                   <TextField
                     requiredIndicator
                     label="Label"
-                    value={attribute.label}
-                    onChange={(newValue) =>
-                      handleAttributeChange({
-                        index: attributeIndex,
-                        field: "label",
-                        newValue,
-                      })
-                    }
+                    value={attribute.label.value}
+                    onChange={attribute.label.onChange}
                   />
                   <TextField
                     requiredIndicator
                     label="Value"
-                    value={attribute.value}
-                    onChange={(newValue) =>
-                      handleAttributeChange({
-                        index: attributeIndex,
-                        field: "value",
-                        newValue,
-                      })
-                    }
+                    value={attribute.value.value}
+                    onChange={attribute.value.onChange}
                   />
                   <Button
                     accessibilityLabel="Remove attribute"
-                    onClick={() => handleAttributeRemove(attributeIndex)}
+                    onClick={() => order.attributes.removeItem(attributeIndex)}
                   >
                     Remove
                   </Button>
@@ -337,10 +262,12 @@ export function OrderCard({ order, setOrder }) {
 
             <Button
               primary
-              onClick={handleAttributeAdd}
-              disabled={order.attributes && order.attributes.length === 10}
+              onClick={order.attributes.addItem}
+              disabled={
+                order.attributes.fields && order.attributes.fields.length === 10
+              }
             >
-              {!order.attributes || order.attributes.length !== 10
+              {!order.attributes.fields || order.attributes.fields.length !== 10
                 ? "Add attribute"
                 : "10/10 attributes reached"}
             </Button>
@@ -350,7 +277,6 @@ export function OrderCard({ order, setOrder }) {
           <FormLayout>
             <Checkbox
               label="Redirect to Shop Pay"
-              {...order.useShopPay}
               helpText={
                 <>
                   Automatically redirect a customer to{" "}
@@ -360,6 +286,7 @@ export function OrderCard({ order, setOrder }) {
                   .
                 </>
               }
+              {...asChoiceField(order.useShopPay)}
             />
           </FormLayout>
         </Modal.Section>
