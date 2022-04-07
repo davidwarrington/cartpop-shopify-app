@@ -62,12 +62,18 @@ export function CustomerCard({ customer }) {
                   <div style={iconStyles}>
                     <Icon source={EmailMajor} color="base" />
                   </div>
-                  <Stack vertical spacing="none">
-                    <Subheading>
-                      <TextStyle variation="subdued">Email</TextStyle>
-                    </Subheading>
-                    <Stack.Item>{customer.email.value}</Stack.Item>
-                  </Stack>
+                  <Stack.Item fill>
+                    <Stack vertical spacing="none">
+                      <Subheading>
+                        <TextStyle variation="subdued">Email</TextStyle>
+                      </Subheading>
+                      <Stack.Item>
+                        <span style={{ overflowWrap: "break-word" }}>
+                          {customer.email.value}
+                        </span>
+                      </Stack.Item>
+                    </Stack>
+                  </Stack.Item>
                 </Stack>
               ) : null}
               {customer.first_name.value || customer.last_name.value ? (
