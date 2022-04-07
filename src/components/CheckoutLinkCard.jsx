@@ -67,6 +67,7 @@ export function CheckoutLinkCard({
   products,
   customer,
   order,
+  accessToken,
 }) {
   const { error, data, loading } = useQuery(SHOP_DOMAIN_QUERY);
 
@@ -77,15 +78,16 @@ export function CheckoutLinkCard({
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [generatedUrl, setUrl] = useState("");
-  const [useAccessToken, setUseAccessToken] = useState(false);
-  const [accessToken, setAccessToken] = useState("");
+  const [useAccessToken, setUseAccessToken] = useState(
+    accessToken.value ? true : false
+  );
   const [toast, setToast] = useState({});
   const [selectedIndex, setIndex] = useState(0);
 
   useEffect(() => {
     // Let's clear the access token whenever it's disabled
     if (useAccessToken === false) {
-      setAccessToken("");
+      accessToken.onChange("");
     }
   }, [useAccessToken]);
 
@@ -115,54 +117,66 @@ export function CheckoutLinkCard({
     // Build Remainder of Parameters
     let urlParameters = "";
 
-    if (customer) {
-      if (customer.email) {
-        urlParameters += `&checkout[email]=${customer.email}`;
+    const hasCustomerInfo =
+      customer &&
+      Object.keys(customer).some((key) =>
+        customer[key].value || customer[key].checked ? true : false
+      );
+
+    if (hasCustomerInfo) {
+      if (customer.email && customer.email.value) {
+        urlParameters += `&checkout[email]=${customer.email.value}`;
       }
 
-      if (customer.first_name) {
-        urlParameters += `&checkout[shipping_address][first_name]=${customer.first_name}`;
+      if (customer.first_name && customer.first_name.value) {
+        urlParameters += `&checkout[shipping_address][first_name]=${customer.first_name.value}`;
       }
 
-      if (customer.last_name) {
-        urlParameters += `&checkout[shipping_address][last_name]=${customer.last_name}`;
+      if (customer.last_name && customer.last_name.value) {
+        urlParameters += `&checkout[shipping_address][last_name]=${customer.last_name.value}`;
       }
 
-      if (customer.address1) {
-        urlParameters += `&checkout[shipping_address][address1]=${customer.address1}`;
+      if (customer.address1 && customer.address1.value) {
+        urlParameters += `&checkout[shipping_address][address1]=${customer.address1.value}`;
       }
 
-      if (customer.address2) {
-        urlParameters += `&checkout[shipping_address][address2]=${customer.address2}`;
+      if (customer.address2 && customer.address2.value) {
+        urlParameters += `&checkout[shipping_address][address2]=${customer.address2.value}`;
       }
 
-      if (customer.city) {
-        urlParameters += `&checkout[shipping_address][city]=${customer.city}`;
+      if (customer.city && customer.city.value) {
+        urlParameters += `&checkout[shipping_address][city]=${customer.city.value}`;
       }
 
-      if (customer.province) {
-        urlParameters += `&checkout[shipping_address][province]=${customer.province}`;
+      if (customer.province && customer.province.value) {
+        urlParameters += `&checkout[shipping_address][province]=${customer.province.value}`;
       }
 
-      if (customer.zipcode) {
-        urlParameters += `&checkout[shipping_address][zip]=${customer.zipcode}`;
+      if (customer.zipcode && customer.zipcode.value) {
+        urlParameters += `&checkout[shipping_address][zip]=${customer.zipcode.value}`;
       }
     }
 
-    if (order) {
-      if (order.discountCode) {
-        urlParameters += `&discount=${order.discountCode}`;
+    const hasOrderInfo =
+      order &&
+      Object.keys(order).some((key) =>
+        order[key].value || order[key].checked ? true : false
+      );
+
+    if (hasOrderInfo) {
+      if (order.discountCode && order.discountCode.value) {
+        urlParameters += `&discount=${order.discountCode.value}`;
       }
 
-      if (order.note) {
-        urlParameters += `&note=${encodeURIComponent(order.note)}`;
+      if (order.note && order.note.value) {
+        urlParameters += `&note=${encodeURIComponent(order.note.value)}`;
       }
 
-      if (order.ref) {
-        urlParameters += `&ref=${encodeURIComponent(order.ref)}`;
+      if (order.ref && order.ref.value) {
+        urlParameters += `&ref=${encodeURIComponent(order.ref.value)}`;
       }
 
-      if (order.useShopPay) {
+      if (order.useShopPay && order.useShopPay.checked) {
         urlParameters += `&payment=shop_pay`;
       }
 
@@ -177,8 +191,8 @@ export function CheckoutLinkCard({
       }
     }
 
-    if (accessToken) {
-      urlParameters += `&access_token=${accessToken}`;
+    if (accessToken && accessToken.value) {
+      urlParameters += `&access_token=${accessToken.value}`;
     }
 
     shopDomain &&
@@ -389,8 +403,8 @@ export function CheckoutLinkCard({
                 label="Access token"
                 labelHidden
                 helpText="Attributes order to a specific sales channel. This is not normally needed."
-                value={accessToken}
-                onChange={(newValue) => setAccessToken(newValue)}
+                {...accessToken}
+                //onChange={(newValue) => setAccessToken(newValue)}
               />
             ) : null}
           </FormLayout>
