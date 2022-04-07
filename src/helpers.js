@@ -5,6 +5,12 @@ export const getShop = () => {
   return new URL(location).searchParams.get("shop");
 };
 
+export const capitalize = (string) => {
+  if (!string || string.length === 1) return string;
+
+  return string.charAt(0).toUpperCase() + string.toLowerCase().slice(1);
+};
+
 export const getIdFromGid = (type, gid) => {
   if (!gid || !type) return gid;
 
