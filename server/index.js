@@ -151,9 +151,7 @@ export async function createServer(
   app.use(express.json());
 
   apiLinks(app);
-
   webhookGdprRoutes(app);
-
   appProxyRoutes(app);
 
   // iFrame Security headers

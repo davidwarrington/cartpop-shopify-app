@@ -1,6 +1,8 @@
 import { generatedCheckoutLink } from "../../helpers/app-proxy.js";
 import verifyAppProxyExtensionSignatureMiddleware from "../../middleware/verify-app-proxy.js";
 
+const apiRoutePrefix = `/proxy/links`;
+
 export default function appProxyRoutes(app) {
   /*
         App proxy Routes
@@ -14,8 +16,8 @@ export default function appProxyRoutes(app) {
         The root is reserved for dynamic links such as reorder scenarios
     */
   app.get(
-    "/proxy/links",
-    verifyAppProxyExtensionSignatureMiddleware,
+    `${apiRoutePrefix}`,
+    verifyAppProxyExtensionSignatureMiddleware(),
     async (req, res) => {
       const { db } = req;
       const shop = req.headers && req.headers["x-shop-domain"];
@@ -46,8 +48,8 @@ export default function appProxyRoutes(app) {
         When a link alias is used we route logic here
     */
   app.get(
-    "/proxy/links/:alias",
-    verifyAppProxyExtensionSignatureMiddleware,
+    `${apiRoutePrefix}/:alias`,
+    verifyAppProxyExtensionSignatureMiddleware(),
     async (req, res) => {
       const { db } = req;
       const shop = req.headers && req.headers["x-shop-domain"];
