@@ -33,7 +33,9 @@ export function OrderCard({ order }) {
   }, []);
 
   const hasOrderInfo = Object.keys(order).some((key) =>
-    order[key].value || order[key].checked ? true : false
+    (order[key].value && order[key].value.length !== 0) || order[key].checked
+      ? true
+      : false
   );
 
   return (
