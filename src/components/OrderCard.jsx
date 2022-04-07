@@ -118,7 +118,7 @@ export function OrderCard({ order, setOrder }) {
             <Stack distribution="equalSpacing" alignment="center">
               <Heading element="h2">Order information</Heading>
               <Button removeUnderline onClick={toggleModalVisibility} plain>
-                Edit
+                Edit order info
               </Button>
             </Stack>
           </Card.Section>
