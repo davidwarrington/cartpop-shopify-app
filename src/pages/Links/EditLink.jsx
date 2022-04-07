@@ -23,10 +23,6 @@ const EditLink = () => {
   );
   const [link, setLink] = useState(null);
 
-  //  const [products, setProducts] = useState([]);
-  //const [customer, setCustomer] = useState({});
-  //const [order, setOrder] = useState({});
-
   const pageTitle = (link && (link.name || link._id)) || "Edit link";
 
   async function getLinks() {
@@ -43,17 +39,7 @@ const EditLink = () => {
         throw `Link not found`;
       }
 
-      // console.log("fields.products", fields.products);
-      //products.newDefaultValue(linkRes.products)
-
       setLink(linkRes);
-
-      // setName(linkRes.name);
-      // setAlias(linkRes.alias);
-      //setProducts(linkRes.products);
-      //setCustomer(linkRes.customer);
-      //setOrder(linkRes.order);
-
       setPageState(PAGE_STATES.idle);
     } catch (e) {
       console.warn(e);
@@ -97,7 +83,7 @@ const EditLink = () => {
     });
 
     setPageState(PAGE_STATES.idle);
-  }, []); //[linkName, linkActive, linkAlias]) // products, customer, order]);
+  }, []);
 
   const handleDelete = useCallback(async () => {
     setPageState(PAGE_STATES.submitting);
