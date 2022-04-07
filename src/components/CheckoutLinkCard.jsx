@@ -96,8 +96,7 @@ export function CheckoutLinkCard({
   );
   const [toast, setToast] = useState({});
   const [selectedIndex, setIndex] = useState(0);
-
-  const [popoverActive, setPopoverActive] = useState(true);
+  const [popoverActive, setPopoverActive] = useState(false);
 
   const togglePopoverActive = useCallback(
     () => setPopoverActive((popoverActive) => !popoverActive),
