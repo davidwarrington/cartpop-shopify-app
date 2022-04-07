@@ -27,7 +27,6 @@ const Home = () => {
   async function getLinks() {
     const fetchFunction = userLoggedInFetch(app);
     const apiRes = await fetchFunction("/api/links").then((res) => res.json());
-    console.log("apiRes links", apiRes.links);
 
     if (!apiRes) {
       // TODO: fail
