@@ -74,7 +74,7 @@ const NewLink = () => {
     navigate(`/links/${newLinkId}`, {
       state: {
         new: true,
-      }
+      },
     });
   }, [linkName, products, customer, order]);
 

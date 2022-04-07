@@ -203,12 +203,14 @@ export function LinkForm({
 
           {showSuccess ? (
             <Layout.Section fullWidth>
-              <Banner 
-                status="success" 
-                title={`${link.name || "Link"} created`} 
+              <Banner
+                status="success"
+                title={`${link.name || "Link"} created`}
                 icon={CircleTickMajor}
               >
-                <Link monochrome url="/links/new">Create another checkout link</Link>
+                <Link monochrome url="/links/new">
+                  Create another checkout link
+                </Link>
               </Banner>
             </Layout.Section>
           ) : null}
@@ -293,7 +295,7 @@ export function LinkForm({
                 handleDelete
                   ? [
                       {
-                        content: "Delete",
+                        content: "Delete link",
                         outline: true,
                         destructive: true,
                         loading: pageState === PAGE_STATES.submitting,
