@@ -44,12 +44,6 @@ export function LinkForm({
   handlePreview,
   handleDelete,
 }) {
-  // TODO:
-  const [linkActive, setActive] = useState(link.active);
-
-  // TODO:
-  const [linkAlias, setAlias] = useState(link.alias);
-
   const products = useField({
     value: link.products,
     validates: [
@@ -83,12 +77,10 @@ export function LinkForm({
     attributes: useDynamicList([], () => ({ label: "", value: "" })),
   };
 
-  const active = useField(link.active || false);
-
   const { fields, submit, submitting, dirty, reset, submitErrors, makeClean } =
     useForm({
       fields: {
-        active: active,
+        active: useField(link.active || false),
         alias: useField({
           value: link.alias,
           validates: [notEmpty("Link alias is required")],
@@ -226,8 +218,7 @@ export function LinkForm({
             <OrderCard order={fields.order} />
             <CheckoutLinkCard
               link={link}
-              alias={linkAlias}
-              setAlias={setAlias}
+              alias={fields.alias}
               products={fields.products.value}
               customer={fields.customer}
               order={fields.order}
