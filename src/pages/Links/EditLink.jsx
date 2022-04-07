@@ -65,18 +65,13 @@ const EditLink = () => {
     getLinks();
   }, [id]);
 
-  const handleUpdate = useCallback(async () => {
+  const handleUpdate = useCallback(async (fields) => {
     setPageState(PAGE_STATES.submitting);
 
     const apiRes = await fetchFunction(`/api/links/${id}`, {
       method: "PUT",
       body: JSON.stringify({
-        // name: linkName,
-        // active: linkActive,
-        // alias: linkAlias,
-        //products,
-        //customer,
-        //order,
+        fields,
       }),
       headers: {
         Accept: "application/json",
@@ -188,7 +183,7 @@ const EditLink = () => {
         setToast={setToast}
         //
         handleDelete={handleDelete}
-        handleUpdate={handleUpdate}
+        handleSubmit={handleUpdate}
         handleCopy={handleCopy}
       />
     </Frame>

@@ -39,7 +39,7 @@ export function LinkForm({
   pageTitle,
   pageState,
   toast,
-  handleUpdate,
+  handleSubmit,
   handleCopy,
   handlePreview,
   handleDelete,
@@ -95,19 +95,25 @@ export function LinkForm({
         accessToken: useField(link.accessToken || ""),
       },
       async onSubmit(form) {
-        console.log("submit!", form);
-        // TODO:
-        //handleUpdate();
+        try {
+          const result = await handleSubmit(form);
 
-        const remoteErrors = []; // your API call goes here
-        if (remoteErrors.length > 0) {
+          // TODO: check result
+
+          const remoteErrors = []; // your API call goes here
+          if (remoteErrors.length > 0) {
+            return { status: "fail", errors: remoteErrors };
+          }
+
+          console.log("hello~");
+          makeCleanFields();
+
+          return submitSuccess();
+          //return {status: 'success'};
+        } catch (err) {
+          console.warn(err);
           return { status: "fail", errors: remoteErrors };
         }
-
-        console.log("hello~");
-        makeCleanFields();
-        return submitSuccess();
-        //return {status: 'success'};
       },
     });
 
@@ -204,13 +210,6 @@ export function LinkForm({
             </Layout.Section>
           ) : null}
 
-          {link.isEnabled || link.analytics?.views ? (
-            <Layout.Section fullWidth>
-              <Card title="Analytics" sectioned>
-                // TODO: add analytics card
-              </Card>
-            </Layout.Section>
-          ) : null}
           <Layout.Section>
             <NameCard name={fields.name} />
             <ProductsCard products={fields.products} />
@@ -256,6 +255,11 @@ export function LinkForm({
                 onChange={() => active.onChange(!fields.active.value)}
               />
             </Card>
+            {link.isEnabled || link.analytics?.clicks ? (
+              <Card title="Analytics" sectioned>
+                // TODO: add analytics card
+              </Card>
+            ) : null}
             <Stack vertical alignment="center">
               <Stack.Item />
               <Stack.Item>
