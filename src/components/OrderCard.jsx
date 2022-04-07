@@ -10,12 +10,9 @@ import {
   Subheading,
   TextStyle,
   Icon,
-  Truncate,
   TextContainer,
-  DisplayText,
   Heading,
   Link,
-  PageActions,
 } from "@shopify/polaris";
 import {
   DiscountsMajor,
@@ -117,9 +114,7 @@ export function OrderCard({ order, setOrder }) {
         {hasOrderInfo ? (
           <Card.Section subdued>
             <Stack distribution="equalSpacing" alignment="center">
-              <DisplayText>
-                <Heading element="h2">Order information</Heading>
-              </DisplayText>
+              <Heading element="h2">Order information</Heading>
               <Button removeUnderline onClick={toggleModalVisibility} plain>
                 Edit
               </Button>
