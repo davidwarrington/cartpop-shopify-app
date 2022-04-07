@@ -1,10 +1,12 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { HelpScout } from "../components/HelpScout";
 import { Home, Settings, NewLink, EditLink } from "../pages";
 import AppProvider from "./AppProvider";
 
 const Router = () => {
   return (
     <BrowserRouter>
+      <HelpScout />
       <Routes>
         <Route path="/" element={<AppProvider />}>
           <Route index element={<Home />} />

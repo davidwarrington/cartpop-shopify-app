@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.10",
+    "@bugsnag/js": "^7.16.2",
+    "@bugsnag/plugin-express": "^7.16.3",
     "@shopify/admin-graphql-api-utilities": "^1.0.9",
     "@shopify/app-bridge": "^2.0.19",
     "@shopify/app-bridge-react": "^2.0.19",

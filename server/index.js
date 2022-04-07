@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import { MongoClient, ObjectId } from "mongodb";
 import { Shopify, ApiVersion } from "@shopify/shopify-api";
 import Analytics from "analytics-node";
+import Bugsnag from "@bugsnag/js";
+import BugsnagPluginExpress from "@bugsnag/plugin-express";
 import "dotenv/config";
 
 import webhookGdprRoutes from "./webhooks/gdpr.js";
@@ -13,6 +15,18 @@ import verifyRequest from "./middleware/verify-request.js";
 import MongoStore from "./middleware/mongo-store.js";
 import apiLinks from "./routes/links/index.js";
 import appProxyRoutes from "./routes/proxy/index.js";
+
+// Bugsnag
+const useBugsnag = process.env.BUGSNAG_SERVER_KEY ? true : false;
+if (useBugsnag) {
+  Bugsnag.start({
+    apiKey: process.env.BUGSNAG_SERVER_KEY,
+    plugins: [BugsnagPluginExpress],
+  });
+} else {
+  console.warn(`Missing BUGSNAG_SERVER_KEY environment variable`);
+}
+const BugsnagMiddleware = useBugsnag && Bugsnag.getPlugin("express");
 
 // Segment Client
 const analyticsClient = process.env.SEGMENT_WRITE_KEY
@@ -96,6 +110,12 @@ export async function createServer(
    * @type {import('vite').ViteDevServer}
    */
   let vite;
+
+  // Bugsnag Middleware
+  // -- must be first to catch any error downstream
+  if (useBugsnag) {
+    app.use(BugsnagMiddleware.requestHandler);
+  }
 
   // Expose mongodb on req
   app.use((req, res, next) => {
@@ -247,6 +267,12 @@ export async function createServer(
         .set("Content-Type", "text/html")
         .send(fs.readFileSync(`${process.cwd()}/dist/client/index.html`));
     });
+  }
+
+  // Bugsnag Middleware
+  // -- must be first to catch any error downstream
+  if (useBugsnag) {
+    app.use(BugsnagMiddleware.errorHandler);
   }
 
   return { app, vite };

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Button, Card, DisplayText, Heading, Stack } from "@shopify/polaris";
+import { Button, Card, Heading, Stack } from "@shopify/polaris";
 import { ResourcePicker } from "@shopify/app-bridge-react";
 import { ProductList } from "./ProductList";
 
@@ -95,9 +95,7 @@ export function ProductsCard({ products, setProducts }) {
         {hasProducts ? (
           <Card.Section subdued>
             <Stack distribution="equalSpacing" alignment="center">
-              <DisplayText>
-                <Heading element="h2">Products</Heading>
-              </DisplayText>
+              <Heading element="h2">Products</Heading>
               <Button removeUnderline onClick={togglePickerShow} plain>
                 Edit products
               </Button>

@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import {
   Button,
   Card,
-  DisplayText,
   FormLayout,
   Heading,
   Icon,
@@ -59,9 +58,7 @@ export function CustomerCard({ customer, setCustomer }) {
         {hasCustomerInfo ? (
           <Card.Section subdued>
             <Stack distribution="equalSpacing" alignment="center">
-              <DisplayText>
-                <Heading element="h2">Customer information</Heading>
-              </DisplayText>
+              <Heading element="h2">Customer information</Heading>
               <Button removeUnderline onClick={toggleModalVisibility} plain>
                 Edit customer
               </Button>
