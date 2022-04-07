@@ -81,8 +81,29 @@ export default function apiLinks(app) {
     apiSession(app),
     async (req, res) => {
       try {
-        console.log(`GET LINK ENDPOINT`);
+        console.log(`GET LINK (Id) ENDPOINT`);
         const link = await Links.get(req, res);
+        res.status(200).send(link);
+      } catch (error) {
+        console.log(`Failed to process api request: ${error}`);
+        res.status(500).send(error.message);
+      }
+    }
+  );
+
+  /*
+        GET api/links/alias/:alias
+        
+        > Return link of alias for store of session shop
+    */
+  app.get(
+    `${apiRoutePrefix}/alias/:alias`,
+    verifyRequest(app),
+    apiSession(app),
+    async (req, res) => {
+      try {
+        console.log(`GET LINK (Alias) ENDPOINT`);
+        const link = await Links.getWithAlias(req, res);
         res.status(200).send(link);
       } catch (error) {
         console.log(`Failed to process api request: ${error}`);
