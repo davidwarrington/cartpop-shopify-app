@@ -11,7 +11,8 @@ export default function verifyAppProxyExtensionSignatureMiddleware(app) {
     ) {
       return next();
     }
-    res.statusCode = 401;
+
+    return res.status(401).send(`Invalid proxy`);
   };
 }
 
