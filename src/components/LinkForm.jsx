@@ -104,6 +104,7 @@ export function LinkForm({
         products,
         customer,
         order,
+        accessToken: useField(link.accessToken || ""),
       },
       async onSubmit(form) {
         console.log("submit!", form);
@@ -234,9 +235,10 @@ export function LinkForm({
               link={link}
               alias={linkAlias}
               setAlias={setAlias}
-              products={products}
-              customer={customer}
-              order={order}
+              products={fields.products.value}
+              customer={fields.customer}
+              order={fields.order}
+              accessToken={fields.accessToken}
             />
           </Layout.Section>
           <Layout.Section secondary>
