@@ -88,8 +88,6 @@ export default function appProxyRoutes(app) {
           link,
         });
 
-        console.log("generatedLink", generatedLink);
-
         if (!generatedLink) {
           throw `Checkout link generation failed on ${link} on ${shop}`;
         }
