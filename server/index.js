@@ -2,7 +2,7 @@
 import { resolve } from "path";
 import express from "express";
 import cookieParser from "cookie-parser";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import { Shopify, ApiVersion } from "@shopify/shopify-api";
 import Analytics from "analytics-node";
 import "dotenv/config";
@@ -12,6 +12,7 @@ import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 import MongoStore from "./middleware/mongo-store.js";
 import apiLinks from "./routes/links/index.js";
+import appProxyRoutes from "./routes/proxy/index.js";
 
 // Segment Client
 const analyticsClient = process.env.SEGMENT_WRITE_KEY
@@ -150,8 +151,8 @@ export async function createServer(
   app.use(express.json());
 
   apiLinks(app);
-
   webhookGdprRoutes(app);
+  appProxyRoutes(app);
 
   // iFrame Security headers
   // See: https://shopify.dev/apps/store/security/iframe-protection

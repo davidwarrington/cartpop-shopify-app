@@ -221,8 +221,31 @@ export function CheckoutLinkCard({
     [generatedUrl]
   );
 
-  const handleCopyCheckoutLink = useCallback((e) => {
+  const handleCopyCheckoutLink = useCallback(() => {
     const textarea = document.getElementById("generated-link");
+
+    if (!textarea) {
+      setToast({
+        show: true,
+        content: "Failed to copy link. Please try again",
+        error: true,
+      });
+      return;
+    }
+
+    // Select the text link contents and copy to clipboard
+    textarea.select();
+    document.execCommand("copy");
+
+    // Show success message
+    setToast({
+      show: true,
+      content: "Copied to clipboard",
+    });
+  }, []);
+
+  const handleCopyAliasLink = useCallback(() => {
+    const textarea = document.getElementById("alias-link");
 
     if (!textarea) {
       setToast({
@@ -277,14 +300,18 @@ export function CheckoutLinkCard({
         <Card.Section>
           {link && selectedIndex == 0 ? (
             <TextField
+              id="alias-link"
               labelHidden
               label="Customer checkout link"
               // TODO: how do we get the correct proxy route since merchants can change this?
-              prefix={`https://${shopDomain}/a/cart/`}
-              value={(link && link.alias) || ""}
+              //prefix={`https://${shopDomain}/a/cart/`}
+              value={`https://${shopDomain}/a/cart/${
+                (link && link.alias) || ""
+              }`}
+              selectTextOnFocus
               //onChange
               connectedRight={
-                <Button onClick={() => alert("TODO:")}>Copy</Button>
+                <Button onClick={handleCopyAliasLink}>Copy</Button>
               }
             />
           ) : null}
@@ -305,7 +332,9 @@ export function CheckoutLinkCard({
                     //disabled
                     selectTextOnFocus
                     connectedRight={
-                      <Button onClick={handleCopyCheckoutLink}>Copy</Button>
+                      link ? (
+                        <Button onClick={handleCopyCheckoutLink}>Copy</Button>
+                      ) : null
                     }
                   />
                   {!link ? (

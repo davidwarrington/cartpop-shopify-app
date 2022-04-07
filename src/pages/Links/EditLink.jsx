@@ -11,6 +11,8 @@ import {
   Heading,
   Stack,
   Link,
+  Subheading,
+  DisplayText,
 } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
@@ -60,6 +62,7 @@ const EditLink = () => {
       }
 
       setLink(linkRes);
+      setActive(linkRes.active);
       setName(linkRes.name);
       setAlias(linkRes.alias);
       setProducts(linkRes.products);
@@ -79,21 +82,27 @@ const EditLink = () => {
   const handleUpdate = useCallback(async () => {
     setPageState(PAGE_STATES.submitting);
 
-    const apiRes = await fetchFunction(`/api/links/${id}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        name: linkName,
-        active: linkActive,
-        alias: linkAlias,
-        products,
-        customer,
-        order,
-      }),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    }).then((res) => res.json());
+    let apiRes = null;
+    try {
+      // Edit link
+      apiRes = await fetchFunction(`/api/links/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          name: linkName,
+          active: linkActive,
+          alias: linkAlias,
+          products,
+          customer,
+          order,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }).then((res) => res.json());
+    } catch (err) {
+      console.warn(err);
+    }
 
     // Check if update failed
     if (apiRes !== true) {
@@ -229,14 +238,17 @@ const EditLink = () => {
         />
       ) : null}
       <Layout>
-        {link.isEnabled || link.analytics?.views ? (
-          <Layout.Section fullWidth>
-            <Card title="Analytics" sectioned>
-              // TODO: add analytics card
-            </Card>
-          </Layout.Section>
-        ) : null}
         <Layout.Section>
+          {link.isEnabled || link.analytics?.clicks ? (
+            <Card title="Analytics" sectioned>
+              <Stack vertical spacing="extraTight">
+                <Subheading>
+                  <TextStyle variation="subdued">Clicks</TextStyle>
+                </Subheading>
+                <DisplayText size="small">{link.analytics.clicks}</DisplayText>
+              </Stack>
+            </Card>
+          ) : null}
           <NameCard id={link._id} name={linkName} setName={setName} />
           <ProductsCard products={products} setProducts={setProducts} />
           <CustomerCard customer={customer} setCustomer={setCustomer} />
