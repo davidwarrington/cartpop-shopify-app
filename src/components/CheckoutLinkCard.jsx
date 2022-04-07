@@ -38,7 +38,13 @@ const QRCodeSection = ({ generatedUrl, handleDownloadQrCode }) => (
   <Card>
     <Card.Section subdued>
       <Stack distribution="center">
-        <QRCode id="qr-code-link" value={generatedUrl} />
+        <div
+          style={{
+            padding: "20px",
+          }}
+        >
+          <QRCode id="qr-code-link" value={generatedUrl} size="150" muted />
+        </div>
       </Stack>
     </Card.Section>
     <Card.Section>
@@ -309,7 +315,7 @@ export function CheckoutLinkCard({
                 (link && link.alias) || ""
               }`}
               selectTextOnFocus
-              //onChange
+              //onChange // TODO:
               connectedRight={
                 <Button onClick={handleCopyAliasLink}>Copy</Button>
               }
@@ -362,7 +368,10 @@ export function CheckoutLinkCard({
           ) : null}
           {link && selectedIndex == 2 ? (
             <QRCodeSection
-              generatedUrl={generatedUrl}
+              //generatedUrl={generatedUrl}
+              generatedUrl={`https://${shopDomain}/a/cart/${
+                (link && link.alias) || "123"
+              }`}
               handleDownloadQrCode={handleDownloadQrCode}
             />
           ) : null}
