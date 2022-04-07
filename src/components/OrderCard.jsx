@@ -197,8 +197,9 @@ export function OrderCard({ order }) {
               type="text"
               label="Discount code"
               maxLength={255}
-              {...order.discountCode}
+              spellCheck={false}
               helpText="Automatically applied at checkout."
+              {...order.discountCode}
             />
             <TextField
               showCharacterCount
@@ -206,13 +207,13 @@ export function OrderCard({ order }) {
               label="Note"
               multiline={3}
               maxLength={5000}
-              {...order.note}
               helpText="Order notes are shown on the order details page."
+              {...order.note}
             />
             <TextField
               type="text"
               label="Ref"
-              {...order.ref}
+              spellCheck={false}
               helpText={
                 <>
                   Not visibile to customers. Shown as the referral code in the{" "}
@@ -225,6 +226,7 @@ export function OrderCard({ order }) {
                   section on the details page.
                 </>
               }
+              {...order.ref}
             />
           </FormLayout>
         </Modal.Section>
