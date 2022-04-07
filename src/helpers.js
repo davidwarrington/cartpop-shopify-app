@@ -2,8 +2,6 @@ import { Redirect } from "@shopify/app-bridge/actions";
 import { authenticatedFetch } from "@shopify/app-bridge-utils";
 
 export const getShop = () => {
-  // new URLSearchParams(search).get('shpp')
-  console.log("document.url", document.location.href);
   return new URL(location).searchParams.get("shop");
 };
 
