@@ -71,7 +71,11 @@ const NewLink = () => {
 
     // Redirect to link edit page
     const newLinkId = apiRes.id;
-    navigate(`/links/${newLinkId}`);
+    navigate(`/links/${newLinkId}`, {
+      state: {
+        new: true,
+      }
+    });
   }, [linkName, products, customer, order]);
 
   if (pageState === PAGE_STATES.loading) {

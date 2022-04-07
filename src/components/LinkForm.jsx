@@ -14,6 +14,7 @@ import {
   Link,
   Banner,
 } from "@shopify/polaris";
+import { CircleTickMajor } from "@shopify/polaris-icons";
 import {
   useField,
   lengthLessThan,
@@ -33,6 +34,7 @@ import { ProductsCard } from "./ProductsCard";
 import SaveBar from "./SaveBar";
 
 export function LinkForm({
+  showSuccess,
   link,
   pageTitle,
   pageState,
@@ -198,6 +200,19 @@ export function LinkForm({
         ) : null}
         <Layout>
           {errorBanner}
+
+          {showSuccess ? (
+            <Layout.Section fullWidth>
+              <Banner 
+                status="success" 
+                title={`${link.name || "Link"} created`} 
+                icon={CircleTickMajor}
+              >
+                <Link monochrome url="/links/new">Create another checkout link</Link>
+              </Banner>
+            </Layout.Section>
+          ) : null}
+
           {link.isEnabled || link.analytics?.views ? (
             <Layout.Section fullWidth>
               <Card title="Analytics" sectioned>

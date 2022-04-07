@@ -1,50 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  useField,
-  lengthLessThan,
-  useForm,
-  notEmpty,
-  useChoiceField,
-  submitSuccess,
-  makeCleanFields,
-} from "@shopify/react-form";
-import {
-  Badge,
-  Button,
-  Card,
-  Layout,
-  Page,
-  PageActions,
-  TextStyle,
-  RadioButton,
-  Heading,
-  Stack,
-  Link,
-<<<<<<< HEAD
-  Subheading,
-  DisplayText,
-=======
-  Banner,
-  Form,
-  Frame,
->>>>>>> 2dba430 (Begin moving old form logic to use Shopify's react-form library)
-} from "@shopify/polaris";
+import { Button, Card, Page, Frame } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { TitleBar, Toast, useAppBridge } from "@shopify/app-bridge-react";
 
 import { SkeletonLinkPage } from "../../components/SkeletonLinkPage";
 import { PAGE_STATES } from "../../constants";
-import { NameCard } from "../../components/NameCard";
-import { ProductsCard } from "../../components/ProductsCard";
-import { CustomerCard } from "../../components/CustomerCard";
-import { OrderCard } from "../../components/OrderCard";
-import { CheckoutLinkCard } from "../../components/CheckoutLinkCard";
 import { userLoggedInFetch } from "../../helpers";
 import SaveBar from "../../components/SaveBar";
 import { LinkForm } from "../../components/LinkForm";
 
 const EditLink = () => {
+  const { state } = useLocation();
   const { id } = useParams();
   const navigate = useNavigate();
   const app = useAppBridge();
@@ -80,20 +47,13 @@ const EditLink = () => {
       //products.newDefaultValue(linkRes.products)
 
       setLink(linkRes);
-<<<<<<< HEAD
-      setActive(linkRes.active);
-      setName(linkRes.name);
-      setAlias(linkRes.alias);
-      setProducts(linkRes.products);
-      setCustomer(linkRes.customer);
-      setOrder(linkRes.order);
-=======
+
       // setName(linkRes.name);
       // setAlias(linkRes.alias);
       //setProducts(linkRes.products);
       //setCustomer(linkRes.customer);
       //setOrder(linkRes.order);
->>>>>>> 2dba430 (Begin moving old form logic to use Shopify's react-form library)
+
       setPageState(PAGE_STATES.idle);
     } catch (e) {
       console.warn(e);
@@ -108,29 +68,6 @@ const EditLink = () => {
   const handleUpdate = useCallback(async () => {
     setPageState(PAGE_STATES.submitting);
 
-<<<<<<< HEAD
-    let apiRes = null;
-    try {
-      // Edit link
-      apiRes = await fetchFunction(`/api/links/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          name: linkName,
-          active: linkActive,
-          alias: linkAlias,
-          products,
-          customer,
-          order,
-        }),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }).then((res) => res.json());
-    } catch (err) {
-      console.warn(err);
-    }
-=======
     const apiRes = await fetchFunction(`/api/links/${id}`, {
       method: "PUT",
       body: JSON.stringify({
@@ -146,7 +83,6 @@ const EditLink = () => {
         "Content-Type": "application/json",
       },
     }).then((res) => res.json());
->>>>>>> 2dba430 (Begin moving old form logic to use Shopify's react-form library)
 
     // Check if update failed
     if (apiRes !== true) {
@@ -244,6 +180,7 @@ const EditLink = () => {
   return (
     <Frame>
       <LinkForm
+        showSuccess={state && state.new}
         pageTitle={pageTitle}
         pageState={pageState}
         link={link}
