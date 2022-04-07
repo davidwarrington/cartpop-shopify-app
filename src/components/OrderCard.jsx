@@ -95,7 +95,9 @@ export function OrderCard({ order, setOrder }) {
     })
   );
 
-  const hasOrderInfo = false; //order && Object.keys(order).length;
+  const hasOrderInfo = Object.keys(order).some((key) =>
+    order[key].value || order[key].checked ? true : false
+  );
 
   return (
     <>
@@ -123,13 +125,13 @@ export function OrderCard({ order, setOrder }) {
         ) : null}
         {hasOrderInfo ? (
           <>
-            {order.note ||
-            order.discountCode ||
-            order.ref ||
-            order.useShopPay ? (
+            {order.note.value ||
+            order.discountCode.value ||
+            order.ref.value ||
+            order.useShopPay.value ? (
               <Card.Section>
                 <CardGrid>
-                  {order.discountCode ? (
+                  {order.discountCode.value ? (
                     <Stack alignment="center" spacing="tight" wrap={false}>
                       <div style={iconStyles}>
                         <Icon source={DiscountsMajor} color="base" />
@@ -141,12 +143,12 @@ export function OrderCard({ order, setOrder }) {
                               Discount code
                             </TextStyle>
                           </Subheading>
-                          <Stack.Item>{order.discountCode}</Stack.Item>
+                          <Stack.Item>{order.discountCode.value}</Stack.Item>
                         </Stack>
                       </Stack.Item>
                     </Stack>
                   ) : null}
-                  {order.note ? (
+                  {order.note.value ? (
                     <Stack alignment="center" spacing="tight" wrap={false}>
                       <div style={iconStyles}>
                         <Icon source={NoteMajor} color="base" />
@@ -160,16 +162,16 @@ export function OrderCard({ order, setOrder }) {
                           </Subheading>
                           <Stack.Item>
                             <TextContainer>
-                              {order.note && order.note.length > 50
-                                ? order.note.substring(0, 50) + "..."
-                                : order.note}
+                              {order.note.value && order.note.value.length > 50
+                                ? order.note.value.substring(0, 50) + "..."
+                                : order.note.value}
                             </TextContainer>
                           </Stack.Item>
                         </Stack>
                       </Stack.Item>
                     </Stack>
                   ) : null}
-                  {order.ref ? (
+                  {order.ref.value ? (
                     <Stack alignment="center" spacing="tight" wrap={false}>
                       <div style={iconStyles}>
                         <Icon source={ReferralMajor} color="base" />
@@ -181,12 +183,12 @@ export function OrderCard({ order, setOrder }) {
                               Referral code
                             </TextStyle>
                           </Subheading>
-                          <Stack.Item>{order.ref}</Stack.Item>
+                          <Stack.Item>{order.ref.value}</Stack.Item>
                         </Stack>
                       </Stack.Item>
                     </Stack>
                   ) : null}
-                  {order.useShopPay ? (
+                  {order.useShopPay.value ? (
                     <Stack alignment="center" spacing="tight" wrap={false}>
                       <div style={iconStyles}>
                         <Icon source={PaymentsMajor} color="base" />

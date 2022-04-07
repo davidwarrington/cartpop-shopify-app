@@ -58,28 +58,28 @@ export function LinkForm({
   });
 
   const customer = {
-    email: useField(""),
-    first_name: useField(""),
-    last_name: useField(""),
-    address1: useField(""),
-    address2: useField(""),
-    city: useField(""),
-    province: useField(""),
-    zipcode: useField(""),
-    country: useField(""),
+    email: useField((link.customer && link.customer.email) || ""),
+    first_name: useField((link.customer && link.customer.first_name) || ""),
+    last_name: useField((link.customer && link.customer.last_name) || ""),
+    address1: useField((link.customer && link.customer.address1) || ""),
+    address2: useField((link.customer && link.customer.address2) || ""),
+    city: useField((link.customer && link.customer.city) || ""),
+    province: useField((link.customer && link.customer.province) || ""),
+    zipcode: useField((link.customer && link.customer.zipcode) || ""),
+    country: useField((link.customer && link.customer.country) || ""),
   };
 
   const order = {
     note: useField({
-      value: "",
+      value: (link.order && link.order.note) || "",
       validates: [lengthLessThan("5000")],
     }),
     discountCode: useField({
-      value: "",
+      value: (link.order && link.order.discountCode) || "",
       validates: [lengthLessThan("255")],
     }),
-    ref: useField(""),
-    useShopPay: useChoiceField(""),
+    ref: useField((link.order && link.order.ref) || ""),
+    useShopPay: useChoiceField((link.order && link.order.useShopPay) || false),
     attributes: useField(""), // TODO:
   };
 
