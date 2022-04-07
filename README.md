@@ -34,3 +34,32 @@ HOST={your app's host}              # Your app's host, without the protocol pref
   - [App authentication](https://shopify.dev/apps/auth)
 - [Shopify CLI command reference](https://shopify.dev/apps/tools/cli/app)
 - [Shopify API Library documentation](https://github.com/Shopify/shopify-node-api/tree/main/docs)
+
+## App Proxy
+
+## Mongodb
+
+### Index
+
+### shops
+
+| Key  | Fields | Description                                    | Unique? |
+| ---- | ------ | ---------------------------------------------- | ------- |
+| \_id | \_id   |                                                | ✅      |
+| id   | id     | Lookup field for sessions                      | ✅?     |
+| shop | shop   | When app is uninstalled, we delete all by shop |         |
+
+### \_\_sessions
+
+| Key  | Fields | Description | Unique? |
+| ---- | ------ | ----------- | ------- |
+| \_id | \_id   |             | ✅      |
+| shop | shop   |             | ✅      |
+
+#### Links
+
+| Key        | Fields      | Description                                   | Unique? |
+| ---------- | ----------- | --------------------------------------------- | ------- |
+| \_id       | \_id        |                                               | ✅      |
+| shop       | shop        |                                               |         |
+| shop_alias | shop, alias | We need every link unique on a per shop basis | ✅      |
