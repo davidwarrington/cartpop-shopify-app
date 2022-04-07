@@ -221,10 +221,7 @@ export function LinkForm({
           ) : null}
           <Layout.Section>
             <NameCard name={fields.name} />
-            <ProductsCard
-              products={fields.products.value}
-              onChange={fields.products.onChange}
-            />
+            <ProductsCard products={fields.products} />
             <CustomerCard customer={fields.customer} />
             <OrderCard order={fields.order} />
             <CheckoutLinkCard
