@@ -7,6 +7,7 @@ export const getWithAlias = async (req, res) => {
     const linkDoc = await db.collection("links").findOne({
       shop: shop,
       alias: linkAlias,
+      // active: true, // TODO: add as optional flag
     });
 
     if (!linkDoc) {
