@@ -24,13 +24,13 @@
     "@bugsnag/js": "^7.16.2",
     "@bugsnag/plugin-express": "^7.16.3",
     "@shopify/admin-graphql-api-utilities": "^1.0.9",
-    "@shopify/app-bridge": "^2.0.19",
-    "@shopify/app-bridge-react": "^2.0.19",
-    "@shopify/app-bridge-utils": "^2.0.19",
+    "@shopify/app-bridge": "^2.0.22",
+    "@shopify/app-bridge-react": "^2.0.22",
+    "@shopify/app-bridge-utils": "^2.0.22",
     "@shopify/polaris": "^9.2.2",
-    "@shopify/polaris-icons": "^4.18.3",
+    "@shopify/polaris-icons": "^4.18.4",
     "@shopify/react-form": "^1.1.18",
-    "@shopify/shopify-api": "^3.0.0-rc.3",
+    "@shopify/shopify-api": "^3.0.0",
     "@vitejs/plugin-react": "1.2.0",
     "analytics-node": "^6.0.0",
     "compression": "^1.7.4",
@@ -48,7 +48,7 @@
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
     "serve-static": "^1.14.1",
-    "vite": "^2.8.6"
+    "vite": "^2.9.1"
   },
   "devDependencies": {
     "husky": "^7.0.4",
