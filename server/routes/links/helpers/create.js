@@ -1,4 +1,4 @@
-import { nanoid } from "nanoid";
+import { generateLinkAlias } from "../../../helpers/index.js";
 
 // Add payload into Mongodb
 export const create = async (req, res) => {
@@ -13,7 +13,7 @@ export const create = async (req, res) => {
     const newLink = await db.collection("links").insertOne({
       shop: shop,
       active: true,
-      alias: nanoid(10), // TODO: unique index
+      alias: generateLinkAlias(),
       name, // required
       type: "checkout", // TODO: ["cart", "checkout", "reorder"]
       products, // required

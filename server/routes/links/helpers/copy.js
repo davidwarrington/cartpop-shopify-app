@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { nanoid } from "nanoid";
+import { generateLinkAlias } from "../../../helpers/index.js";
 
 export const copy = async (req, res) => {
   const { db, session, analytics } = req;
@@ -18,6 +18,7 @@ export const copy = async (req, res) => {
 
     // Clean up
     delete linkToCopy._id;
+    delete linkToCopy.alias;
     delete linkToCopy.createdAt;
     delete linkToCopy.updatedAt;
     delete linkToCopy.analytics;
@@ -26,7 +27,7 @@ export const copy = async (req, res) => {
       {
         ...linkToCopy,
         name: linkToCopy.name ? `Copy of ${linkToCopy.name}` : null,
-        alis: nanoid(10), // TODO: generate a new one if somehow an existing one does not exist.
+        alias: generateLinkAlias(),
         isEnabled: false,
         createdAt: new Date(),
         updatedAt: null,
