@@ -6,13 +6,11 @@ import {
   Card,
   Checkbox,
   FormLayout,
-  Heading,
   Icon,
   Modal,
   Popover,
   Spinner,
   Stack,
-  Subheading,
   Tabs,
   TextContainer,
   TextField,
@@ -20,11 +18,9 @@ import {
 } from "@shopify/polaris";
 import {
   CancelSmallMinor,
-  CircleAlertMajor,
   ClipboardMinor,
   EditMinor,
   ShopcodesMajor,
-  ThumbsUpMajor,
   TickSmallMinor,
 } from "@shopify/polaris-icons";
 import { Toast } from "@shopify/app-bridge-react";
@@ -75,6 +71,7 @@ const QRCodeSection = ({ generatedUrl, handleDownloadQrCode }) => (
 );
 
 export function CheckoutLinkCard({
+  newForm,
   link,
   alias,
   products,
@@ -95,7 +92,7 @@ export function CheckoutLinkCard({
     accessToken.value ? true : false
   );
   const [toast, setToast] = useState({});
-  const [selectedIndex, setIndex] = useState(0);
+  const [selectedIndex, setIndex] = useState(newForm ? 1 : 0);
   const [popoverActive, setPopoverActive] = useState(false);
 
   const togglePopoverActive = useCallback(
@@ -338,30 +335,32 @@ export function CheckoutLinkCard({
         ) : null}
         {link && selectedIndex == 0 ? (
           <>
-            <Card.Section subdued title="Supported features">
-              <Stack spacing="tight">
-                <Stack spacing="none">
-                  <Icon source={TickSmallMinor} color="success" />{" "}
-                  <TextStyle>Analytics</TextStyle>
+            {!newForm ? (
+              <Card.Section subdued title="Supported features">
+                <Stack spacing="tight">
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>Analytics</TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>Change after sharing</TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>Cart or Checkout</TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>Subscription products</TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>Line item properties</TextStyle>
+                  </Stack>
                 </Stack>
-                <Stack spacing="none">
-                  <Icon source={TickSmallMinor} color="success" />{" "}
-                  <TextStyle>Change after sharing</TextStyle>
-                </Stack>
-                <Stack spacing="none">
-                  <Icon source={TickSmallMinor} color="success" />{" "}
-                  <TextStyle>Cart or Checkout</TextStyle>
-                </Stack>
-                <Stack spacing="none">
-                  <Icon source={TickSmallMinor} color="success" />{" "}
-                  <TextStyle>Subscription products</TextStyle>
-                </Stack>
-                <Stack spacing="none">
-                  <Icon source={TickSmallMinor} color="success" />{" "}
-                  <TextStyle>Line item properties</TextStyle>
-                </Stack>
-              </Stack>
-            </Card.Section>
+              </Card.Section>
+            ) : null}
             <Card.Section>
               <Stack vertical spacing="extraTight">
                 <TextField
@@ -429,30 +428,32 @@ export function CheckoutLinkCard({
 
         {!link || selectedIndex == 1 ? (
           <>
-            <Card.Section subdued title="Supported features">
-              <Stack spacing="tight">
-                <Stack spacing="none">
-                  <Icon source={CancelSmallMinor} color="critical" />{" "}
-                  <TextStyle>Analytics</TextStyle>
+            {!newForm ? (
+              <Card.Section subdued title="Supported features">
+                <Stack spacing="tight">
+                  <Stack spacing="none">
+                    <Icon source={CancelSmallMinor} color="critical" />{" "}
+                    <TextStyle>Analytics</TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={CancelSmallMinor} color="critical" />{" "}
+                    <TextStyle>Change after sharing</TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={CancelSmallMinor} color="critical" />{" "}
+                    <TextStyle>Cart or Checkout</TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={CancelSmallMinor} color="critical" />{" "}
+                    <TextStyle>Subscription products</TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={CancelSmallMinor} color="critical" />{" "}
+                    <TextStyle>Line item properties</TextStyle>
+                  </Stack>
                 </Stack>
-                <Stack spacing="none">
-                  <Icon source={CancelSmallMinor} color="critical" />{" "}
-                  <TextStyle>Change after sharing</TextStyle>
-                </Stack>
-                <Stack spacing="none">
-                  <Icon source={CancelSmallMinor} color="critical" />{" "}
-                  <TextStyle>Cart or Checkout</TextStyle>
-                </Stack>
-                <Stack spacing="none">
-                  <Icon source={CancelSmallMinor} color="critical" />{" "}
-                  <TextStyle>Subscription products</TextStyle>
-                </Stack>
-                <Stack spacing="none">
-                  <Icon source={CancelSmallMinor} color="critical" />{" "}
-                  <TextStyle>Line item properties</TextStyle>
-                </Stack>
-              </Stack>
-            </Card.Section>
+              </Card.Section>
+            ) : null}
             <Card.Section>
               <Stack vertical>
                 {!generatedUrl ? (
