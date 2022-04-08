@@ -71,7 +71,7 @@ const Home = () => {
       }
     >
       {/* Empty TitleBar to reset when navigating from other pages like Settings */}
-      <TitleBar />
+      <TitleBar title={"Dashboard"} />
       <Layout>
         {links && links.length ? (
           <Layout.Section fullWidth>

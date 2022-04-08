@@ -39,13 +39,13 @@ const SettingsPage = () => {
 
   return (
     <Page
-      breadcrumbs={[{ content: "Home", url: "/" }]}
+      breadcrumbs={[{ content: "Dashboard", url: "/" }]}
       title="Settings"
       narrowWidth
     >
       <TitleBar
         title="Settings"
-        breadcrumbs={[{ content: "Home", url: "/" }]}
+        breadcrumbs={[{ content: "Dashboard", url: "/" }]}
         // primaryAction={primaryAction}
         // secondaryActions={secondaryActions}
         // actionGroups={actionGroups}

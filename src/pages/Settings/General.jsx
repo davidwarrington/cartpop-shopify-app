@@ -10,7 +10,7 @@ const SettingsGeneralPage = () => {
   return (
     <Page
       breadcrumbs={[
-        { content: "Home", url: "/" },
+        { content: "Dashboard", url: "/" },
         { content: "Settings", url: "/settings" },
       ]}
       title={pageTitle}
@@ -18,7 +18,7 @@ const SettingsGeneralPage = () => {
       <TitleBar
         title={pageTitle}
         breadcrumbs={[
-          { content: "Home", url: "/" },
+          { content: "Dashboard", url: "/" },
           { content: "Settings", url: "/settings" },
         ]}
       />

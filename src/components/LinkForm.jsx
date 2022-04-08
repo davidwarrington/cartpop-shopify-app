@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { TitleBar, Toast } from "@shopify/app-bridge-react";
+import { Toast } from "@shopify/app-bridge-react";
 import {
   Badge,
   Card,
@@ -14,14 +13,8 @@ import {
   Link,
   Banner,
   DisplayText,
-  Subheading,
-  Icon,
 } from "@shopify/polaris";
-import {
-  ArrowDownMinor,
-  CircleDownMajor,
-  CircleTickMajor,
-} from "@shopify/polaris-icons";
+import { CircleTickMajor } from "@shopify/polaris-icons";
 import {
   useField,
   lengthLessThan,
@@ -195,7 +188,6 @@ export function LinkForm({
           //   onAction: reset,
           // }}
         />
-        <TitleBar title={pageTitle} />
         {toast && toast.show ? (
           <Toast
             content={toast.content}

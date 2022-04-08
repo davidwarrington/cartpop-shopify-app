@@ -1,13 +1,8 @@
 import { useCallback, useState } from "react";
-import { Frame, Layout, Page } from "@shopify/polaris";
+import { Frame } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { TitleBar, Toast, useAppBridge } from "@shopify/app-bridge-react";
 
-import { CheckoutLinkCard } from "../../components/CheckoutLinkCard";
-import { ProductsCard } from "../../components/ProductsCard";
-import { CustomerCard } from "../../components/CustomerCard";
-import { OrderCard } from "../../components/OrderCard";
-import { NameCard } from "../../components/NameCard";
 import { PAGE_STATES } from "../../constants";
 import { SkeletonLinkPage } from "../../components/SkeletonLinkPage";
 import { userLoggedInFetch } from "../../helpers";
@@ -73,6 +68,10 @@ const NewLink = () => {
 
   return (
     <Frame>
+      <TitleBar
+        title={pageTitle}
+        breadcrumbs={[{ content: "Dashboard", url: "/" }]}
+      />
       <LinkForm
         newForm={true}
         showSuccess={false}
@@ -83,57 +82,10 @@ const NewLink = () => {
         toast={toast}
         setToast={setToast}
         //
-        //handleDelete={handleDelete}
         handleSubmit={handleSubmit}
-        //handleCopy={handleCopy}
       />
     </Frame>
   );
 };
 
 export default NewLink;
-
-{
-  /* 
-<Page
-      title={pageTitle}
-      breadcrumbs={[
-        {
-          content: "Home",
-          url: "/",
-          // TODO: warn about lost changes
-        },
-      ]}
-      primaryAction={{
-        content: "Create link",
-        disabled: !canSubmit || pageState === PAGE_STATES.submitting,
-        onAction: handleSubmit,
-        loading: pageState === PAGE_STATES.loading,
-      }}
-    >
-      <TitleBar title={pageTitle} />
-      {toast && toast.show ? (
-        <Toast
-          content={toast.content}
-          onDismiss={() => setToast({})}
-          error={toast.error}
-        />
-      ) : null}
-      <Layout>
-        <Layout.Section>
-          <NameCard name={linkName} setName={setName} />
-          <ProductsCard products={products} setProducts={setProducts} />
-          <CustomerCard customer={customer} setCustomer={setCustomer} />
-          <OrderCard order={order} setOrder={setOrder} />
-        </Layout.Section>
-        <Layout.Section secondary>
-          <CheckoutLinkCard
-            products={products}
-            customer={customer}
-            order={order}
-          />
-        </Layout.Section>
-        <Layout.Section></Layout.Section>
-      </Layout>
-    </Page> */
-}

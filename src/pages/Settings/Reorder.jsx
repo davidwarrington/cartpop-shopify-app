@@ -9,13 +9,16 @@ const SettingsReorderPage = () => {
 
   return (
     <Page
-      breadcrumbs={[{ content: "Settings", url: "/settings" }]}
+      breadcrumbs={[
+        { content: "Dashboard", url: "/" },
+        { content: "Settings", url: "/settings" },
+      ]}
       title={pageTitle}
     >
       <TitleBar
         title={pageTitle}
         breadcrumbs={[
-          { content: "Home", url: "/" },
+          { content: "Dashboard", url: "/" },
           { content: "Settings", url: "/settings" },
         ]}
       />
