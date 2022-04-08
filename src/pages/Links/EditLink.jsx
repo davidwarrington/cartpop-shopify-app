@@ -56,9 +56,7 @@ const EditLink = () => {
 
     const apiRes = await fetchFunction(`/api/links/${id}`, {
       method: "PUT",
-      body: JSON.stringify({
-        fields,
-      }),
+      body: JSON.stringify(fields),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
