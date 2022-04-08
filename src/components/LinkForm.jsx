@@ -34,9 +34,11 @@ import { ProductsCard } from "./ProductsCard";
 import SaveBar from "./SaveBar";
 
 export function LinkForm({
+  newForm,
   showSuccess,
   link,
   pageTitle,
+  narrowWidth = false,
   pageState,
   toast,
   handleSubmit,
@@ -45,7 +47,7 @@ export function LinkForm({
   handleDelete,
 }) {
   const products = useField({
-    value: link.products,
+    value: link.products || [],
     validates: [
       //notEmpty("At least one selected product is required"),
     ],
@@ -154,6 +156,7 @@ export function LinkForm({
   return (
     <Form onSubmit={submit}>
       <Page
+        narrowWidth={narrowWidth}
         breadcrumbs={[{ content: "Home", url: "/" }]}
         title={pageTitle}
         subtitle={
@@ -216,6 +219,7 @@ export function LinkForm({
             <CustomerCard customer={fields.customer} />
             <OrderCard order={fields.order} />
             <CheckoutLinkCard
+              newForm={newForm}
               link={link}
               alias={fields.alias}
               products={fields.products.value}
@@ -225,37 +229,39 @@ export function LinkForm({
             />
           </Layout.Section>
           <Layout.Section secondary>
-            <Card
-              sectioned
-              title={
-                <Stack alignment="center">
-                  <Heading>Visibility</Heading>
-                  {fields.active.value ? (
-                    <Badge status="success">Live</Badge>
-                  ) : (
-                    <Badge>Disabled</Badge>
-                  )}
-                </Stack>
-              }
-            >
-              <RadioButton
-                label="Enabled"
-                helpText="Customers will be able to check out with this link."
-                id="enabled"
-                name="visibility"
-                checked={fields.active.value}
-                onChange={() => active.onChange(!fields.active.value)}
-              />
-              <RadioButton
-                label="Disabled"
-                helpText="Customers will not be able to check out with this link."
-                id="disabled"
-                name="visibility"
-                checked={fields.active.value === false}
-                onChange={() => active.onChange(!fields.active.value)}
-              />
-            </Card>
-            {link.isEnabled || link.analytics?.clicks ? (
+            {!newForm ? (
+              <Card
+                sectioned
+                title={
+                  <Stack alignment="center">
+                    <Heading>Visibility</Heading>
+                    {fields.active.value ? (
+                      <Badge status="success">Live</Badge>
+                    ) : (
+                      <Badge>Disabled</Badge>
+                    )}
+                  </Stack>
+                }
+              >
+                <RadioButton
+                  label="Enabled"
+                  helpText="Customers will be able to check out with this link."
+                  id="enabled"
+                  name="visibility"
+                  checked={fields.active.value}
+                  onChange={() => active.onChange(!fields.active.value)}
+                />
+                <RadioButton
+                  label="Disabled"
+                  helpText="Customers will not be able to check out with this link."
+                  id="disabled"
+                  name="visibility"
+                  checked={fields.active.value === false}
+                  onChange={() => active.onChange(!fields.active.value)}
+                />
+              </Card>
+            ) : null}
+            {!newForm && (fields.active.value || link.analytics?.clicks) ? (
               <Card title="Analytics" sectioned>
                 // TODO: add analytics card
               </Card>
