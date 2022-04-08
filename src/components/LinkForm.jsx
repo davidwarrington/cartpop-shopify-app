@@ -94,7 +94,6 @@ export function LinkForm({
         products,
         customer,
         order,
-        accessToken: useField(link.accessToken || ""),
       },
       async onSubmit(form) {
         try {
@@ -225,7 +224,6 @@ export function LinkForm({
               products={fields.products.value}
               customer={fields.customer}
               order={fields.order}
-              accessToken={fields.accessToken}
             />
           </Layout.Section>
           <Layout.Section secondary>
@@ -262,8 +260,10 @@ export function LinkForm({
               </Card>
             ) : null}
             {!newForm && (fields.active.value || link.analytics?.clicks) ? (
-              <Card title="Analytics" sectioned>
-                // TODO: add analytics card
+              <Card title="Analytics">
+                <Card.Section title="Clicks">
+                  {link.analytics.clicks}
+                </Card.Section>
               </Card>
             ) : null}
             <Stack vertical alignment="center">

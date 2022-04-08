@@ -88,9 +88,6 @@ export function CheckoutLinkCard({
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [generatedUrl, setUrl] = useState("");
-  const [useAccessToken, setUseAccessToken] = useState(
-    accessToken.value ? true : false
-  );
   const [toast, setToast] = useState({});
   const [selectedIndex, setIndex] = useState(newForm ? 1 : 0);
   const [popoverActive, setPopoverActive] = useState(false);
@@ -99,13 +96,6 @@ export function CheckoutLinkCard({
     () => setPopoverActive((popoverActive) => !popoverActive),
     []
   );
-
-  useEffect(() => {
-    // Let's clear the access token whenever it's disabled
-    if (useAccessToken === false) {
-      accessToken.onChange("");
-    }
-  }, [useAccessToken]);
 
   // Compute url whenever a parameter changes
   useEffect(() => {
@@ -519,24 +509,6 @@ export function CheckoutLinkCard({
           </>
         ) : null}
       </CardContainer>
-      <Card title="Advanced settings" sectioned>
-        <FormLayout>
-          <Checkbox
-            label="Use access token"
-            helpText="Attributes order to a specific sales channel. This is not normally needed."
-            checked={useAccessToken}
-            onChange={(checked) => setUseAccessToken(checked)}
-          />
-          {useAccessToken ? (
-            <TextField
-              type="text"
-              label="Access token"
-              labelHidden
-              {...accessToken}
-            />
-          ) : null}
-        </FormLayout>
-      </Card>
       <Modal
         open={showQrModal}
         onClose={handleToggleQRModal}
