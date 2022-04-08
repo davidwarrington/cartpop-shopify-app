@@ -13,8 +13,15 @@ import {
   TextStyle,
   Link,
   Banner,
+  DisplayText,
+  Subheading,
+  Icon,
 } from "@shopify/polaris";
-import { CircleTickMajor } from "@shopify/polaris-icons";
+import {
+  ArrowDownMinor,
+  CircleDownMajor,
+  CircleTickMajor,
+} from "@shopify/polaris-icons";
 import {
   useField,
   lengthLessThan,
@@ -27,6 +34,7 @@ import {
 
 import { PAGE_STATES } from "../constants";
 import { CheckoutLinkCard } from "./CheckoutLinkCard";
+import { Tooltip } from "./Tooltip";
 import { CustomerCard } from "./CustomerCard";
 import { NameCard } from "./NameCard";
 import { OrderCard } from "./OrderCard";
@@ -260,24 +268,87 @@ export function LinkForm({
               </Card>
             ) : null}
             {!newForm && (fields.active.value || link.analytics?.clicks) ? (
-              <Card title="Analytics">
-                <Card.Section title="Clicks">
-                  {link.analytics.clicks}
+              <Card
+                title={
+                  <Stack distribution="equalSpacing" alignment="center">
+                    <Heading>Analytics</Heading>
+                    <TextStyle variation="subdued">All time</TextStyle>
+                  </Stack>
+                }
+              >
+                <Card.Section>
+                  <Stack distribution="fillEvenly">
+                    <Stack vertical spacing="extraTight">
+                      <Tooltip
+                        subheading
+                        content="Any time a link is accessed, it counts as a click."
+                      >
+                        Clicks
+                      </Tooltip>
+                      <DisplayText size="small">
+                        {link.analytics.clicks || 0}
+                      </DisplayText>
+                    </Stack>
+                    <Stack vertical spacing="extraTight">
+                      <Tooltip
+                        subheading
+                        content="Links scanned via QR Code will register as a scan rather than a click."
+                      >
+                        Scans
+                      </Tooltip>
+                      <DisplayText size="small">
+                        {link.analytics.scans || 0}
+                      </DisplayText>
+                    </Stack>
+                  </Stack>
                 </Card.Section>
+                <Card.Section
+                  title={
+                    <Tooltip
+                      subheading
+                      content="If a customer converts from a link, it will count as an order."
+                    >
+                      Orders
+                    </Tooltip>
+                  }
+                >
+                  <DisplayText size="small">
+                    {link.analytics.orders || 0}
+                  </DisplayText>
+                </Card.Section>
+                <Card.Section
+                  title={
+                    <Tooltip
+                      subheading
+                      content="Total revenue generated from link."
+                    >
+                      Revenue
+                    </Tooltip>
+                  }
+                >
+                  <DisplayText size="small">
+                    {link.analytics.revenue || 0}
+                  </DisplayText>
+                </Card.Section>
+                {/* <Card.Section subdued>
+                  <Link>Learn more about analytics</Link>
+                </Card.Section> */}
               </Card>
             ) : null}
-            <Stack vertical alignment="center">
-              <Stack.Item />
-              <Stack.Item>
-                Learn more about{" "}
-                <Link
-                  external
-                  url="https://help.shopify.com/en/manual/products/details/checkout-link"
-                >
-                  checkout links
-                </Link>
-              </Stack.Item>
-            </Stack>
+            {newForm ? (
+              <Stack vertical alignment="center">
+                <Stack.Item />
+                <Stack.Item>
+                  Learn more about{" "}
+                  <Link
+                    external
+                    url="https://help.shopify.com/en/manual/products/details/checkout-link"
+                  >
+                    checkout links
+                  </Link>
+                </Stack.Item>
+              </Stack>
+            ) : null}
           </Layout.Section>
           <Layout.Section>
             <PageActions
