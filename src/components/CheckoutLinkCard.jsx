@@ -396,14 +396,6 @@ export function CheckoutLinkCard({
                   </Stack>
                   <Stack spacing="none">
                     <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>Change after sharing</TextStyle>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>Cart or Checkout</TextStyle>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
                     <TextStyle>Subscription products</TextStyle>
                   </Stack>
                   <Stack spacing="none">
@@ -489,14 +481,6 @@ export function CheckoutLinkCard({
                   </Stack>
                   <Stack spacing="none">
                     <Icon source={CancelSmallMinor} color="critical" />{" "}
-                    <TextStyle>Change after sharing</TextStyle>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={CancelSmallMinor} color="critical" />{" "}
-                    <TextStyle>Cart or Checkout</TextStyle>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={CancelSmallMinor} color="critical" />{" "}
                     <TextStyle>Subscription products</TextStyle>
                   </Stack>
                   <Stack spacing="none">
@@ -519,7 +503,7 @@ export function CheckoutLinkCard({
                       label="Generated checkout link"
                       labelHidden
                       helpText="This link is auto generated and you can not change it."
-                      multiline={1}
+                      multiline={3}
                       value={generatedUrl}
                       //disabled
                       selectTextOnFocus
