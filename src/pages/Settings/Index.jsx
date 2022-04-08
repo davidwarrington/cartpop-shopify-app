@@ -10,7 +10,11 @@ import {
 } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { TitleBar } from "@shopify/app-bridge-react";
-import { QuickSaleMajor, SettingsMajor } from "@shopify/polaris-icons";
+import {
+  PaymentsMajor,
+  QuickSaleMajor,
+  SettingsMajor,
+} from "@shopify/polaris-icons";
 import { SettingsGeneral, SettingsReorder } from "../index";
 
 const SettingsPage = () => {
@@ -23,11 +27,17 @@ const SettingsPage = () => {
   ];
 
   const settingLinks = [
+    // {
+    //   content: "General",
+    //   helpText: "View and update your details",
+    //   icon: SettingsMajor,
+    //   url: "/settings/general",
+    // },
     {
-      content: "General",
-      helpText: "View and update your details",
-      icon: SettingsMajor,
-      url: "/settings/general",
+      content: "Billing",
+      helpText: "View and update your CartPop subscription plan",
+      icon: PaymentsMajor,
+      url: "/settings/billing",
     },
     // {
     //   content: "Reorder links",
