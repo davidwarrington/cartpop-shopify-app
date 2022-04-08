@@ -4,8 +4,7 @@ import {
   Button,
   ButtonGroup,
   Card,
-  Checkbox,
-  FormLayout,
+  ColorPicker,
   Icon,
   Modal,
   Popover,
@@ -15,6 +14,7 @@ import {
   TextContainer,
   TextField,
   TextStyle,
+  hsbToHex,
 } from "@shopify/polaris";
 import {
   CancelSmallMinor,
@@ -44,31 +44,93 @@ const CardContainer = ({ showTitle, sectioned, children }) => (
   </Card>
 );
 
-const QRCodeSection = ({ generatedUrl, handleDownloadQrCode }) => (
-  <>
-    <Card.Subsection>
-      <Stack distribution="center">
-        <div
-          style={{
-            padding: "20px",
-          }}
-        >
-          <QRCode id="qr-code-link" value={generatedUrl} size="150" muted />
-        </div>
-      </Stack>
-    </Card.Subsection>
-    <Card.Subsection>
-      <ButtonGroup fullWidth>
-        <Button download primary onClick={() => handleDownloadQrCode("png")}>
-          Download PNG
-        </Button>
-        <Button download primary onClick={() => handleDownloadQrCode("svg")}>
-          Download SVG
-        </Button>
-      </ButtonGroup>
-    </Card.Subsection>
-  </>
-);
+const QRCodeSection = ({ title = "", generatedUrl, handleDownloadQrCode }) => {
+  const [color, setColor] = useState({
+    hue: 0,
+    brightness: 0,
+    saturation: 0,
+  });
+
+  const [popoverActive, setPopoverActive] = useState(false);
+
+  const togglePopoverActive = useCallback(
+    () => setPopoverActive((popoverActive) => !popoverActive),
+    []
+  );
+
+  return (
+    <>
+      <Card.Subsection>
+        <Stack distribution="center">
+          <div
+            style={{
+              padding: "20px",
+            }}
+          >
+            <QRCode
+              muted
+              id="qr-code-link"
+              value={generatedUrl}
+              size="150"
+              title={title}
+              fgColor={hsbToHex(color)}
+            />
+          </div>
+        </Stack>
+      </Card.Subsection>
+
+      <Card.Subsection>
+        <Stack>
+          <Popover
+            active={popoverActive}
+            onClose={togglePopoverActive}
+            activator={
+              <Button
+                plain
+                onClick={togglePopoverActive}
+                accessibilityLabel="QR Code color"
+              >
+                <div
+                  style={{
+                    width: "2.5rem",
+                    height: "2.5rem",
+                    borderRadius: "50%",
+                    background: hsbToHex(color),
+                    boxShadow: "inset 0 0 0 1px rgb(0 0 0 / 19%)",
+                  }}
+                />
+              </Button>
+            }
+            sectioned
+          >
+            <ColorPicker onChange={setColor} color={color} />
+          </Popover>
+
+          <Stack.Item fill>
+            <ButtonGroup fullWidth>
+              <Button
+                download
+                primary
+                size="large"
+                onClick={() => handleDownloadQrCode("png")}
+              >
+                Download PNG
+              </Button>
+              <Button
+                download
+                primary
+                size="large"
+                onClick={() => handleDownloadQrCode("svg")}
+              >
+                Download SVG
+              </Button>
+            </ButtonGroup>
+          </Stack.Item>
+        </Stack>
+      </Card.Subsection>
+    </>
+  );
+};
 
 export function CheckoutLinkCard({
   newForm,
