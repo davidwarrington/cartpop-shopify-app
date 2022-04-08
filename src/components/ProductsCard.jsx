@@ -3,7 +3,7 @@ import { Button, Card, Heading, Stack } from "@shopify/polaris";
 import { ResourcePicker } from "@shopify/app-bridge-react";
 import { ProductList } from "./ProductList";
 
-export function ProductsCard({ products, setProducts }) {
+export function ProductsCard({ products }) {
   const [showPicker, setShowPicker] = useState(false);
 
   const togglePickerShow = useCallback(() => {
@@ -17,18 +17,18 @@ export function ProductsCard({ products, setProducts }) {
   // Set all selected products (overrides existing)
   const handleProductSelection = useCallback(({ selection }) => {
     // TODO: prevent overwriting Quantity
-    setProducts(selection);
+    products.onChange(selection);
     togglePickerHide();
   }, []);
 
   // Remove variant at specified indexes
-  const handleVariantRemove = useCallback((productIndex, variantIndex) => {
-    if (productIndex < 0 || variantIndex < 0) {
-      return;
-    }
+  const handleVariantRemove = useCallback(
+    (productIndex, variantIndex) => {
+      if (productIndex < 0 || variantIndex < 0) {
+        return;
+      }
 
-    return setProducts((products) => {
-      const cachedProducts = [...products];
+      const cachedProducts = [...products.value];
       cachedProducts[productIndex] &&
         cachedProducts[productIndex].variants[variantIndex] &&
         cachedProducts[productIndex].variants.splice(variantIndex, 1);
@@ -41,12 +41,13 @@ export function ProductsCard({ products, setProducts }) {
       }
 
       if (!cachedProducts || !cachedProducts.length) {
-        return [];
+        return products.onChange([]);
       }
 
-      return cachedProducts;
-    });
-  }, []);
+      return products.onChange(cachedProducts);
+    },
+    [products]
+  );
 
   // Change variant quantity
   const handleVariantQuantity = useCallback(
@@ -55,28 +56,27 @@ export function ProductsCard({ products, setProducts }) {
         return;
       }
 
-      return setProducts((products) => {
-        const cachedProducts = [...products];
+      const cachedProducts = [...products.value];
 
-        // We need to make sure the indexes are valid
-        if (
-          !cachedProducts[productIndex] ||
-          !cachedProducts[productIndex].variants ||
-          !cachedProducts[productIndex].variants.length ||
-          !cachedProducts[productIndex].variants[variantIndex]
-        ) {
-          return cachedProducts;
-        }
+      // We need to make sure the indexes are valid
+      if (
+        !cachedProducts[productIndex] ||
+        !cachedProducts[productIndex].variants ||
+        !cachedProducts[productIndex].variants.length ||
+        !cachedProducts[productIndex].variants[variantIndex]
+      ) {
+        return;
+      }
 
-        cachedProducts[productIndex].variants[variantIndex].quantity =
-          newQuantity;
-        return cachedProducts;
-      });
+      cachedProducts[productIndex].variants[variantIndex].quantity =
+        newQuantity > 0 ? newQuantity : 1;
+
+      return products.onChange(cachedProducts);
     },
-    []
+    [products]
   );
 
-  const hasProducts = products && products.length;
+  const hasProducts = products && products.value.length;
 
   return (
     <>
@@ -104,7 +104,7 @@ export function ProductsCard({ products, setProducts }) {
         ) : null}
         <Card.Section>
           <ProductList
-            products={products}
+            products={products.value}
             handleVariantRemove={handleVariantRemove}
             handleVariantQuantity={handleVariantQuantity}
           />
@@ -117,8 +117,8 @@ export function ProductsCard({ products, setProducts }) {
         resourceType="Product"
         // Populated with the current selection
         initialSelectionIds={
-          products && products.length
-            ? products.map((product) => {
+          products && products.value.length
+            ? products.value.map((product) => {
                 return {
                   id: product.id,
                   variants: product.variants,

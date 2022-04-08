@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Layout, Page } from "@shopify/polaris";
+import { Frame, Layout, Page } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { TitleBar, Toast, useAppBridge } from "@shopify/app-bridge-react";
 
@@ -11,6 +11,7 @@ import { NameCard } from "../../components/NameCard";
 import { PAGE_STATES } from "../../constants";
 import { SkeletonLinkPage } from "../../components/SkeletonLinkPage";
 import { userLoggedInFetch } from "../../helpers";
+import { LinkForm } from "../../components/LinkForm";
 
 const NewLink = () => {
   const navigate = useNavigate();
@@ -19,30 +20,18 @@ const NewLink = () => {
 
   const [toast, setToast] = useState(null);
   const [pageState, setPageState] = useState(PAGE_STATES.idle);
-  const [products, setProducts] = useState([]);
-  const [customer, setCustomer] = useState({});
-  const [order, setOrder] = useState({});
-  const [linkName, setName] = useState(null);
 
-  const canSubmit = products && products.length;
-  const pageTitle = linkName || "Create checkout link";
+  const pageTitle = "Create checkout link";
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(async (fields) => {
     setPageState(PAGE_STATES.loading);
-
-    const payload = {
-      name: linkName,
-      products,
-      customer,
-      order,
-    };
 
     let apiRes = null;
     try {
       // Create link
       apiRes = await fetchFunction(`/api/links`, {
         method: "POST",
-        body: JSON.stringify(payload),
+        body: JSON.stringify(fields),
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -71,15 +60,42 @@ const NewLink = () => {
 
     // Redirect to link edit page
     const newLinkId = apiRes.id;
-    navigate(`/links/${newLinkId}`);
-  }, [linkName, products, customer, order]);
+    navigate(`/links/${newLinkId}`, {
+      state: {
+        new: true,
+      },
+    });
+  }, []);
 
   if (pageState === PAGE_STATES.loading) {
     return <SkeletonLinkPage />;
   }
 
   return (
-    <Page
+    <Frame>
+      <LinkForm
+        newForm={true}
+        showSuccess={false}
+        pageTitle={pageTitle}
+        narrowWidth={true}
+        pageState={pageState}
+        link={{}}
+        toast={toast}
+        setToast={setToast}
+        //
+        //handleDelete={handleDelete}
+        handleSubmit={handleSubmit}
+        //handleCopy={handleCopy}
+      />
+    </Frame>
+  );
+};
+
+export default NewLink;
+
+{
+  /* 
+<Page
       title={pageTitle}
       breadcrumbs={[
         {
@@ -119,8 +135,5 @@ const NewLink = () => {
         </Layout.Section>
         <Layout.Section></Layout.Section>
       </Layout>
-    </Page>
-  );
-};
-
-export default NewLink;
+    </Page> */
+}

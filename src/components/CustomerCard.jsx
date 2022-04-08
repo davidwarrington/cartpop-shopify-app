@@ -19,27 +19,16 @@ import {
 import { iconStyles } from "../constants";
 import { CardGrid } from "./CardGrid";
 
-export function CustomerCard({ customer, setCustomer }) {
+export function CustomerCard({ customer }) {
   const [showModal, setShowModal] = useState(false);
 
   const toggleModalVisibility = useCallback(() => {
     setShowModal((status) => !status);
   }, []);
 
-  const handleCustomerChange = useCallback(({ field, value }) =>
-    setCustomer((customer) => {
-      const cachedCustomer = { ...customer };
-      cachedCustomer[field] = value;
-
-      if (!cachedCustomer[field] && !cachedCustomer[field] !== 0) {
-        delete cachedCustomer[field];
-      }
-
-      return cachedCustomer;
-    })
+  const hasCustomerInfo = Object.keys(customer).some((key) =>
+    customer[key].value ? true : false
   );
-
-  const hasCustomerInfo = customer && Object.keys(customer).length;
 
   return (
     <>
@@ -68,20 +57,26 @@ export function CustomerCard({ customer, setCustomer }) {
         {hasCustomerInfo ? (
           <Card.Section>
             <CardGrid>
-              {customer.email ? (
+              {customer.email.value ? (
                 <Stack alignment="center" spacing="tight" wrap={false}>
                   <div style={iconStyles}>
                     <Icon source={EmailMajor} color="base" />
                   </div>
-                  <Stack vertical spacing="none">
-                    <Subheading>
-                      <TextStyle variation="subdued">Email</TextStyle>
-                    </Subheading>
-                    <Stack.Item>{customer.email}</Stack.Item>
-                  </Stack>
+                  <Stack.Item fill>
+                    <Stack vertical spacing="none">
+                      <Subheading>
+                        <TextStyle variation="subdued">Email</TextStyle>
+                      </Subheading>
+                      <Stack.Item>
+                        <span style={{ overflowWrap: "break-word" }}>
+                          {customer.email.value}
+                        </span>
+                      </Stack.Item>
+                    </Stack>
+                  </Stack.Item>
                 </Stack>
               ) : null}
-              {customer.first_name || customer.last_name ? (
+              {customer.first_name.value || customer.last_name.value ? (
                 <Stack alignment="center" spacing="tight" wrap={false}>
                   <div style={iconStyles}>
                     <Icon source={CustomersMajor} color="base" />
@@ -91,17 +86,17 @@ export function CustomerCard({ customer, setCustomer }) {
                       <TextStyle variation="subdued">Name</TextStyle>
                     </Subheading>
                     <Stack.Item>
-                      {customer.first_name + " "}
-                      {customer.last_name}
+                      {customer.first_name.value + " "}
+                      {customer.last_name.value}
                     </Stack.Item>
                   </Stack>
                 </Stack>
               ) : null}
-              {customer.address1 ||
-              customer.address2 ||
-              customer.city ||
-              customer.province ||
-              customer.zipcode ? (
+              {customer.address1.value ||
+              customer.address2.value ||
+              customer.city.value ||
+              customer.province.value ||
+              customer.zipcode.value ? (
                 <Stack alignment="center" spacing="tight" wrap={false}>
                   <div style={iconStyles}>
                     <Icon source={LocationMajor} color="base" />
@@ -113,14 +108,16 @@ export function CustomerCard({ customer, setCustomer }) {
                       </TextStyle>
                     </Subheading>
                     <Stack.Item>
-                      {customer.address1}
-                      {customer.address2 && ", " + customer.address2}
-                      {customer.city && ", " + customer.city}
-                      {customer.province && ", " + customer.province}
+                      {customer.address1.value}
+                      {customer.address2.value &&
+                        ", " + customer.address2.value}
+                      {customer.city.value && ", " + customer.city.value}
+                      {customer.province.value &&
+                        ", " + customer.province.value}
                     </Stack.Item>
                     <Stack.Item>
-                      {customer.zipcode && customer.zipcode}
-                      {customer.country && ", " + customer.country}
+                      {customer.zipcode.value && customer.zipcode.value}
+                      {customer.country.value && ", " + customer.country.value}
                     </Stack.Item>
                   </Stack>
                 </Stack>
@@ -152,29 +149,20 @@ export function CustomerCard({ customer, setCustomer }) {
               type="email"
               label="Email"
               placeholder="example@example.com"
-              value={customer && customer.email}
-              onChange={(value) =>
-                handleCustomerChange({ field: "email", value })
-              }
+              {...customer.email}
             />
             <Stack distribution="fillEvenly">
               <TextField
                 type="text"
                 label="First name"
-                placeholder="Tobi"
-                value={customer && customer.first_name}
-                onChange={(value) =>
-                  handleCustomerChange({ field: "first_name", value })
-                }
+                placeholder="Sample"
+                {...customer.first_name}
               />
               <TextField
                 type="text"
                 label="Last name"
-                placeholder="Lütke"
-                value={customer && customer.last_name}
-                onChange={(value) =>
-                  handleCustomerChange({ field: "last_name", value })
-                }
+                placeholder="customer"
+                {...customer.last_name}
               />
             </Stack>
           </FormLayout>
@@ -185,44 +173,29 @@ export function CustomerCard({ customer, setCustomer }) {
             <TextField
               type="text"
               label="Address line 1"
-              value={customer && customer.address1}
-              onChange={(value) =>
-                handleCustomerChange({ field: "address1", value })
-              }
+              {...customer.address1}
             />
             <TextField
               type="text"
               label="Address line 2"
-              value={customer && customer.address2}
-              onChange={(value) =>
-                handleCustomerChange({ field: "address2", value })
-              }
+              {...customer.address2}
             />
             <Stack distribution="fillEvenly">
               <TextField
                 type="text"
                 label="City"
                 placeholder="New York"
-                value={customer && customer.city}
-                onChange={(value) =>
-                  handleCustomerChange({ field: "city", value })
-                }
+                {...customer.city}
               />
               <TextField
                 label="State/Province"
                 placeholder="New York"
-                value={customer && customer.province}
-                onChange={(value) =>
-                  handleCustomerChange({ field: "province", value })
-                }
+                {...customer.province}
               />
               <TextField
                 label="Zipcode"
                 placeholder="10022"
-                value={customer && customer.zipcode}
-                onChange={(value) =>
-                  handleCustomerChange({ field: "zipcode", value })
-                }
+                {...customer.zipcode}
               />
             </Stack>
           </FormLayout>
