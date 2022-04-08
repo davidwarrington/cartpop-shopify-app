@@ -15,6 +15,7 @@ import verifyRequest from "./middleware/verify-request.js";
 import MongoStore from "./middleware/mongo-store.js";
 import apiLinks from "./routes/links/index.js";
 import appProxyRoutes from "./routes/proxy/index.js";
+import webhooks from "./webhooks/index.js";
 
 // Bugsnag
 const useBugsnag = process.env.BUGSNAG_SERVER_KEY ? true : false;
@@ -70,33 +71,9 @@ Shopify.Context.initialize({
 Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
   path: "/webhooks",
   webhookHandler: async (topic, shop, body) => {
-    // Update shop to show as uninstalled
-    await mongodb
-      .db(MONGODB_DB)
-      .collection("shops")
-      .updateOne(
-        { shop: shop },
-        {
-          $set: {
-            isInstalled: false,
-            uninstalledAt: new Date(),
-            subscription: null,
-          },
-        }
-      );
-
-    // Remove all sessions tied to shop
-    await mongodb
-      .db(MONGODB_DB)
-      .collection("__session")
-      .deleteMany({ shop: shop });
-
-    // Fire reinstall event
-    analyticsClient &&
-      analyticsClient.track({
-        event: "uninstall",
-        userId: shop,
-      });
+    await webhooks.uninstall({
+      topic, shop, body, mongodb, analyticsClient
+    });
   },
 });
 
