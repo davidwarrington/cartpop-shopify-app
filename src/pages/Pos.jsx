@@ -79,13 +79,12 @@ const PosPage = () => {
     scanner.dispatch(Scanner.Action.OPEN_CAMERA);
   }
 
-  const fetchLink = async () => {
+  const fetchLink = async (scannedAlias) => {
     setLoading(true);
 
-    // TODO: add new api route to fetch by alias for POS links
-
+    // Get link by alias
     const linkRes = await fetchFunction(
-      `/api/links/624e32f6a80ad32e8679586f`
+      `/api/links/alias/${scannedAlias}`
     ).then((res) => res.json());
 
     if (linkRes) {
