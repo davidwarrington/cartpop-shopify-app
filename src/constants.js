@@ -15,3 +15,10 @@ export const PAGE_STATES = {
   submitting: "submitting",
   not_found: "not_found",
 };
+
+export const subscriptionPlan = {
+  key: "PRO",
+  name: "Pro",
+  price: "10",
+  trialDuration: 0,
+};

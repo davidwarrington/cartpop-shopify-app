@@ -2,7 +2,7 @@
 import { resolve } from "path";
 import express from "express";
 import cookieParser from "cookie-parser";
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient } from "mongodb";
 import { Shopify, ApiVersion } from "@shopify/shopify-api";
 import Analytics from "analytics-node";
 import Bugsnag from "@bugsnag/js";
@@ -16,6 +16,7 @@ import MongoStore from "./middleware/mongo-store.js";
 import apiLinks from "./routes/links/index.js";
 import appProxyRoutes from "./routes/proxy/index.js";
 import webhooks from "./webhooks/index.js";
+import apiBilling from "./routes/billing/index.js";
 
 // Bugsnag
 const useBugsnag = process.env.BUGSNAG_SERVER_KEY ? true : false;
@@ -72,7 +73,11 @@ Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
   path: "/webhooks",
   webhookHandler: async (topic, shop, body) => {
     await webhooks.uninstall({
-      topic, shop, body, mongodb, analyticsClient
+      topic,
+      shop,
+      body,
+      mongodb,
+      analyticsClient,
     });
   },
 });
@@ -148,6 +153,7 @@ export async function createServer(
   app.use(express.json());
 
   apiLinks(app);
+  apiBilling(app);
   webhookGdprRoutes(app);
   appProxyRoutes(app);
 
