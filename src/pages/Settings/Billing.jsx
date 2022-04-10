@@ -81,7 +81,9 @@ const SettingsBillingPage = () => {
             </Stack>
           </EmptyState>
         </Card.Section>
-        <Card.Section subdued>
+      </Card>
+      <Card>
+        <Card.Section>
           <Stack distribution="center">
             <Heading>Why Upgrade to Pro?</Heading>
           </Stack>

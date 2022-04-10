@@ -35,8 +35,10 @@ export default function apiBilling(app) {
   app.get(`${apiRoutePrefix}/confirm`, async (req, res) => {
     try {
       console.log("CONFIRM BILLING ENDPOINT");
-      await Billing.confirm(req, res);
-      res.redirect("/settings/billing?upgraded=true");
+      const { success, shop } = await Billing.confirm(req, res);
+      res.redirect(
+        `https://${shop}/admin/apps/${process.env.APP_SLUG}/settings/billing?upgraded=true`
+      );
     } catch (error) {
       console.log(`Failed to process api request: ${error}`);
       res.status(500).send(error.message);
@@ -55,8 +57,10 @@ export default function apiBilling(app) {
     async (req, res) => {
       try {
         console.log("DELETE BILLING ENDPOINT");
-        const success = await Billing.downgrade(req, res);
-        res.redirect("/settings/billing?downgraded=true");
+        const { success, shop } = await Billing.downgrade(req, res);
+        res.redirect(
+          `https://${shop}/admin/apps/${process.env.APP_SLUG}/settings/billing?downgraded=true`
+        );
       } catch (error) {
         console.log(`Failed to process api request: ${error}`);
         res.status(500).send(error.message);
