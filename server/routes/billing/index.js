@@ -55,10 +55,10 @@ export default function apiBilling(app) {
     apiSession(app),
     async (req, res) => {
       try {
-        const { success, shop } = await Billing.downgrade(req, res);
-        res.redirect(
-          `https://${shop}/admin/apps/${process.env.APP_SLUG}/settings/billing?downgraded=${success}`
-        );
+        const { success } = await Billing.downgrade(req, res);
+        res.status(200).send({
+          success: success,
+        });
       } catch (error) {
         console.log(`Failed to process api request: ${error}`);
         res.status(500).send(error.message);

@@ -38,6 +38,7 @@ const SettingsBillingPage = () => {
   const hasUpgraded = searchParams.get("upgraded") || false;
   const hasDowngraded = searchParams.get("downgraded") || false;
 
+  const [submitting, setsubmitting] = useState(false);
   const [toast, setToast] = useState(null);
   const [subscription, setSubscription] = useState(
     shopData ? shopData.subscription : hasUpgraded
@@ -52,8 +53,17 @@ const SettingsBillingPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (!shopData) {
+      return;
+    }
+
+    setSubscription(shopData.subscription);
+  }, [shopData]);
+
   const handleSubscription = useCallback(async () => {
     try {
+      setsubmitting(true);
       const result = await fetchFunction(`/api/billing`, {
         method: "POST",
       }).then((res) => res.json());
@@ -65,6 +75,37 @@ const SettingsBillingPage = () => {
       // Redirect to admin billing approval screen
       redirect.dispatch(Redirect.Action.REMOTE, result.url);
     } catch (err) {
+      setsubmitting(false);
+
+      // TODO: send to bugsnag
+      console.warn(err);
+    }
+  }, []);
+
+  const handleDowngrade = useCallback(async () => {
+    try {
+      setsubmitting(true);
+      const result = await fetchFunction(`/api/billing`, {
+        method: "DELETE",
+      }).then((res) => res.json());
+
+      if (!result) {
+        throw `Plan downgrade was unsuccessful`;
+      }
+
+      setShopData((currentShopData) => ({
+        ...currentShopData,
+        subscription: null,
+      }));
+
+      setToast({
+        show: true,
+        content: `Successfully downgraded`,
+      });
+      setsubmitting(false);
+    } catch (err) {
+      setsubmitting(false);
+
       // TODO: send to bugsnag
       console.warn(err);
     }
@@ -103,7 +144,9 @@ const SettingsBillingPage = () => {
                 aliases.
               </p>
             </TextContainer>
-            <Button>Cancel subscription</Button>
+            <Button onClick={handleDowngrade} loading={submitting}>
+              Cancel subscription
+            </Button>
           </Stack>
         </Card>
       ) : (
@@ -115,6 +158,7 @@ const SettingsBillingPage = () => {
               action={{
                 content: "Upgrade to Pro",
                 onAction: handleSubscription,
+                loading: submitting,
               }}
             >
               <Stack>

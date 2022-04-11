@@ -17,7 +17,6 @@ export default function apiShop(app) {
     async (req, res) => {
       try {
         const shopData = await Shop.get(req, res);
-        console.log("shopData", shopData);
         res.status(200).send({
           ...shopData,
         });

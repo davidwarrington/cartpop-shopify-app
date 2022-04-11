@@ -39,20 +39,20 @@ export const downgrade = async (req, res) => {
     const client = new Shopify.Clients.Graphql(shop, session.accessToken);
 
     // Send API request to cancel the subscription
-    const data = await client.query({
+    const res = await client.query({
       data: {
         query: APP_SUBSCRIPTION_CANCEL,
-        varaibles: {
+        variables: {
           id: `${composeGid("AppSubscription", chargeId)}`,
         },
       },
     });
-    if (!data || !data.appSubscriptionCancel) {
+    if (!res?.body?.data?.appSubscriptionCancel) {
       throw `Invalid payload returned for ${shop} on ${chargeId}`;
     }
 
     // Make sure the API call was successful
-    const { status } = data.appSubscriptionCancel.appSubscription;
+    const { status } = res.body.data.appSubscriptionCancel.appSubscription;
     if (status !== "CANCELLED") {
       throw `Status of CENCELLED expected but received ${status}`;
     }
@@ -76,10 +76,10 @@ export const downgrade = async (req, res) => {
     // }
 
     console.log(
-      `${shopDoc.shopDomain} downgraded to free plan. Cancelled charge id: ${chargeId}`
+      `${shopDoc.shop} downgraded to free plan. Cancelled charge id: ${chargeId}`
     );
 
-    return true;
+    return { success: true };
   } catch (err) {
     console.warn("err!!");
     throw err;
