@@ -17,6 +17,7 @@ import apiLinks from "./routes/links/index.js";
 import appProxyRoutes from "./routes/proxy/index.js";
 import webhooks from "./webhooks/index.js";
 import apiBilling from "./routes/billing/index.js";
+import apiShop from "./routes/shop/index.js";
 
 // Bugsnag
 const useBugsnag = process.env.BUGSNAG_SERVER_KEY ? true : false;
@@ -154,6 +155,7 @@ export async function createServer(
 
   apiLinks(app);
   apiBilling(app);
+  apiShop(app);
   webhookGdprRoutes(app);
   appProxyRoutes(app);
 

@@ -24,20 +24,24 @@ import BenefitUnlimited from "../../assets/benefit-unlimited.png";
 import BenefitAnalytics from "../../assets/benefit-analytics.png";
 import BenefitAlias from "../../assets/benefit-alias.png";
 import BenefitReorder from "../../assets/benefit-reorder.png";
+import { useShop } from "../../core/ShopProvider";
 
 const pageTitle = "Billing";
 
 const SettingsBillingPage = () => {
+  const { shopData } = useShop();
   let [searchParams, setSearchParams] = useSearchParams();
   const app = useAppBridge();
   const redirect = Redirect.create(app);
   const fetchFunction = userLoggedInFetch(app);
 
-  const hasUpgraded = searchParams.get("upgraded");
-  const hasDowngraded = searchParams.get("downgraded");
-  const hasSubscription = false; // TODO:
+  const hasUpgraded = searchParams.get("upgraded") || false;
+  const hasDowngraded = searchParams.get("downgraded") || false;
 
   const [toast, setToast] = useState(null);
+  const [subscription, setSubscription] = useState(
+    shopData ? shopData.subscription : hasUpgraded
+  );
 
   useEffect(() => {
     if (hasUpgraded || hasDowngraded) {
@@ -88,7 +92,7 @@ const SettingsBillingPage = () => {
           error={toast.error}
         />
       ) : null}
-      {hasUpgraded || hasSubscription ? (
+      {subscription || hasUpgraded ? (
         <Card sectioned>
           <Stack vertical>
             <Heading>Cancel subscription</Heading>
@@ -106,7 +110,6 @@ const SettingsBillingPage = () => {
         <>
           <Card>
             <EmptyState
-              // TODO: replace image
               image={UpgradeIcon}
               heading="Upgrade to Pro for $10/mo"
               action={{
