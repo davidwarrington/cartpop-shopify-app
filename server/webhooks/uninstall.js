@@ -49,7 +49,9 @@ export const uninstall = async ({
         event: "uninstall",
         userId: shop,
       });
+    return;
   } catch (err) {
     console.warn(err);
+    return;
   }
 };
