@@ -29,7 +29,7 @@ import { useShop } from "../../core/ShopProvider";
 const pageTitle = "Billing";
 
 const SettingsBillingPage = () => {
-  const { shopData } = useShop();
+  const { shopData, setShopData } = useShop();
   let [searchParams, setSearchParams] = useSearchParams();
   const app = useAppBridge();
   const redirect = Redirect.create(app);
@@ -38,7 +38,7 @@ const SettingsBillingPage = () => {
   const hasUpgraded = searchParams.get("upgraded") || false;
   const hasDowngraded = searchParams.get("downgraded") || false;
 
-  const [submitting, setsubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
   const [subscription, setSubscription] = useState(
     shopData ? shopData.subscription : hasUpgraded
@@ -63,7 +63,7 @@ const SettingsBillingPage = () => {
 
   const handleSubscription = useCallback(async () => {
     try {
-      setsubmitting(true);
+      setSubmitting(true);
       const result = await fetchFunction(`/api/billing`, {
         method: "POST",
       }).then((res) => res.json());
@@ -75,7 +75,7 @@ const SettingsBillingPage = () => {
       // Redirect to admin billing approval screen
       redirect.dispatch(Redirect.Action.REMOTE, result.url);
     } catch (err) {
-      setsubmitting(false);
+      setSubmitting(false);
 
       // TODO: send to bugsnag
       console.warn(err);
@@ -84,7 +84,7 @@ const SettingsBillingPage = () => {
 
   const handleDowngrade = useCallback(async () => {
     try {
-      setsubmitting(true);
+      setSubmitting(true);
       const result = await fetchFunction(`/api/billing`, {
         method: "DELETE",
       }).then((res) => res.json());
@@ -102,9 +102,9 @@ const SettingsBillingPage = () => {
         show: true,
         content: `Successfully downgraded`,
       });
-      setsubmitting(false);
+      setSubmitting(false);
     } catch (err) {
-      setsubmitting(false);
+      setSubmitting(false);
 
       // TODO: send to bugsnag
       console.warn(err);

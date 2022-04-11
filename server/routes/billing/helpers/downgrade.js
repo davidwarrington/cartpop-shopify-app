@@ -19,7 +19,7 @@ export const APP_SUBSCRIPTION_CANCEL = `mutation appSubscriptionCancel(
 }`;
 
 export const downgrade = async (req, res) => {
-  const { db, session } = req;
+  const { db, session, analytics } = req;
   const shop = session.shop;
 
   try {
@@ -74,6 +74,22 @@ export const downgrade = async (req, res) => {
     // if (!mongoRes) {
     //   throw `Could not delete link`;
     // }
+
+    // Segment Analytics
+    analytics &&
+      analytics.track({
+        userId: shop,
+        event: "Subscription deactivated",
+        properties: {
+          chargeId: shopDoc.subscription.chargeId,
+          name: shopDoc.subscription.name,
+          price: shopDoc.subscription.price,
+          isTest: shopDoc.subscription.test,
+          status: shopDoc.subscription.status,
+          trialDuration: shopDoc.subscription.trialDays,
+          // trialEndsOn: charge.trial_ends_on
+        },
+      });
 
     console.log(
       `${shopDoc.shop} downgraded to free plan. Cancelled charge id: ${chargeId}`

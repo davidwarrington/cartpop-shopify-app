@@ -11,8 +11,9 @@ export const get = async (req, res) => {
 
     return {
       shop: shop,
-      primaryDomain: shopDoc.shopInfo?.primary_domain || null,
-      shopifyPlan: shopDoc.shopInfo?.plan_name || null,
+      scopes: shopDoc.scopes,
+      primaryDomain: shopDoc.shopInfo?.primaryDomain?.url || null,
+      shopifyPlan: shopDoc.shopInfo?.plan || null,
       subscription: shopDoc.subscription
         ? {
             active: true,
@@ -20,7 +21,6 @@ export const get = async (req, res) => {
             updatedAt: shopDoc.subscription.upgradedAt,
           }
         : null,
-      storefrontAccessToken: shopDoc.storefrontAccessToken,
     };
   } catch (err) {
     throw err;

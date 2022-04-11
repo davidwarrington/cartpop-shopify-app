@@ -57,7 +57,6 @@ export const upgrade = async (req, res) => {
       test: isTestCharge,
       price: subscriptionPlan.price,
     };
-    console.log("subscriptionInput", subscriptionInput);
 
     // Send Creation Query
     const res = await client.query({
