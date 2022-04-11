@@ -27,6 +27,7 @@ import { Toast } from "@shopify/app-bridge-react";
 import QRCode from "react-qr-code";
 import { gql, useQuery } from "@apollo/client";
 import { getIdFromGid } from "../helpers";
+import { useShop } from "../core/ShopProvider";
 
 const SHOP_DOMAIN_QUERY = gql`
   query shopInfo {
@@ -141,12 +142,12 @@ export function CheckoutLinkCard({
   order,
   accessToken,
 }) {
+  const { shopData } = useShop();
   const { error, data, loading } = useQuery(SHOP_DOMAIN_QUERY);
 
   // Get actual shop url from API
   const shopDomain =
-    data?.shop?.primaryDomain?.host ||
-    new URL(location).searchParams.get("shop");
+    data?.shop?.primaryDomain?.host || (shopData && shopData.shop);
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [generatedUrl, setUrl] = useState("");
