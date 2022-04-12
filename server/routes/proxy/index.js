@@ -67,8 +67,7 @@ export default function appProxyRoutes(app) {
           throw `Link ${linkAlias} on ${shop} not found or is not enabled`;
         }
 
-        // TODO: increase click count on link doc
-        // Update total promotion analytics
+        // Update total link click analytics
         await db.collection("links").updateOne(
           {
             _id: link._id,

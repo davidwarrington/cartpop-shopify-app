@@ -2,6 +2,24 @@ import { Shopify } from "@shopify/shopify-api";
 
 import topLevelAuthRedirect from "../helpers/top-level-auth-redirect.js";
 
+const GET_SHOP_DATA = `{
+  shop {
+    name
+		ianaTimezone
+    email
+    url
+    primaryDomain {
+      url
+      sslEnabled
+    }
+    plan {
+      displayName
+      partnerDevelopment
+      shopifyPlus
+    }    
+  }
+}`;
+
 export default function applyAuthMiddleware(app) {
   app.get("/auth", async (req, res) => {
     if (!req.signedCookies[app.get("top-level-oauth-cookie")]) {
@@ -39,6 +57,7 @@ export default function applyAuthMiddleware(app) {
 
   app.get("/auth/callback", async (req, res) => {
     const { db } = req;
+    let fetchShopData = true;
 
     try {
       const session = await Shopify.Auth.validateAuthCallback(
@@ -49,13 +68,13 @@ export default function applyAuthMiddleware(app) {
 
       const host = req.query.host;
 
+      // Register uninstall webhook
       const response = await Shopify.Webhooks.Registry.register({
         shop: session.shop,
         accessToken: session.accessToken,
         topic: "APP_UNINSTALLED",
         path: "/webhooks",
       });
-
       if (!response["APP_UNINSTALLED"].success) {
         console.log(
           `Failed to register APP_UNINSTALLED webhook: ${response.result}`
@@ -107,12 +126,42 @@ export default function applyAuthMiddleware(app) {
             userId: session.shop,
           });
       } else {
+        if (shopDoc.shopInfo) {
+          fetchShopData = false;
+        }
         // Fire reauth event
         req.analytics &&
           req.analytics.track({
             event: "reauth",
             userId: session.shop,
           });
+      }
+
+      if (fetchShopData) {
+        // Set the shopData on the store during initial auth
+        const client = new Shopify.Clients.Graphql(
+          session.shop,
+          session.accessToken
+        );
+        const res = await client.query({ data: GET_SHOP_DATA });
+        // Check if data response was successful
+        if (!res?.body?.data?.shop) {
+          console.warn(`Missing shop data on ${shop}`);
+        } else {
+          const shopData = res.body.data.shop;
+
+          // Save shopData to shop document
+          await db.collection("shops").updateOne(
+            {
+              shop: session.shop,
+            },
+            {
+              $set: {
+                shopData,
+              },
+            }
+          );
+        }
       }
 
       // Redirect to app with shop parameter upon auth

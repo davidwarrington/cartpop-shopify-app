@@ -4,8 +4,7 @@ import {
   Button,
   ButtonGroup,
   Card,
-  Checkbox,
-  FormLayout,
+  ColorPicker,
   Icon,
   Modal,
   Popover,
@@ -15,6 +14,10 @@ import {
   TextContainer,
   TextField,
   TextStyle,
+  hsbToHex,
+  Heading,
+  Subheading,
+  Badge,
 } from "@shopify/polaris";
 import {
   CancelSmallMinor,
@@ -25,18 +28,10 @@ import {
 } from "@shopify/polaris-icons";
 import { Toast } from "@shopify/app-bridge-react";
 import QRCode from "react-qr-code";
-import { gql, useQuery } from "@apollo/client";
 import { getIdFromGid } from "../helpers";
-
-const SHOP_DOMAIN_QUERY = gql`
-  query shopInfo {
-    shop {
-      primaryDomain {
-        host
-      }
-    }
-  }
-`;
+import { useShop } from "../core/ShopProvider";
+import { RequireSubscription } from "./RequireSubscription";
+import { Tooltip } from "./Tooltip";
 
 const CardContainer = ({ showTitle, sectioned, children }) => (
   <Card sectioned={sectioned} title={showTitle ? "Checkout Link" : ""}>
@@ -44,31 +39,93 @@ const CardContainer = ({ showTitle, sectioned, children }) => (
   </Card>
 );
 
-const QRCodeSection = ({ generatedUrl, handleDownloadQrCode }) => (
-  <>
-    <Card.Subsection>
-      <Stack distribution="center">
-        <div
-          style={{
-            padding: "20px",
-          }}
-        >
-          <QRCode id="qr-code-link" value={generatedUrl} size="150" muted />
-        </div>
-      </Stack>
-    </Card.Subsection>
-    <Card.Subsection>
-      <ButtonGroup fullWidth>
-        <Button download primary onClick={() => handleDownloadQrCode("png")}>
-          Download PNG
-        </Button>
-        <Button download primary onClick={() => handleDownloadQrCode("svg")}>
-          Download SVG
-        </Button>
-      </ButtonGroup>
-    </Card.Subsection>
-  </>
-);
+const QRCodeSection = ({ title = "", generatedUrl, handleDownloadQrCode }) => {
+  const [color, setColor] = useState({
+    hue: 0,
+    brightness: 0,
+    saturation: 0,
+  });
+
+  const [popoverActive, setPopoverActive] = useState(false);
+
+  const togglePopoverActive = useCallback(
+    () => setPopoverActive((popoverActive) => !popoverActive),
+    []
+  );
+
+  return (
+    <>
+      <Card.Subsection>
+        <Stack distribution="center">
+          <div
+            style={{
+              padding: "20px",
+            }}
+          >
+            <QRCode
+              muted
+              id="qr-code-link"
+              value={generatedUrl}
+              size="150"
+              title={title}
+              fgColor={hsbToHex(color)}
+            />
+          </div>
+        </Stack>
+      </Card.Subsection>
+
+      <Card.Subsection>
+        <Stack>
+          <Popover
+            active={popoverActive}
+            onClose={togglePopoverActive}
+            activator={
+              <Button
+                plain
+                onClick={togglePopoverActive}
+                accessibilityLabel="QR Code color"
+              >
+                <div
+                  style={{
+                    width: "2.5rem",
+                    height: "2.5rem",
+                    borderRadius: "50%",
+                    background: hsbToHex(color),
+                    boxShadow: "inset 0 0 0 1px rgb(0 0 0 / 19%)",
+                  }}
+                />
+              </Button>
+            }
+            sectioned
+          >
+            <ColorPicker onChange={setColor} color={color} />
+          </Popover>
+
+          <Stack.Item fill>
+            <ButtonGroup fullWidth>
+              <Button
+                download
+                primary
+                size="large"
+                onClick={() => handleDownloadQrCode("png")}
+              >
+                Download PNG
+              </Button>
+              <Button
+                download
+                primary
+                size="large"
+                onClick={() => handleDownloadQrCode("svg")}
+              >
+                Download SVG
+              </Button>
+            </ButtonGroup>
+          </Stack.Item>
+        </Stack>
+      </Card.Subsection>
+    </>
+  );
+};
 
 export function CheckoutLinkCard({
   newForm,
@@ -79,33 +136,22 @@ export function CheckoutLinkCard({
   order,
   accessToken,
 }) {
-  const { error, data, loading } = useQuery(SHOP_DOMAIN_QUERY);
+  const { shopData } = useShop();
 
-  // Get actual shop url from API
-  const shopDomain =
-    data?.shop?.primaryDomain?.host ||
-    new URL(location).searchParams.get("shop");
+  const shopDomain = shopData && (shopData.primaryDomain || shopData.shop);
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [generatedUrl, setUrl] = useState("");
-  const [useAccessToken, setUseAccessToken] = useState(
-    accessToken.value ? true : false
-  );
   const [toast, setToast] = useState({});
-  const [selectedIndex, setIndex] = useState(newForm ? 1 : 0);
+  const [selectedIndex, setIndex] = useState(
+    newForm || !shopData.subscription ? 1 : 0
+  );
   const [popoverActive, setPopoverActive] = useState(false);
 
   const togglePopoverActive = useCallback(
     () => setPopoverActive((popoverActive) => !popoverActive),
     []
   );
-
-  useEffect(() => {
-    // Let's clear the access token whenever it's disabled
-    if (useAccessToken === false) {
-      accessToken.onChange("");
-    }
-  }, [useAccessToken]);
 
   // Compute url whenever a parameter changes
   useEffect(() => {
@@ -303,15 +349,6 @@ export function CheckoutLinkCard({
     });
   }, []);
 
-  // Show loading indicator while we fetch shop domain
-  if (loading) {
-    return (
-      <CardContainer sectioned>
-        <Spinner />
-      </CardContainer>
-    );
-  }
-
   return (
     <>
       {toast && toast.show ? (
@@ -326,7 +363,7 @@ export function CheckoutLinkCard({
           <Tabs
             fitted
             tabs={[
-              { id: "alias", content: "Short link" },
+              { id: "alias", content: "Link alias" },
               { id: "raw", content: "Checkout link" },
             ]}
             selected={selectedIndex}
@@ -334,21 +371,58 @@ export function CheckoutLinkCard({
           />
         ) : null}
         {link && selectedIndex == 0 ? (
-          <>
+          <RequireSubscription
+            content={
+              <Stack vertical>
+                <TextStyle variation="strong">
+                  Please upgrade to Pro in order to leverage link aliases.
+                </TextStyle>
+                <Subheading>Benefits</Subheading>
+                <Stack spacing="tight" vertical>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>
+                      <Tooltip content="Customize a short url to share with customers and use on marketing campaigns. Easily change products and link information without changing the url.">
+                        Link aliases
+                      </Tooltip>
+                    </TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>
+                      <Tooltip content="See how many clicks a link got.">
+                        Analytics
+                      </Tooltip>
+                    </TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>
+                      <Tooltip content="Link customers straight to checkout with subscription products.">
+                        Subscription products
+                      </Tooltip>
+                    </TextStyle>
+                    <Stack.Item>
+                      <Badge>Coming soon</Badge>
+                    </Stack.Item>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>Line item properties</TextStyle>
+                    <Stack.Item>
+                      <Badge>Coming soon</Badge>
+                    </Stack.Item>
+                  </Stack>
+                </Stack>
+              </Stack>
+            }
+          >
             {!newForm ? (
               <Card.Section subdued title="Supported features">
                 <Stack spacing="tight">
                   <Stack spacing="none">
                     <Icon source={TickSmallMinor} color="success" />{" "}
                     <TextStyle>Analytics</TextStyle>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>Change after sharing</TextStyle>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>Cart or Checkout</TextStyle>
                   </Stack>
                   <Stack spacing="none">
                     <Icon source={TickSmallMinor} color="success" />{" "}
@@ -423,7 +497,7 @@ export function CheckoutLinkCard({
                 </Popover>
               </Stack>
             </Card.Section>
-          </>
+          </RequireSubscription>
         ) : null}
 
         {!link || selectedIndex == 1 ? (
@@ -434,14 +508,6 @@ export function CheckoutLinkCard({
                   <Stack spacing="none">
                     <Icon source={CancelSmallMinor} color="critical" />{" "}
                     <TextStyle>Analytics</TextStyle>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={CancelSmallMinor} color="critical" />{" "}
-                    <TextStyle>Change after sharing</TextStyle>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={CancelSmallMinor} color="critical" />{" "}
-                    <TextStyle>Cart or Checkout</TextStyle>
                   </Stack>
                   <Stack spacing="none">
                     <Icon source={CancelSmallMinor} color="critical" />{" "}
@@ -467,7 +533,7 @@ export function CheckoutLinkCard({
                       label="Generated checkout link"
                       labelHidden
                       helpText="This link is auto generated and you can not change it."
-                      multiline={1}
+                      multiline={3}
                       value={generatedUrl}
                       //disabled
                       selectTextOnFocus
@@ -519,24 +585,6 @@ export function CheckoutLinkCard({
           </>
         ) : null}
       </CardContainer>
-      <Card title="Advanced settings" sectioned>
-        <FormLayout>
-          <Checkbox
-            label="Use access token"
-            helpText="Attributes order to a specific sales channel. This is not normally needed."
-            checked={useAccessToken}
-            onChange={(checked) => setUseAccessToken(checked)}
-          />
-          {useAccessToken ? (
-            <TextField
-              type="text"
-              label="Access token"
-              labelHidden
-              {...accessToken}
-            />
-          ) : null}
-        </FormLayout>
-      </Card>
       <Modal
         open={showQrModal}
         onClose={handleToggleQRModal}

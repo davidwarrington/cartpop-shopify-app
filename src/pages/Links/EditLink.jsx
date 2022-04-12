@@ -7,7 +7,6 @@ import { TitleBar, Toast, useAppBridge } from "@shopify/app-bridge-react";
 import { SkeletonLinkPage } from "../../components/SkeletonLinkPage";
 import { PAGE_STATES } from "../../constants";
 import { userLoggedInFetch } from "../../helpers";
-import SaveBar from "../../components/SaveBar";
 import { LinkForm } from "../../components/LinkForm";
 
 const EditLink = () => {
@@ -56,9 +55,7 @@ const EditLink = () => {
 
     const apiRes = await fetchFunction(`/api/links/${id}`, {
       method: "PUT",
-      body: JSON.stringify({
-        fields,
-      }),
+      body: JSON.stringify(fields),
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -147,6 +144,10 @@ const EditLink = () => {
   if (pageState === PAGE_STATES.not_found) {
     return (
       <Page narrowWidth>
+        <TitleBar
+          title={pageTitle}
+          breadcrumbs={[{ content: "Dashboard", url: "/" }]}
+        />
         <Card sectioned title="Could not find specified link">
           <Button url="/">Go home</Button>
         </Card>
@@ -160,6 +161,10 @@ const EditLink = () => {
 
   return (
     <Frame>
+      <TitleBar
+        title={pageTitle}
+        breadcrumbs={[{ content: "Dashboard", url: "/" }]}
+      />
       <LinkForm
         showSuccess={state && state.new}
         pageTitle={pageTitle}

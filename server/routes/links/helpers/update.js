@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { generateLinkAlias } from "../../../helpers/index.js";
 
 export const update = async (req, res) => {
   const { db, session } = req;
@@ -22,7 +23,7 @@ export const update = async (req, res) => {
           products,
           customer,
           order,
-          alias,
+          alias: alias || generateLinkAlias(),
           updatedAt: new Date(),
         },
       },
@@ -34,8 +35,6 @@ export const update = async (req, res) => {
     if (!updatedLinkDoc || !updatedLinkDoc.ok) {
       throw `Could not update link with id ${linkId}`;
     }
-
-    console.log("updatedLinkDoc", updatedLinkDoc);
 
     // TODO: Return specific fields
     //const link = updatedLinkDoc;

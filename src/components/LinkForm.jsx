@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { TitleBar, Toast } from "@shopify/app-bridge-react";
+import { Toast } from "@shopify/app-bridge-react";
 import {
   Badge,
   Card,
@@ -13,6 +12,7 @@ import {
   TextStyle,
   Link,
   Banner,
+  DisplayText,
 } from "@shopify/polaris";
 import { CircleTickMajor } from "@shopify/polaris-icons";
 import {
@@ -27,11 +27,13 @@ import {
 
 import { PAGE_STATES } from "../constants";
 import { CheckoutLinkCard } from "./CheckoutLinkCard";
+import { Tooltip } from "./Tooltip";
 import { CustomerCard } from "./CustomerCard";
 import { NameCard } from "./NameCard";
 import { OrderCard } from "./OrderCard";
 import { ProductsCard } from "./ProductsCard";
 import SaveBar from "./SaveBar";
+import { RequireSubscription } from "./RequireSubscription";
 
 export function LinkForm({
   newForm,
@@ -94,7 +96,6 @@ export function LinkForm({
         products,
         customer,
         order,
-        accessToken: useField(link.accessToken || ""),
       },
       async onSubmit(form) {
         try {
@@ -188,7 +189,6 @@ export function LinkForm({
           //   onAction: reset,
           // }}
         />
-        <TitleBar title={pageTitle} />
         {toast && toast.show ? (
           <Toast
             content={toast.content}
@@ -225,59 +225,127 @@ export function LinkForm({
               products={fields.products.value}
               customer={fields.customer}
               order={fields.order}
-              accessToken={fields.accessToken}
             />
           </Layout.Section>
           <Layout.Section secondary>
             {!newForm ? (
-              <Card
-                sectioned
-                title={
-                  <Stack alignment="center">
-                    <Heading>Visibility</Heading>
-                    {fields.active.value ? (
-                      <Badge status="success">Live</Badge>
-                    ) : (
-                      <Badge>Disabled</Badge>
-                    )}
-                  </Stack>
-                }
-              >
-                <RadioButton
-                  label="Enabled"
-                  helpText="Customers will be able to check out with this link."
-                  id="enabled"
-                  name="visibility"
-                  checked={fields.active.value}
-                  onChange={() => active.onChange(!fields.active.value)}
-                />
-                <RadioButton
-                  label="Disabled"
-                  helpText="Customers will not be able to check out with this link."
-                  id="disabled"
-                  name="visibility"
-                  checked={fields.active.value === false}
-                  onChange={() => active.onChange(!fields.active.value)}
-                />
-              </Card>
+              <RequireSubscription hidden>
+                <Card
+                  sectioned
+                  title={
+                    <Stack alignment="center">
+                      <Heading>Visibility</Heading>
+                      {fields.active.value ? (
+                        <Badge status="success">Live</Badge>
+                      ) : (
+                        <Badge>Disabled</Badge>
+                      )}
+                    </Stack>
+                  }
+                >
+                  <RadioButton
+                    label="Enabled"
+                    helpText="Customers will be able to check out with this link."
+                    id="enabled"
+                    name="visibility"
+                    checked={fields.active.value}
+                    onChange={() => active.onChange(!fields.active.value)}
+                  />
+                  <RadioButton
+                    label="Disabled"
+                    helpText="Customers will not be able to check out with this link."
+                    id="disabled"
+                    name="visibility"
+                    checked={fields.active.value === false}
+                    onChange={() => active.onChange(!fields.active.value)}
+                  />
+                </Card>
+              </RequireSubscription>
             ) : null}
             {!newForm && (fields.active.value || link.analytics?.clicks) ? (
-              <Card title="Analytics" sectioned>
-                // TODO: add analytics card
-              </Card>
-            ) : null}
-            <Stack vertical alignment="center">
-              <Stack.Item />
-              <Stack.Item>
-                Learn more about{" "}
-                <Link
-                  external
-                  url="https://help.shopify.com/en/manual/products/details/checkout-link"
+              <RequireSubscription hidden>
+                <Card
+                  title={
+                    <Stack distribution="equalSpacing" alignment="center">
+                      <Heading>Analytics</Heading>
+                      <TextStyle variation="subdued">All time</TextStyle>
+                    </Stack>
+                  }
                 >
-                  checkout links
-                </Link>
-              </Stack.Item>
-            </Stack>
+                  <Card.Section>
+                    <Stack distribution="fillEvenly">
+                      <Stack vertical spacing="extraTight">
+                        <Tooltip
+                          subheading
+                          content="Any time a link is accessed, it counts as a click."
+                        >
+                          Clicks
+                        </Tooltip>
+                        <DisplayText size="small">
+                          {link.analytics.clicks || 0}
+                        </DisplayText>
+                      </Stack>
+                      <Stack vertical spacing="extraTight">
+                        <Tooltip
+                          subheading
+                          content="Links scanned via QR Code will register as a scan rather than a click."
+                        >
+                          Scans
+                        </Tooltip>
+                        <DisplayText size="small">
+                          {link.analytics.scans || 0}
+                        </DisplayText>
+                      </Stack>
+                    </Stack>
+                  </Card.Section>
+                  <Card.Section
+                    title={
+                      <Tooltip
+                        subheading
+                        content="If a customer converts from a link, it will count as an order."
+                      >
+                        Orders
+                      </Tooltip>
+                    }
+                  >
+                    <DisplayText size="small">
+                      {link.analytics.orders || 0}
+                    </DisplayText>
+                  </Card.Section>
+                  <Card.Section
+                    title={
+                      <Tooltip
+                        subheading
+                        content="Total revenue generated from link."
+                      >
+                        Revenue
+                      </Tooltip>
+                    }
+                  >
+                    <DisplayText size="small">
+                      {link.analytics.revenue || 0}
+                    </DisplayText>
+                  </Card.Section>
+                  {/* <Card.Section subdued>
+                    <Link>Learn more about analytics</Link>
+                  </Card.Section> */}
+                </Card>
+              </RequireSubscription>
+            ) : null}
+            {newForm ? (
+              <Stack vertical alignment="center">
+                <Stack.Item />
+                <Stack.Item>
+                  Learn more about{" "}
+                  <Link
+                    external
+                    url="https://help.shopify.com/en/manual/products/details/checkout-link"
+                  >
+                    checkout links
+                  </Link>
+                </Stack.Item>
+              </Stack>
+            ) : null}
           </Layout.Section>
           <Layout.Section>
             <PageActions

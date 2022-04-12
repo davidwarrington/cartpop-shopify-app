@@ -1,6 +1,14 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { HelpScout } from "../components/HelpScout";
-import { Home, Settings, NewLink, EditLink } from "../pages";
+import {
+  Home,
+  SettingsIndex,
+  SettingsGeneral,
+  SettingsReorder,
+  SettingsBilling,
+  NewLink,
+  EditLink,
+} from "../pages";
 import AppProvider from "./AppProvider";
 
 const Router = () => {
@@ -10,9 +18,8 @@ const Router = () => {
       <Routes>
         <Route path="/" element={<AppProvider />}>
           <Route index element={<Home />} />
-          <Route path="links/new" element={<NewLink />} />
-          <Route path="links/:id" element={<EditLink />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="links/*" element={<Links />} />
+          <Route path="settings/*" element={<Settings />} />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -20,3 +27,20 @@ const Router = () => {
 };
 
 export default Router;
+
+const Links = () => (
+  <Routes>
+    {/* TODO: <Route path="/" element={<LinksIndex />} /> */}
+    <Route path="new" element={<NewLink />} />
+    <Route path=":id" element={<EditLink />} />
+  </Routes>
+);
+
+const Settings = () => (
+  <Routes>
+    <Route path="/" element={<SettingsIndex />} />
+    <Route path="general" element={<SettingsGeneral />} />
+    <Route path="billing" element={<SettingsBilling />} />
+    <Route path="reorder" element={<SettingsReorder />} />
+  </Routes>
+);

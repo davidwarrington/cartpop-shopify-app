@@ -10,6 +10,11 @@ import {
   Page,
   Spinner,
   Stack,
+  Image,
+  Heading,
+  Subheading,
+  Icon,
+  TextContainer,
 } from "@shopify/polaris";
 import { useAppBridge, TitleBar } from "@shopify/app-bridge-react";
 
@@ -17,9 +22,11 @@ import { PAGE_STATES } from "../constants";
 import cashRegister from "../assets/cash_register_128.png";
 import { AllLinksCard } from "../components/AllLinksTable";
 import { userLoggedInFetch } from "../helpers";
+import { useShop } from "../core/ShopProvider";
 
 const Home = () => {
   const app = useAppBridge();
+  const { shopData } = useShop();
 
   const [pageState, setPageState] = useState(PAGE_STATES.loading);
   const [links, setLinks] = useState([]);
@@ -65,12 +72,32 @@ const Home = () => {
       }
     >
       {/* Empty TitleBar to reset when navigating from other pages like Settings */}
-      <TitleBar />
+      <TitleBar title={"Dashboard"} />
       <Layout>
         {links && links.length ? (
-          <Layout.Section fullWidth>
-            <AllLinksCard links={links} />
-          </Layout.Section>
+          <>
+            {!shopData.subscription ? (
+              <Layout.Section fullWidth>
+                <Banner
+                  status="info"
+                  title="Upgrade to Pro to unlock all features"
+                  action={{
+                    url: "/settings/billing",
+                    content: "Learn more about Pro",
+                  }}
+                >
+                  <TextStyle>
+                    Gain access to advanced features including analytics, link
+                    aliases, enable/disable links, and more.
+                  </TextStyle>
+                </Banner>
+              </Layout.Section>
+            ) : null}
+            <Layout.Section fullWidth>
+              <AllLinksCard links={links} />
+            </Layout.Section>
+            {/* <CardCheckoutPromotions /> */}
+          </>
         ) : (
           <Layout.Section fullWidth>
             <Stack vertical spacing="tight">
