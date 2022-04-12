@@ -87,7 +87,7 @@ export function LinkForm({
         active: useField(link.active || false),
         alias: useField({
           value: link.alias,
-          validates: [notEmpty("Link alias is required")],
+          validates: newForm ? [] : [notEmpty("Link alias is required")],
         }),
         name: useField({
           value: link.name || "",
