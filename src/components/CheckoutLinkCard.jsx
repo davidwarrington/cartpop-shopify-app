@@ -608,8 +608,10 @@ export function CheckoutLinkCard({
           <QRCodeSection
             generatedUrl={
               selectedIndex === 0
-                ? `https://${shopDomain}/a/cart/${alias && alias.value}`
-                : generatedUrl
+                ? `https://${shopDomain}/a/cart/${
+                    alias && alias.value
+                  }?scan=true`
+                : generatedUrl + `&scan=true`
             }
             handleDownloadQrCode={handleDownloadQrCode}
           />
