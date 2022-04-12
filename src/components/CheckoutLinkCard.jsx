@@ -15,6 +15,9 @@ import {
   TextField,
   TextStyle,
   hsbToHex,
+  Heading,
+  Subheading,
+  Badge,
 } from "@shopify/polaris";
 import {
   CancelSmallMinor,
@@ -25,19 +28,10 @@ import {
 } from "@shopify/polaris-icons";
 import { Toast } from "@shopify/app-bridge-react";
 import QRCode from "react-qr-code";
-import { gql, useQuery } from "@apollo/client";
 import { getIdFromGid } from "../helpers";
 import { useShop } from "../core/ShopProvider";
-
-const SHOP_DOMAIN_QUERY = gql`
-  query shopInfo {
-    shop {
-      primaryDomain {
-        host
-      }
-    }
-  }
-`;
+import { RequireSubscription } from "./RequireSubscription";
+import { Tooltip } from "./Tooltip";
 
 const CardContainer = ({ showTitle, sectioned, children }) => (
   <Card sectioned={sectioned} title={showTitle ? "Checkout Link" : ""}>
@@ -143,16 +137,15 @@ export function CheckoutLinkCard({
   accessToken,
 }) {
   const { shopData } = useShop();
-  const { error, data, loading } = useQuery(SHOP_DOMAIN_QUERY);
 
-  // Get actual shop url from API
-  const shopDomain =
-    data?.shop?.primaryDomain?.host || (shopData && shopData.shop);
+  const shopDomain = shopData && (shopData.primaryDomain || shopData.shop);
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [generatedUrl, setUrl] = useState("");
   const [toast, setToast] = useState({});
-  const [selectedIndex, setIndex] = useState(newForm ? 1 : 0);
+  const [selectedIndex, setIndex] = useState(
+    newForm || !shopData.subscription ? 1 : 0
+  );
   const [popoverActive, setPopoverActive] = useState(false);
 
   const togglePopoverActive = useCallback(
@@ -356,15 +349,6 @@ export function CheckoutLinkCard({
     });
   }, []);
 
-  // Show loading indicator while we fetch shop domain
-  if (loading) {
-    return (
-      <CardContainer sectioned>
-        <Spinner />
-      </CardContainer>
-    );
-  }
-
   return (
     <>
       {toast && toast.show ? (
@@ -379,7 +363,7 @@ export function CheckoutLinkCard({
           <Tabs
             fitted
             tabs={[
-              { id: "alias", content: "Short link" },
+              { id: "alias", content: "Link alias" },
               { id: "raw", content: "Checkout link" },
             ]}
             selected={selectedIndex}
@@ -387,7 +371,52 @@ export function CheckoutLinkCard({
           />
         ) : null}
         {link && selectedIndex == 0 ? (
-          <>
+          <RequireSubscription
+            content={
+              <Stack vertical>
+                <TextStyle variation="strong">
+                  Please upgrade to Pro in order to leverage link aliases.
+                </TextStyle>
+                <Subheading>Benefits</Subheading>
+                <Stack spacing="tight" vertical>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>
+                      <Tooltip content="Customize a short url to share with customers and use on marketing campaigns. Easily change products and link information without changing the url.">
+                        Link aliases
+                      </Tooltip>
+                    </TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>
+                      <Tooltip content="See how many clicks a link got.">
+                        Analytics
+                      </Tooltip>
+                    </TextStyle>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>
+                      <Tooltip content="Link customers straight to checkout with subscription products.">
+                        Subscription products
+                      </Tooltip>
+                    </TextStyle>
+                    <Stack.Item>
+                      <Badge>Coming soon</Badge>
+                    </Stack.Item>
+                  </Stack>
+                  <Stack spacing="none">
+                    <Icon source={TickSmallMinor} color="success" />{" "}
+                    <TextStyle>Line item properties</TextStyle>
+                    <Stack.Item>
+                      <Badge>Coming soon</Badge>
+                    </Stack.Item>
+                  </Stack>
+                </Stack>
+              </Stack>
+            }
+          >
             {!newForm ? (
               <Card.Section subdued title="Supported features">
                 <Stack spacing="tight">
@@ -468,7 +497,7 @@ export function CheckoutLinkCard({
                 </Popover>
               </Stack>
             </Card.Section>
-          </>
+          </RequireSubscription>
         ) : null}
 
         {!link || selectedIndex == 1 ? (
