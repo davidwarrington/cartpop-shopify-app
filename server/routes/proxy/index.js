@@ -22,6 +22,12 @@ export default function appProxyRoutes(app) {
       const { db } = req;
       const shop = req.headers && req.headers["x-shop-domain"];
       const shopifyRequestId = req.headers && req.headers["x-request-id"];
+      const { order, customer, products} = req.query;
+
+      if (!order && !products && !customer && shop) {
+        res.redirect(`https://${shop}`);
+        return;
+      }
 
       try {
         res.set("Content-Type", "application/liquid");
@@ -33,7 +39,7 @@ export default function appProxyRoutes(app) {
           <body>
             <div class="full-page-overlay">
               <div class="full-page-overlay__wrap">
-                <meta http-equiv="refresh" content="3;URL=?from_processing_page=1">
+                <!-- <meta http-equiv="refresh" content="3;URL=?from_processing_page=1"> -->
                 <div data-processing-order="" class="full-page-overlay__content" role="region" aria-describedby="full-page-overlay__processing-text" aria-label="Processing order" tabindex="-1">
                   <svg class="icon-svg icon-svg--color-accent icon-svg--size-64 icon-svg--spinner full-page-overlay__icon" aria-hidden="true" focusable="false">
                     <use xlink:href="#spinner-large"></use>
