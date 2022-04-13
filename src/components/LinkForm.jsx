@@ -262,7 +262,9 @@ export function LinkForm({
                 </Card>
               </RequireSubscription>
             ) : null}
-            {!newForm && (fields.active.value || link.analytics?.clicks) ? (
+            {(!newForm && fields.active.value) ||
+            (link.analytics &&
+              (link.analytics.clicks || link.analytics.scans)) ? (
               <RequireSubscription hidden>
                 <Card
                   title={
@@ -282,7 +284,7 @@ export function LinkForm({
                           Clicks
                         </Tooltip>
                         <DisplayText size="small">
-                          {link.analytics.clicks || 0}
+                          {(link.analytics && link.analytics.clicks) || 0}
                         </DisplayText>
                       </Stack>
                       <Stack vertical spacing="extraTight">
@@ -293,12 +295,12 @@ export function LinkForm({
                           Scans
                         </Tooltip>
                         <DisplayText size="small">
-                          {link.analytics.scans || 0}
+                          {(link.analytics && link.analytics.scans) || 0}
                         </DisplayText>
                       </Stack>
                     </Stack>
                   </Card.Section>
-                  <Card.Section
+                  {/* <Card.Section
                     title={
                       <Tooltip
                         subheading
@@ -309,7 +311,7 @@ export function LinkForm({
                     }
                   >
                     <DisplayText size="small">
-                      {link.analytics.orders || 0}
+                      {link.analytics && link.analytics.orders || 0}
                     </DisplayText>
                   </Card.Section>
                   <Card.Section
@@ -323,9 +325,9 @@ export function LinkForm({
                     }
                   >
                     <DisplayText size="small">
-                      {link.analytics.revenue || 0}
+                      {link.analytics && link.analytics.revenue || 0}
                     </DisplayText>
-                  </Card.Section>
+                  </Card.Section> */}
                   {/* <Card.Section subdued>
                     <Link>Learn more about analytics</Link>
                   </Card.Section> */}

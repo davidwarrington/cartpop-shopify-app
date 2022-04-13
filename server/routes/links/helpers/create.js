@@ -19,6 +19,7 @@ export const create = async (req, res) => {
       products, // required
       customer: customer || null,
       order: order || null,
+      analytics: {},
       createdAt: new Date(),
     });
 

@@ -69,19 +69,28 @@ export function ProductList({
           </Stack.Item>
           <Stack.Item>
             <Stack vertical alignment="trailing">
-              <TextField
-                label="Quantity"
-                type="number"
-                labelHidden
-                min={1}
-                value={variant.quantity || "1"}
-                onChange={(newQuantity) =>
-                  handleVariantQuantity(productIndex, variantIndex, newQuantity)
-                }
-              />
+              <div style={{ maxWidth: "5.5rem" }}>
+                <TextField
+                  label="Quantity"
+                  type="number"
+                  labelHidden
+                  min={1}
+                  value={variant.quantity || "1"}
+                  onChange={(newQuantity) =>
+                    handleVariantQuantity(
+                      productIndex,
+                      variantIndex,
+                      newQuantity
+                    )
+                  }
+                  autoComplete="off"
+                />
+              </div>
               <Button
                 onClick={() => handleVariantRemove(productIndex, variantIndex)}
                 accessibilityLabel="Remove product"
+                destructive
+                outline
               >
                 Remove
               </Button>
