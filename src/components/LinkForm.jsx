@@ -262,7 +262,9 @@ export function LinkForm({
                 </Card>
               </RequireSubscription>
             ) : null}
-            {!newForm && (fields.active.value || link.analytics?.clicks) ? (
+            {!newForm &&
+            (fields.active.value ||
+              (link.analytics && link.analytics.clicks)) ? (
               <RequireSubscription hidden>
                 <Card
                   title={
