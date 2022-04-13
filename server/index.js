@@ -5,12 +5,31 @@ import cookieParser from "cookie-parser";
 import { MongoClient } from "mongodb";
 import { Shopify, ApiVersion } from "@shopify/shopify-api";
 import Analytics from "analytics-node";
+import Bugsnag from "@bugsnag/js";
+import BugsnagPluginExpress from "@bugsnag/plugin-express";
 import "dotenv/config";
 
 import webhookGdprRoutes from "./webhooks/gdpr.js";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 import MongoStore from "./middleware/mongo-store.js";
+import apiLinks from "./routes/links/index.js";
+import appProxyRoutes from "./routes/proxy/index.js";
+import webhooks from "./webhooks/index.js";
+import apiBilling from "./routes/billing/index.js";
+import apiShop from "./routes/shop/index.js";
+
+// Bugsnag
+const useBugsnag = process.env.BUGSNAG_SERVER_KEY ? true : false;
+if (useBugsnag) {
+  Bugsnag.start({
+    apiKey: process.env.BUGSNAG_SERVER_KEY,
+    plugins: [BugsnagPluginExpress],
+  });
+} else {
+  console.warn(`Missing BUGSNAG_SERVER_KEY environment variable`);
+}
+const BugsnagMiddleware = useBugsnag && Bugsnag.getPlugin("express");
 
 // Segment Client
 const analyticsClient = process.env.SEGMENT_WRITE_KEY
@@ -54,33 +73,13 @@ Shopify.Context.initialize({
 Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
   path: "/webhooks",
   webhookHandler: async (topic, shop, body) => {
-    // Update shop to show as uninstalled
-    await mongodb
-      .db(MONGODB_DB)
-      .collection("shops")
-      .updateOne(
-        { shop: shop },
-        {
-          $set: {
-            isInstalled: false,
-            uninstalledAt: new Date(),
-            subscription: null,
-          },
-        }
-      );
-
-    // Remove all sessions tied to shop
-    await mongodb
-      .db(MONGODB_DB)
-      .collection("__session")
-      .deleteMany({ shop: shop });
-
-    // Fire reinstall event
-    analyticsClient &&
-      analyticsClient.track({
-        event: "uninstall",
-        userId: shop,
-      });
+    await webhooks.uninstall({
+      topic,
+      shop,
+      body,
+      mongodb,
+      analyticsClient,
+    });
   },
 });
 
@@ -94,6 +93,12 @@ export async function createServer(
    * @type {import('vite').ViteDevServer}
    */
   let vite;
+
+  // Bugsnag Middleware
+  // -- must be first to catch any error downstream
+  if (useBugsnag) {
+    app.use(BugsnagMiddleware.requestHandler);
+  }
 
   // Expose mongodb on req
   app.use((req, res, next) => {
@@ -148,7 +153,11 @@ export async function createServer(
 
   app.use(express.json());
 
+  apiLinks(app);
+  apiBilling(app);
+  apiShop(app);
   webhookGdprRoutes(app);
+  appProxyRoutes(app);
 
   // iFrame Security headers
   // See: https://shopify.dev/apps/store/security/iframe-protection
@@ -243,6 +252,12 @@ export async function createServer(
         .set("Content-Type", "text/html")
         .send(fs.readFileSync(`${process.cwd()}/dist/client/index.html`));
     });
+  }
+
+  // Bugsnag Middleware
+  // -- must be first to catch any error downstream
+  if (useBugsnag) {
+    app.use(BugsnagMiddleware.errorHandler);
   }
 
   return { app, vite };
