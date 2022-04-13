@@ -24,7 +24,33 @@ export default function appProxyRoutes(app) {
       const shopifyRequestId = req.headers && req.headers["x-request-id"];
 
       try {
-        res.status(200).send("Link proxy");
+        res.set("Content-Type", "application/liquid");
+        res.status(200).send(`{% layout none %} 
+        <html>
+          <head>
+            <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-2602686fb8b88d94b8051bb6bb771e56-160" media="all" />
+          </head>
+          <body>
+            <div class="full-page-overlay">
+              <div class="full-page-overlay__wrap">
+                <meta http-equiv="refresh" content="3;URL=?from_processing_page=1">
+                <div data-processing-order="" class="full-page-overlay__content" role="region" aria-describedby="full-page-overlay__processing-text" aria-label="Processing order" tabindex="-1">
+                  <svg class="icon-svg icon-svg--color-accent icon-svg--size-64 icon-svg--spinner full-page-overlay__icon" aria-hidden="true" focusable="false">
+                    <use xlink:href="#spinner-large"></use>
+                  </svg>
+                  <div id="full-page-overlay__processing-text">
+                    <svg class="icon-svg icon-svg--color-accent icon-svg--size-64 icon-svg--spinner full-page-overlay__icon" xmlns="http://www.w3.org/2000/svg" viewBox="-270 364 66 66"><path d="M-237 428c-17.1 0-31-13.9-31-31s13.9-31 31-31v-2c-18.2 0-33 14.8-33 33s14.8 33 33 33 33-14.8 33-33h-2c0 17.1-13.9 31-31 31z"></path></svg>
+                    <h3 class="full-page-overlay__title">
+                      Loading checkout
+                    </h3>
+                    <p class="full-page-overlay__text">Please wait while we load your checkout.</p>
+                    <!-- <p class="full-page-overlay__text"> If you’re not automatically redirected, <a href="?from_processing_page=1">refresh this page</a>. </p> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </body>
+        </html>`);
       } catch (error) {
         // TODO: better error handling
         console.warn(JSON.stringify(error));
@@ -37,7 +63,7 @@ export default function appProxyRoutes(app) {
 
         // Fallback if somehow shop header is missing
         res.set("Content-Type", "application/liquid");
-        res.status(200).send("There was an error.");
+        res.status(200).send(`There was an error.`);
       }
     }
   );
