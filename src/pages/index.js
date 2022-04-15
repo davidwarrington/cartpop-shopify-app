@@ -3,5 +3,6 @@ export { default as SettingsIndex } from "./Settings/Index";
 export { default as SettingsGeneral } from "./Settings/General";
 export { default as SettingsReorder } from "./Settings/Reorder";
 export { default as SettingsBilling } from "./Settings/Billing";
+export { default as SettingsTranslations } from "./Settings/Translations";
 export { default as NewLink } from "./Links/NewLink";
 export { default as EditLink } from "./Links/EditLink";

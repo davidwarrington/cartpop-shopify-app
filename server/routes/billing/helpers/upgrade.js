@@ -48,7 +48,7 @@ export const upgrade = async (req, res) => {
     // Create Graphql Client
     const client = new Shopify.Clients.Graphql(shop, session.accessToken);
 
-    const isTestCharge = true; // TODO:
+    const isTestCharge = shopDoc.shopData?.plan?.partnerDevelopment || false;
 
     const subscriptionInput = {
       name: `${subscriptionPlan.key}`,

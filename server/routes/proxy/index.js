@@ -22,7 +22,7 @@ export default function appProxyRoutes(app) {
       const { db } = req;
       const shop = req.headers && req.headers["x-shop-domain"];
       const shopifyRequestId = req.headers && req.headers["x-request-id"];
-      const { order, customer, products} = req.query;
+      const { order, customer, products } = req.query;
 
       if (!order && !products && !customer && shop) {
         res.redirect(`https://${shop}`);
@@ -30,13 +30,24 @@ export default function appProxyRoutes(app) {
       }
 
       try {
+        const randomId = "2602686fb8b88d94b8051bb6bb771e56";
+
         res.set("Content-Type", "application/liquid");
         res.status(200).send(`{% layout none %} 
         <html>
           <head>
-            <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-2602686fb8b88d94b8051bb6bb771e56-160" media="all" />
+            <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-${randomId}-160" media="all" />
           </head>
           <body>
+            <script>
+              const isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|webOS|BlackBerry|IEMobile|Opera Mini)/i);
+              
+              if (isMobile) {
+                console.log("mobile");
+              } else {
+                console.log("desktop");
+              }
+            </script>
             <div class="full-page-overlay">
               <div class="full-page-overlay__wrap">
                 <!-- <meta http-equiv="refresh" content="3;URL=?from_processing_page=1"> -->
@@ -75,6 +86,21 @@ export default function appProxyRoutes(app) {
   );
 
   /* 
+        Generate dynamic link
+
+        We call this in the dynamic link creator to getch the checkout link.
+        We'll also log additional browser analytics like mobile vs desktop
+    */
+  app.get(
+    `${apiRoutePrefix}/dynamic`,
+    verifyAppProxyExtensionSignatureMiddleware(),
+    async (req, res) => {
+      //TODO:
+      res.status(200).send({ url: null });
+    }
+  );
+
+  /* 
         Specific link
 
         When a link alias is used we route logic here
@@ -87,6 +113,10 @@ export default function appProxyRoutes(app) {
       const shop = req.headers && req.headers["x-shop-domain"];
       const shopifyRequestId = req.headers && req.headers["x-request-id"];
       const linkAlias = req.params.alias;
+
+      // Detect QR Scan vs Link click
+      const scan = req.query.scan;
+      const eventType = scan ? "scans" : "clicks";
 
       try {
         const link = await db.collection("links").findOne({
@@ -106,12 +136,27 @@ export default function appProxyRoutes(app) {
           },
           {
             $inc: {
-              [`analytics.clicks`]: 1,
+              [`analytics.${eventType}`]: 1,
               // TODO: track mobile vs desktop
             },
           },
           true
         );
+
+        // Insert new event doc
+        // await db.collection("events").insertOne(
+        //   {
+        //     _id: link._id,
+
+        //   },
+        //   {
+        //     $inc: {
+        //       [`analytics.clicks`]: 1,
+        //       // TODO: track mobile vs desktop
+        //     },
+        //   },
+        //   true
+        // );
 
         // Generate checkout link
         const generatedLink = generatedCheckoutLink({

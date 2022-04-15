@@ -11,11 +11,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { TitleBar } from "@shopify/app-bridge-react";
 import {
+  LanguageMinor,
   PaymentsMajor,
   QuickSaleMajor,
   SettingsMajor,
 } from "@shopify/polaris-icons";
-import { SettingsGeneral, SettingsReorder } from "../index";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
@@ -38,6 +38,12 @@ const SettingsPage = () => {
       helpText: "View and update your CartPop subscription plan",
       icon: PaymentsMajor,
       url: "/settings/billing",
+    },
+    {
+      content: "Translations",
+      helpText: "Change customer facing copy",
+      icon: LanguageMinor,
+      url: "/settings/translations",
     },
     // {
     //   content: "Reorder links",

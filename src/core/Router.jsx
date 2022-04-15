@@ -6,6 +6,7 @@ import {
   SettingsGeneral,
   SettingsReorder,
   SettingsBilling,
+  SettingsTranslations,
   NewLink,
   EditLink,
 } from "../pages";
@@ -42,5 +43,6 @@ const Settings = () => (
     <Route path="general" element={<SettingsGeneral />} />
     <Route path="billing" element={<SettingsBilling />} />
     <Route path="reorder" element={<SettingsReorder />} />
+    <Route path="translations" element={<SettingsTranslations />} />
   </Routes>
 );

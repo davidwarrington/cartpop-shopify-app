@@ -9,13 +9,17 @@ import {
   TextStyle,
   Thumbnail,
 } from "@shopify/polaris";
-import { getIdFromGid, getShop } from "../helpers";
+import { useShop } from "../core/ShopProvider";
+import { getIdFromGid } from "../helpers";
 
 export function ProductList({
   products,
   handleVariantRemove,
   handleVariantQuantity,
 }) {
+  const { shopData } = useShop();
+  const shopDomain = shopData && shopData.shop;
+
   // Return message when no product is selected
   if (!products || !products.length) {
     return (
@@ -50,7 +54,7 @@ export function ProductList({
                   <TextStyle variation="strong">
                     <Link
                       monochrome
-                      url={`https://${getShop()?.replace(
+                      url={`https://${shopDomain.replace(
                         "https://",
                         ""
                       )}/admin/products/${getIdFromGid("Product", product.id)}`}
