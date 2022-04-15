@@ -26,4 +26,48 @@ export default function apiShop(app) {
       }
     }
   );
+
+  /*
+        Get api/shop/translations
+        
+        > Get shop translations
+    */
+  app.get(
+    `${apiRoutePrefix}/translations`,
+    verifyRequest(app),
+    apiSession(app),
+    async (req, res) => {
+      try {
+        const translations = await Shop.getTranslations(req, res);
+        res.status(200).send({
+          ...translations,
+        });
+      } catch (error) {
+        console.log(`Failed to process api request: ${error}`);
+        res.status(500).send(error.message);
+      }
+    }
+  );
+
+  /*
+        Put api/shop/translations
+        
+        > Update shop translations
+    */
+  app.put(
+    `${apiRoutePrefix}/translations`,
+    verifyRequest(app),
+    apiSession(app),
+    async (req, res) => {
+      try {
+        const success = await Shop.updateTranslations(req, res);
+        res.status(200).send({
+          success: success,
+        });
+      } catch (error) {
+        console.log(`Failed to process api request: ${error}`);
+        res.status(500).send(error.message);
+      }
+    }
+  );
 }
