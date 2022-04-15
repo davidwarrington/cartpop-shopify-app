@@ -91,14 +91,14 @@ export default function appProxyRoutes(app) {
         We call this in the dynamic link creator to getch the checkout link.
         We'll also log additional browser analytics like mobile vs desktop
     */
-    app.get(
-      `${apiRoutePrefix}/dynamic`,
-      verifyAppProxyExtensionSignatureMiddleware(),
-      async (req, res) => {
-        //TODO:
-        res.status(200).send({ url: null });
-      }
-    );
+  app.get(
+    `${apiRoutePrefix}/dynamic`,
+    verifyAppProxyExtensionSignatureMiddleware(),
+    async (req, res) => {
+      //TODO:
+      res.status(200).send({ url: null });
+    }
+  );
 
   /* 
         Specific link
@@ -136,12 +136,27 @@ export default function appProxyRoutes(app) {
           },
           {
             $inc: {
-              [`analytics.clicks`]: 1,
+              [`analytics.${eventType}`]: 1,
               // TODO: track mobile vs desktop
             },
           },
           true
         );
+
+        // Insert new event doc
+        // await db.collection("events").insertOne(
+        //   {
+        //     _id: link._id,
+
+        //   },
+        //   {
+        //     $inc: {
+        //       [`analytics.clicks`]: 1,
+        //       // TODO: track mobile vs desktop
+        //     },
+        //   },
+        //   true
+        // );
 
         // Generate checkout link
         const generatedLink = generatedCheckoutLink({
