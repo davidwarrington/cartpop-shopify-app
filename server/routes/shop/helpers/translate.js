@@ -1,3 +1,5 @@
+import { defaultTranslations } from "../../../translations.js";
+
 export const getTranslations = async (req, res) => {
   const { db, session } = req;
   const shop = session.shop;
@@ -10,6 +12,8 @@ export const getTranslations = async (req, res) => {
     }
 
     // TODO: fetch translations from shop metafield(s) (do this in client?)
+
+    // TODO: merge  defaultTranslations["en"]
 
     return {
       translations: shopDoc.translations,
