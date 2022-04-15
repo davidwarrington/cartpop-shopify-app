@@ -87,7 +87,7 @@ export default function appProxyRoutes(app) {
       const shop = req.headers && req.headers["x-shop-domain"];
       const shopifyRequestId = req.headers && req.headers["x-request-id"];
       const linkAlias = req.params.alias;
-      
+
       // Detect QR Scan vs Link click
       const scan = req.query.scan;
       const eventType = scan ? "scans" : "clicks";
