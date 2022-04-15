@@ -43,6 +43,7 @@ export function LinkForm({
   narrowWidth = false,
   pageState,
   toast,
+  setToast,
   handleSubmit,
   handleCopy,
   handlePreview,
@@ -100,7 +101,6 @@ export function LinkForm({
       async onSubmit(form) {
         try {
           const result = await handleSubmit(form);
-
           // TODO: check result
 
           const remoteErrors = []; // your API call goes here
@@ -108,16 +108,13 @@ export function LinkForm({
             return { status: "fail", errors: remoteErrors };
           }
 
-          console.log("hello~");
-          makeCleanFields();
-
-          return submitSuccess();
-          //return {status: 'success'};
+          return { status: "success" };
         } catch (err) {
           console.warn(err);
           return { status: "fail", errors: remoteErrors };
         }
       },
+      makeCleanAfterSubmit: true,
     });
 
   const errorBanner =
