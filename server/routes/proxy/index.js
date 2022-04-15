@@ -22,7 +22,7 @@ export default function appProxyRoutes(app) {
       const { db } = req;
       const shop = req.headers && req.headers["x-shop-domain"];
       const shopifyRequestId = req.headers && req.headers["x-request-id"];
-      const { order, customer, products} = req.query;
+      const { order, customer, products } = req.query;
 
       if (!order && !products && !customer && shop) {
         res.redirect(`https://${shop}`);
@@ -87,6 +87,10 @@ export default function appProxyRoutes(app) {
       const shop = req.headers && req.headers["x-shop-domain"];
       const shopifyRequestId = req.headers && req.headers["x-request-id"];
       const linkAlias = req.params.alias;
+      
+      // Detect QR Scan vs Link click
+      const scan = req.query.scan;
+      const eventType = scan ? "scans" : "clicks";
 
       try {
         const link = await db.collection("links").findOne({
