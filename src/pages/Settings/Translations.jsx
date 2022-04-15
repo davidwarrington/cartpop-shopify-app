@@ -22,7 +22,7 @@ const SettingsTranslationsPage = () => {
           { content: "Settings", url: "/settings" },
         ]}
       />
-      <Card sectioned>Translations...</Card>
+      <Card sectioned>Coming soon!</Card>
     </Page>
   );
 };
