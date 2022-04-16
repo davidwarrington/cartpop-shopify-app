@@ -395,7 +395,7 @@ export function CheckoutLinkCard({
                       </Tooltip>
                     </TextStyle>
                   </Stack>
-                  <Stack spacing="none">
+                  {/* <Stack spacing="none">
                     <Icon source={TickSmallMinor} color="success" />{" "}
                     <TextStyle>
                       <Tooltip content="Link customers straight to checkout with subscription products.">
@@ -412,7 +412,7 @@ export function CheckoutLinkCard({
                     <Stack.Item>
                       <Badge>Coming soon</Badge>
                     </Stack.Item>
-                  </Stack>
+                  </Stack> */}
                 </Stack>
               </Stack>
             }
