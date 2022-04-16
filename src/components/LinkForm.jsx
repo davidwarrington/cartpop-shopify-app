@@ -15,6 +15,7 @@ import {
   DisplayText,
   Subheading,
   Icon,
+  ProgressBar,
 } from "@shopify/polaris";
 import {
   CircleTickMajor,
@@ -40,6 +41,7 @@ import { ProductsCard } from "./ProductsCard";
 import SaveBar from "./SaveBar";
 import { RequireSubscription } from "./RequireSubscription";
 import { useShop } from "../core/ShopProvider";
+import { LinkAnalytics } from "./LinkAnalytics";
 
 export function LinkForm({
   newForm,
@@ -267,124 +269,8 @@ export function LinkForm({
                 </Card>
               </RequireSubscription>
             ) : null}
-            {(!newForm && fields.active.value) ||
-            (link.analytics &&
-              (link.analytics.clicks || link.analytics.scans)) ? (
-              <Card
-                title={
-                  <Stack distribution="equalSpacing" alignment="center">
-                    <Heading>Analytics</Heading>
-                    <TextStyle variation="subdued">All time</TextStyle>
-                  </Stack>
-                }
-              >
-                <Card.Section>
-                  <Stack distribution="fillEvenly">
-                    <Stack vertical spacing="tight">
-                      <Tooltip
-                        subheading
-                        content="Any time a link is accessed, it counts as a click."
-                      >
-                        Clicks
-                      </Tooltip>
-
-                      <Stack vertical spacing="extraTight">
-                        <Stack alignment="center">
-                          <Icon source={MobileMajor} color="subdued" />
-                          <DisplayText size="small">
-                            {(link.analytics &&
-                              link.analytics.clicks &&
-                              link.analytics.clicks.mobile) ||
-                              0}
-                          </DisplayText>
-                        </Stack>
-
-                        <Stack alignment="center">
-                          <Icon source={DesktopMajor} color="subdued" />
-                          <DisplayText size="small">
-                            {(link.analytics &&
-                              link.analytics.clicks &&
-                              link.analytics.clicks.desktop) ||
-                              0}
-                          </DisplayText>
-                        </Stack>
-                      </Stack>
-                    </Stack>
-                    <Stack vertical spacing="extraTight">
-                      <Tooltip
-                        subheading
-                        content="Links scanned via QR Code will register as a scan rather than a click."
-                      >
-                        Scans
-                      </Tooltip>
-                      <Stack vertical spacing="extraTight">
-                        <Stack alignment="center">
-                          <Icon source={MobileMajor} color="subdued" />
-                          <DisplayText size="small">
-                            {(link.analytics &&
-                              link.analytics.scans &&
-                              link.analytics.scans.mobile) ||
-                              0}
-                          </DisplayText>
-                        </Stack>
-
-                        <Stack alignment="center">
-                          <Icon source={DesktopMajor} color="subdued" />
-                          <DisplayText size="small">
-                            {(link.analytics &&
-                              link.analytics.scans &&
-                              link.analytics.scans.desktop) ||
-                              0}
-                          </DisplayText>
-                        </Stack>
-                      </Stack>
-                    </Stack>
-                    {hasSubscription ? null : (
-                      <Banner
-                        status="info"
-                        action={{
-                          url: "/settings/billing",
-                          content: "Learn more",
-                        }}
-                      >
-                        Link analytics require upgrading to{" "}
-                        <TextStyle variation="strong">PRO</TextStyle>.
-                      </Banner>
-                    )}
-                  </Stack>
-                </Card.Section>
-                {/* <Card.Section
-                  title={
-                    <Tooltip
-                      subheading
-                      content="If a customer converts from a link, it will count as an order."
-                    >
-                      Orders
-                    </Tooltip>
-                  }
-                >
-                  <DisplayText size="small">
-                    {link.analytics && link.analytics.orders || 0}
-                  </DisplayText>
-                </Card.Section>
-                <Card.Section
-                  title={
-                    <Tooltip
-                      subheading
-                      content="Total revenue generated from link."
-                    >
-                      Revenue
-                    </Tooltip>
-                  }
-                >
-                  <DisplayText size="small">
-                    {link.analytics && link.analytics.revenue || 0}
-                  </DisplayText>
-                </Card.Section> */}
-                {/* <Card.Section subdued>
-                  <Link>Learn more about analytics</Link>
-                </Card.Section> */}
-              </Card>
+            {!newForm && fields.active.value ? (
+              <LinkAnalytics link={link} hasSubscription={hasSubscription} />
             ) : null}
             {newForm ? (
               <Stack vertical alignment="center">
