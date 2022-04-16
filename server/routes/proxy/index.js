@@ -36,7 +36,11 @@ export default function appProxyRoutes(app) {
         res.status(200).send(`{% layout none %} 
         <html>
           <head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
             <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-${randomId}-160" media="all" />
+            <meta name="shopify-x-request-id" content="${shopifyRequestId}">
           </head>
           <body>
             <script>
