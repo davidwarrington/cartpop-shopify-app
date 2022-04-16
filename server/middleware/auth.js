@@ -4,6 +4,7 @@ import topLevelAuthRedirect from "../helpers/top-level-auth-redirect.js";
 
 const GET_SHOP_DATA = `{
   shop {
+    id
     name
 		ianaTimezone
     email
