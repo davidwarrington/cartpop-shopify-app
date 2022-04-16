@@ -13,8 +13,15 @@ import {
   Link,
   Banner,
   DisplayText,
+  Subheading,
+  Icon,
 } from "@shopify/polaris";
-import { CircleTickMajor } from "@shopify/polaris-icons";
+import {
+  CircleTickMajor,
+  DesktopMajor,
+  MobileMajor,
+  PhoneInMajor,
+} from "@shopify/polaris-icons";
 import {
   useField,
   lengthLessThan,
@@ -84,40 +91,39 @@ export function LinkForm({
     attributes: useDynamicList([], () => ({ label: "", value: "" })),
   };
 
-  const { fields, submit, submitting, dirty, reset, submitErrors, makeClean } =
-    useForm({
-      fields: {
-        active: useField(link.active || false),
-        alias: useField({
-          value: link.alias,
-          validates: newForm ? [] : [notEmpty("Link alias is required")],
-        }),
-        name: useField({
-          value: link.name || "",
-          validates: [notEmpty("Link name is required")],
-        }),
-        products,
-        customer,
-        order,
-      },
-      async onSubmit(form) {
-        try {
-          const result = await handleSubmit(form);
-          // TODO: check result
+  const { fields, submit, submitting, dirty, reset, submitErrors } = useForm({
+    fields: {
+      active: useField(link.active || false),
+      alias: useField({
+        value: link.alias,
+        validates: newForm ? [] : [notEmpty("Link alias is required")],
+      }),
+      name: useField({
+        value: link.name || "",
+        validates: [notEmpty("Link name is required")],
+      }),
+      products,
+      customer,
+      order,
+    },
+    async onSubmit(form) {
+      try {
+        const result = await handleSubmit(form);
+        // TODO: check result
 
-          const remoteErrors = []; // your API call goes here
-          if (remoteErrors.length > 0) {
-            return { status: "fail", errors: remoteErrors };
-          }
-
-          return { status: "success" };
-        } catch (err) {
-          console.warn(err);
+        const remoteErrors = []; // your API call goes here
+        if (remoteErrors.length > 0) {
           return { status: "fail", errors: remoteErrors };
         }
-      },
-      makeCleanAfterSubmit: true,
-    });
+
+        return { status: "success" };
+      } catch (err) {
+        console.warn(err);
+        return { status: "fail", errors: remoteErrors };
+      }
+    },
+    makeCleanAfterSubmit: true,
+  });
 
   const errorBanner =
     submitErrors.length > 0 ? (
@@ -274,16 +280,35 @@ export function LinkForm({
               >
                 <Card.Section>
                   <Stack distribution="fillEvenly">
-                    <Stack vertical spacing="extraTight">
+                    <Stack vertical spacing="tight">
                       <Tooltip
                         subheading
                         content="Any time a link is accessed, it counts as a click."
                       >
                         Clicks
                       </Tooltip>
-                      <DisplayText size="small">
-                        {(link.analytics && link.analytics.clicks) || 0}
-                      </DisplayText>
+
+                      <Stack vertical spacing="extraTight">
+                        <Stack alignment="center">
+                          <Icon source={MobileMajor} color="subdued" />
+                          <DisplayText size="small">
+                            {(link.analytics &&
+                              link.analytics.clicks &&
+                              link.analytics.clicks.mobile) ||
+                              0}
+                          </DisplayText>
+                        </Stack>
+
+                        <Stack alignment="center">
+                          <Icon source={DesktopMajor} color="subdued" />
+                          <DisplayText size="small">
+                            {(link.analytics &&
+                              link.analytics.clicks &&
+                              link.analytics.clicks.desktop) ||
+                              0}
+                          </DisplayText>
+                        </Stack>
+                      </Stack>
                     </Stack>
                     <Stack vertical spacing="extraTight">
                       <Tooltip
@@ -292,9 +317,27 @@ export function LinkForm({
                       >
                         Scans
                       </Tooltip>
-                      <DisplayText size="small">
-                        {(link.analytics && link.analytics.scans) || 0}
-                      </DisplayText>
+                      <Stack vertical spacing="extraTight">
+                        <Stack alignment="center">
+                          <Icon source={MobileMajor} color="subdued" />
+                          <DisplayText size="small">
+                            {(link.analytics &&
+                              link.analytics.scans &&
+                              link.analytics.scans.mobile) ||
+                              0}
+                          </DisplayText>
+                        </Stack>
+
+                        <Stack alignment="center">
+                          <Icon source={DesktopMajor} color="subdued" />
+                          <DisplayText size="small">
+                            {(link.analytics &&
+                              link.analytics.scans &&
+                              link.analytics.scans.desktop) ||
+                              0}
+                          </DisplayText>
+                        </Stack>
+                      </Stack>
                     </Stack>
                     {hasSubscription ? null : (
                       <Banner
