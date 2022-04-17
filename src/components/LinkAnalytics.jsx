@@ -1,4 +1,5 @@
 import {
+  Banner,
   Card,
   DisplayText,
   Heading,
@@ -8,6 +9,7 @@ import {
   TextStyle,
 } from "@shopify/polaris";
 import { DesktopMajor, MobileMajor } from "@shopify/polaris-icons";
+import { roundTwoPlaces } from "../helpers";
 import { Tooltip } from "./Tooltip";
 
 export function LinkAnalytics({ link, hasSubscription }) {
@@ -68,7 +70,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
                   <DisplayText size="small">{clicks.mobile}</DisplayText>
                   {clicks.total ? (
                     <TextStyle>
-                      ({(clicks.mobile / clicks.total) * 100}%)
+                      ({roundTwoPlaces((clicks.mobile / clicks.total) * 100)}%)
                     </TextStyle>
                   ) : null}
                 </Stack>
@@ -85,7 +87,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
                   <DisplayText size="small">{clicks.desktop}</DisplayText>
                   {clicks.total ? (
                     <TextStyle>
-                      ({(clicks.desktop / clicks.total) * 100}%)
+                      ({roundTwoPlaces((clicks.desktop / clicks.total) * 100)}%)
                     </TextStyle>
                   ) : null}
                 </Stack>
@@ -121,7 +123,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
                   <DisplayText size="small">{scans.mobile}</DisplayText>
                   {scans.total ? (
                     <TextStyle>
-                      ({(scans.mobile / scans.total) * 100}%)
+                      ({roundTwoPlaces((scans.mobile / scans.total) * 100)}%)
                     </TextStyle>
                   ) : null}
                 </Stack>
@@ -138,7 +140,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
                   <DisplayText size="small">{scans.desktop}</DisplayText>
                   {scans.total ? (
                     <TextStyle>
-                      ({(scans.desktop / scans.total) * 100}%)
+                      ({roundTwoPlaces((scans.desktop / scans.total) * 100)}%)
                     </TextStyle>
                   ) : null}
                 </Stack>
