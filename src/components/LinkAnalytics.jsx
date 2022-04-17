@@ -53,40 +53,48 @@ export function LinkAnalytics({ link, hasSubscription }) {
           </Tooltip>
         }
       >
-        <br />
-        <Stack distribution="fillEvenly" vertical>
-          <Stack alignment="center" distribution="fillEvenly">
-            <Stack alignment="center" spacing="extraTight">
-              <Icon source={MobileMajor} color="subdued" />
-              <Subheading>
-                <TextStyle variation="subdued">Mobile</TextStyle>
-              </Subheading>
-            </Stack>
-            <Stack alignment="center" spacing="tight">
-              <DisplayText size="small">{clicks.mobile}</DisplayText>
-              {clicks.total ? (
-                <TextStyle>({(clicks.mobile / clicks.total) * 100}%)</TextStyle>
-              ) : null}
-            </Stack>
-          </Stack>
+        {clicks.total ? (
+          <>
+            <br />
+            <Stack distribution="fillEvenly" vertical>
+              <Stack alignment="center" distribution="fillEvenly">
+                <Stack alignment="center" spacing="extraTight">
+                  <Icon source={MobileMajor} color="subdued" />
+                  <Subheading>
+                    <TextStyle variation="subdued">Mobile</TextStyle>
+                  </Subheading>
+                </Stack>
+                <Stack alignment="center" spacing="tight">
+                  <DisplayText size="small">{clicks.mobile}</DisplayText>
+                  {clicks.total ? (
+                    <TextStyle>
+                      ({(clicks.mobile / clicks.total) * 100}%)
+                    </TextStyle>
+                  ) : null}
+                </Stack>
+              </Stack>
 
-          <Stack alignment="center" distribution="fillEvenly">
-            <Stack alignment="center" spacing="extraTight">
-              <Icon source={DesktopMajor} color="subdued" />
-              <Subheading>
-                <TextStyle variation="subdued">Desktop</TextStyle>
-              </Subheading>
+              <Stack alignment="center" distribution="fillEvenly">
+                <Stack alignment="center" spacing="extraTight">
+                  <Icon source={DesktopMajor} color="subdued" />
+                  <Subheading>
+                    <TextStyle variation="subdued">Desktop</TextStyle>
+                  </Subheading>
+                </Stack>
+                <Stack alignment="center" spacing="tight">
+                  <DisplayText size="small">{clicks.desktop}</DisplayText>
+                  {clicks.total ? (
+                    <TextStyle>
+                      ({(clicks.desktop / clicks.total) * 100}%)
+                    </TextStyle>
+                  ) : null}
+                </Stack>
+              </Stack>
             </Stack>
-            <Stack alignment="center" spacing="tight">
-              <DisplayText size="small">{clicks.desktop}</DisplayText>
-              {clicks.total ? (
-                <TextStyle>
-                  ({(clicks.desktop / clicks.total) * 100}%)
-                </TextStyle>
-              ) : null}
-            </Stack>
-          </Stack>
-        </Stack>
+          </>
+        ) : (
+          <DisplayText size="small">0</DisplayText>
+        )}
       </Card.Section>
       <Card.Section
         title={
@@ -98,38 +106,48 @@ export function LinkAnalytics({ link, hasSubscription }) {
           </Tooltip>
         }
       >
-        <br />
-        <Stack distribution="fillEvenly" vertical>
-          <Stack alignment="center" distribution="fillEvenly">
-            <Stack alignment="center" spacing="extraTight">
-              <Icon source={MobileMajor} color="subdued" />
-              <Subheading>
-                <TextStyle variation="subdued">Mobile</TextStyle>
-              </Subheading>
-            </Stack>
-            <Stack alignment="center" spacing="tight">
-              <DisplayText size="small">{scans.mobile}</DisplayText>
-              {scans.total ? (
-                <TextStyle>({(scans.mobile / scans.total) * 100}%)</TextStyle>
-              ) : null}
-            </Stack>
-          </Stack>
+        {scans.total ? (
+          <>
+            <br />
+            <Stack distribution="fillEvenly" vertical>
+              <Stack alignment="center" distribution="fillEvenly">
+                <Stack alignment="center" spacing="extraTight">
+                  <Icon source={MobileMajor} color="subdued" />
+                  <Subheading>
+                    <TextStyle variation="subdued">Mobile</TextStyle>
+                  </Subheading>
+                </Stack>
+                <Stack alignment="center" spacing="tight">
+                  <DisplayText size="small">{scans.mobile}</DisplayText>
+                  {scans.total ? (
+                    <TextStyle>
+                      ({(scans.mobile / scans.total) * 100}%)
+                    </TextStyle>
+                  ) : null}
+                </Stack>
+              </Stack>
 
-          <Stack alignment="center" distribution="fillEvenly">
-            <Stack alignment="center" spacing="extraTight">
-              <Icon source={DesktopMajor} color="subdued" />
-              <Subheading>
-                <TextStyle variation="subdued">Desktop</TextStyle>
-              </Subheading>
+              <Stack alignment="center" distribution="fillEvenly">
+                <Stack alignment="center" spacing="extraTight">
+                  <Icon source={DesktopMajor} color="subdued" />
+                  <Subheading>
+                    <TextStyle variation="subdued">Desktop</TextStyle>
+                  </Subheading>
+                </Stack>
+                <Stack alignment="center" spacing="tight">
+                  <DisplayText size="small">{scans.desktop}</DisplayText>
+                  {scans.total ? (
+                    <TextStyle>
+                      ({(scans.desktop / scans.total) * 100}%)
+                    </TextStyle>
+                  ) : null}
+                </Stack>
+              </Stack>
             </Stack>
-            <Stack alignment="center" spacing="tight">
-              <DisplayText size="small">{scans.desktop}</DisplayText>
-              {scans.total ? (
-                <TextStyle>({(scans.desktop / scans.total) * 100}%)</TextStyle>
-              ) : null}
-            </Stack>
-          </Stack>
-        </Stack>
+          </>
+        ) : (
+          <DisplayText size="small">0</DisplayText>
+        )}
       </Card.Section>
       <Card.Section
         title={
@@ -142,7 +160,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
         }
       >
         {/* Track order total, desktop vs mobile, and conversion % based on total clicks and orders placed */}
-        Coming soon.
+        <TextStyle variation="subdued">Coming soon.</TextStyle>
       </Card.Section>
       <Card.Section
         title={
@@ -155,7 +173,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
         }
       >
         {/* Track revenue based on currency code. Support multi-currency. */}
-        Coming soon.
+        <TextStyle variation="subdued">Coming soon.</TextStyle>
       </Card.Section>
       {/* Referral sources? Countries? Languages? */}
       {hasSubscription ? null : (
