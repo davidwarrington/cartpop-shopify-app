@@ -9,6 +9,7 @@ const GET_SHOP_DATA = `{
 		ianaTimezone
     email
     url
+    currencyCode
     primaryDomain {
       url
       sslEnabled
@@ -17,7 +18,7 @@ const GET_SHOP_DATA = `{
       displayName
       partnerDevelopment
       shopifyPlus
-    }    
+    }
   }
 }`;
 
