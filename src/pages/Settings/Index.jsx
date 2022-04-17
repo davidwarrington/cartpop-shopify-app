@@ -57,7 +57,7 @@ const SettingsPage = () => {
     <Page
       breadcrumbs={[{ content: "Dashboard", url: "/" }]}
       title="Settings"
-      narrowWidth
+      //narrowWidth
     >
       <TitleBar
         title="Settings"

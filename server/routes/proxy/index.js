@@ -1,3 +1,5 @@
+import { translationMetafield } from "../../constants.js";
+import { defaultTranslations } from "../../default-translations.js";
 import { generatedCheckoutLink } from "../../helpers/app-proxy.js";
 import verifyAppProxyExtensionSignatureMiddleware from "../../middleware/verify-app-proxy.js";
 
@@ -22,6 +24,11 @@ export default function appProxyRoutes(app) {
       const { db } = req;
       const shop = req.headers && req.headers["x-shop-domain"];
       const shopifyRequestId = req.headers && req.headers["x-request-id"];
+      const acceptLanguage =
+        req.headers &&
+        req.headers["accept-language"] &&
+        req.headers["accept-language"].split(",")[0];
+      const isMobile = req.headers && req.headers["x-is-mobile"];
       const { order, customer, products } = req.query;
 
       if (!order && !products && !customer && shop) {
@@ -34,19 +41,26 @@ export default function appProxyRoutes(app) {
 
         res.set("Content-Type", "application/liquid");
         res.status(200).send(`{% layout none %} 
-        <html>
+        <html lang="{{ request.locale.iso_code }}">
           <head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
             <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-${randomId}-160" media="all" />
+            <meta name="shopify-x-request-id" content="${shopifyRequestId}">
           </head>
           <body>
             <script>
-              const isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|webOS|BlackBerry|IEMobile|Opera Mini)/i);
-              
-              if (isMobile) {
-                console.log("mobile");
-              } else {
-                console.log("desktop");
-              }
+              const isMobile = ${isMobile};
+              const languageCode = "{{ request.locale.iso_code }}";
+              const defaultTranslations = ${JSON.stringify(
+                defaultTranslations
+              )};
+              const translations = {{ shop.metafields.${
+                translationMetafield.namespace
+              }.${translationMetafield.key}.value | json }};
+              console.log("defaultTranslations", defaultTranslations)
+              console.log("translations", translations)
             </script>
             <div class="full-page-overlay">
               <div class="full-page-overlay__wrap">
@@ -58,9 +72,19 @@ export default function appProxyRoutes(app) {
                   <div id="full-page-overlay__processing-text">
                     <svg class="icon-svg icon-svg--color-accent icon-svg--size-64 icon-svg--spinner full-page-overlay__icon" xmlns="http://www.w3.org/2000/svg" viewBox="-270 364 66 66"><path d="M-237 428c-17.1 0-31-13.9-31-31s13.9-31 31-31v-2c-18.2 0-33 14.8-33 33s14.8 33 33 33 33-14.8 33-33h-2c0 17.1-13.9 31-31 31z"></path></svg>
                     <h3 class="full-page-overlay__title">
-                      Loading checkout
+                      {{ shop.metafields.${translationMetafield.namespace}.${
+          translationMetafield.key
+        }.value[${acceptLanguage}].loading_title | default: "${
+          defaultTranslations[acceptLanguage].loading_title
+        }" }}
                     </h3>
-                    <p class="full-page-overlay__text">Please wait while we load your checkout.</p>
+                    <p class="full-page-overlay__text">{{ shop.metafields.${
+                      translationMetafield.namespace
+                    }.${
+          translationMetafield.key
+        }.value[request.locale.iso_code].loading_message | default: "${
+          defaultTranslations[acceptLanguage].loading_message
+        }" }}</p>
                     <!-- <p class="full-page-overlay__text"> If you’re not automatically redirected, <a href="?from_processing_page=1">refresh this page</a>. </p> -->
                   </div>
                 </div>
@@ -112,6 +136,8 @@ export default function appProxyRoutes(app) {
       const { db } = req;
       const shop = req.headers && req.headers["x-shop-domain"];
       const shopifyRequestId = req.headers && req.headers["x-request-id"];
+      const acceptLanguage = req.headers && req.headers["accept-language"];
+      const isMobile = req.headers && req.headers["x-is-mobile"];
       const linkAlias = req.params.alias;
 
       // Detect QR Scan vs Link click
@@ -136,8 +162,9 @@ export default function appProxyRoutes(app) {
           },
           {
             $inc: {
-              [`analytics.${eventType}`]: 1,
-              // TODO: track mobile vs desktop
+              [`analytics.${eventType}.${
+                parseInt(isMobile) ? "mobile" : "desktop"
+              }`]: 1,
             },
           },
           true

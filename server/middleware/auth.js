@@ -4,10 +4,12 @@ import topLevelAuthRedirect from "../helpers/top-level-auth-redirect.js";
 
 const GET_SHOP_DATA = `{
   shop {
+    id
     name
 		ianaTimezone
     email
     url
+    currencyCode
     primaryDomain {
       url
       sslEnabled
@@ -16,7 +18,7 @@ const GET_SHOP_DATA = `{
       displayName
       partnerDevelopment
       shopifyPlus
-    }    
+    }
   }
 }`;
 
