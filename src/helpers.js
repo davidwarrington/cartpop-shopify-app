@@ -31,10 +31,17 @@ export function userLoggedInFetch(app) {
       );
 
       const redirect = Redirect.create(app);
-      redirect.dispatch(Redirect.Action.APP, authUrlHeader || `/auth`);
+      redirect.dispatch(
+        Redirect.Action.REMOTE,
+        process.env.HOST + authUrlHeader || `${process.env.HOST}/auth`
+      );
       return null;
     }
 
     return response;
   };
 }
+
+export const roundTwoPlaces = (value) => {
+  return Math.round((value + Number.EPSILON) * 100) / 100;
+};
