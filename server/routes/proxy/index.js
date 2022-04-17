@@ -24,7 +24,10 @@ export default function appProxyRoutes(app) {
       const { db } = req;
       const shop = req.headers && req.headers["x-shop-domain"];
       const shopifyRequestId = req.headers && req.headers["x-request-id"];
-      //const acceptLanguage = req.headers && req.headers["accept-language"];
+      const acceptLanguage =
+        req.headers &&
+        req.headers["accept-language"] &&
+        req.headers["accept-language"].split(",")[0];
       const isMobile = req.headers && req.headers["x-is-mobile"];
       const { order, customer, products } = req.query;
 
@@ -71,13 +74,17 @@ export default function appProxyRoutes(app) {
                     <h3 class="full-page-overlay__title">
                       {{ shop.metafields.${translationMetafield.namespace}.${
           translationMetafield.key
-        }.value[{{ request.locale.iso_code }}].loading_title }}
+        }.value[${acceptLanguage}].loading_title | default: "${
+          defaultTranslations[acceptLanguage].loading_title
+        }" }}
                     </h3>
                     <p class="full-page-overlay__text">{{ shop.metafields.${
                       translationMetafield.namespace
                     }.${
           translationMetafield.key
-        }.value[{{ request.locale.iso_code }}].loading_message }}</p>
+        }.value[request.locale.iso_code].loading_message | default: "${
+          defaultTranslations[acceptLanguage].loading_message
+        }" }}</p>
                     <!-- <p class="full-page-overlay__text"> If you’re not automatically redirected, <a href="?from_processing_page=1">refresh this page</a>. </p> -->
                   </div>
                 </div>
