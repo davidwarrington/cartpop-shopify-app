@@ -6,7 +6,7 @@ import crypto from "crypto";
     Learn more: https://help.shopify.com/en/manual/products/details/checkout-link
 */
 export const generatedCheckoutLink = ({ shop, link }) => {
-  if (!shop || !link) return null;
+  if (!link) return null;
 
   const { products, customer, order } = link;
 
@@ -95,11 +95,8 @@ export const generatedCheckoutLink = ({ shop, link }) => {
   }
 
   // Create full url
-  let checkoutUrl = `https://${shop.replace(
-    "https://",
-    ""
-  )}/cart/${productString}?${urlParameters}`;
-
+  let checkoutUrl = shop ? `https://${shop.replace("https://", "")}` : "";
+  checkoutUrl += `/cart/${productString}?${urlParameters}`;
   return checkoutUrl;
 };
 
@@ -129,4 +126,21 @@ export const verifyAppProxyExtensionSignature = (
     digest.length === checksum.length &&
     crypto.timingSafeEqual(digest, checksum)
   );
+};
+
+export const getHeaders = (req) => {
+  const locale =
+    req.headers &&
+    req.headers["accept-language"] &&
+    req.headers["accept-language"].split(",")[0];
+  const shopifyRequestId = req.headers && req.headers["x-request-id"];
+  const isMobile = req.headers && req.headers["x-is-mobile"];
+  const shop = req.headers && req.headers["x-shop-domain"];
+
+  return {
+    isMobile,
+    shopifyRequestId,
+    locale,
+    shop,
+  };
 };
