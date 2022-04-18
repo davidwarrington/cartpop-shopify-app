@@ -123,6 +123,9 @@ const SettingsTranslationsPage = () => {
     );
   }
 
+  console.log("defaultTranslations", defaultTranslations);
+  console.log("locale", locale);
+
   return (
     <Page
       breadcrumbs={pageBreadcrumbs}
@@ -148,31 +151,33 @@ const SettingsTranslationsPage = () => {
           </Card.Section>
           <Card.Section>
             <FormLayout>
-              {Object.keys(defaultTranslations[locale]).map(
-                (translationKey) => (
-                  <TextField
-                    key={translationKey}
-                    autoComplete="off"
-                    label={capitalize(translationKey.replaceAll("_", " "))}
-                    placeholder={defaultTranslations[locale][translationKey]}
-                    value={
-                      translations &&
-                      translations[locale] &&
-                      translations[locale][translationKey]
-                    }
-                    onChange={(value) =>
-                      handleChangeTranslation({ key: translationKey, value })
-                    }
-                    clearButton
-                    onClearButtonClick={() =>
-                      handleChangeTranslation({
-                        key: translationKey,
-                        value: null,
-                      })
-                    }
-                  />
-                )
-              )}
+              {defaultTranslations &&
+                defaultTranslations[locale] &&
+                Object.keys(defaultTranslations[locale]).map(
+                  (translationKey) => (
+                    <TextField
+                      key={translationKey}
+                      autoComplete="off"
+                      label={capitalize(translationKey.replaceAll("_", " "))}
+                      placeholder={defaultTranslations[locale][translationKey]}
+                      value={
+                        translations &&
+                        translations[locale] &&
+                        translations[locale][translationKey]
+                      }
+                      onChange={(value) =>
+                        handleChangeTranslation({ key: translationKey, value })
+                      }
+                      clearButton
+                      onClearButtonClick={() =>
+                        handleChangeTranslation({
+                          key: translationKey,
+                          value: null,
+                        })
+                      }
+                    />
+                  )
+                )}
               {/* <PageActions primaryAction={{
                         content: "Save",
                         onAction: handleSubmit,
