@@ -56,44 +56,50 @@ export function LinkAnalytics({ link, hasSubscription }) {
         }
       >
         {clicks.total ? (
-          <>
-            <br />
-            <Stack distribution="fillEvenly" vertical>
-              <Stack alignment="center" distribution="fillEvenly">
-                <Stack alignment="center" spacing="extraTight">
-                  <Icon source={MobileMajor} color="subdued" />
-                  <Subheading>
-                    <TextStyle variation="subdued">Mobile</TextStyle>
-                  </Subheading>
+          <Stack vertical spacing="extraTight">
+            <Card.Subsection>
+              <DisplayText size="small">{clicks.total}</DisplayText>
+            </Card.Subsection>
+            <Card subdued sectioned>
+              <Stack distribution="fillEvenly" vertical spacing="extraTight">
+                <Stack alignment="center" distribution="fillEvenly">
+                  <Stack alignment="center" spacing="extraTight">
+                    <Icon source={MobileMajor} color="subdued" />
+                    <Subheading>
+                      <TextStyle variation="subdued">Mobile</TextStyle>
+                    </Subheading>
+                  </Stack>
+                  <Stack alignment="center" spacing="tight">
+                    <DisplayText size="small">{clicks.mobile}</DisplayText>
+                    {clicks.total ? (
+                      <TextStyle>
+                        ({roundTwoPlaces((clicks.mobile / clicks.total) * 100)}
+                        %)
+                      </TextStyle>
+                    ) : null}
+                  </Stack>
                 </Stack>
-                <Stack alignment="center" spacing="tight">
-                  <DisplayText size="small">{clicks.mobile}</DisplayText>
-                  {clicks.total ? (
-                    <TextStyle>
-                      ({roundTwoPlaces((clicks.mobile / clicks.total) * 100)}%)
-                    </TextStyle>
-                  ) : null}
-                </Stack>
-              </Stack>
 
-              <Stack alignment="center" distribution="fillEvenly">
-                <Stack alignment="center" spacing="extraTight">
-                  <Icon source={DesktopMajor} color="subdued" />
-                  <Subheading>
-                    <TextStyle variation="subdued">Desktop</TextStyle>
-                  </Subheading>
-                </Stack>
-                <Stack alignment="center" spacing="tight">
-                  <DisplayText size="small">{clicks.desktop}</DisplayText>
-                  {clicks.total ? (
-                    <TextStyle>
-                      ({roundTwoPlaces((clicks.desktop / clicks.total) * 100)}%)
-                    </TextStyle>
-                  ) : null}
+                <Stack alignment="center" distribution="fillEvenly">
+                  <Stack alignment="center" spacing="extraTight">
+                    <Icon source={DesktopMajor} color="subdued" />
+                    <Subheading>
+                      <TextStyle variation="subdued">Desktop</TextStyle>
+                    </Subheading>
+                  </Stack>
+                  <Stack alignment="center" spacing="tight">
+                    <DisplayText size="small">{clicks.desktop}</DisplayText>
+                    {clicks.total ? (
+                      <TextStyle>
+                        ({roundTwoPlaces((clicks.desktop / clicks.total) * 100)}
+                        %)
+                      </TextStyle>
+                    ) : null}
+                  </Stack>
                 </Stack>
               </Stack>
-            </Stack>
-          </>
+            </Card>
+          </Stack>
         ) : (
           <DisplayText size="small">0</DisplayText>
         )}
@@ -109,44 +115,46 @@ export function LinkAnalytics({ link, hasSubscription }) {
         }
       >
         {scans.total ? (
-          <>
-            <br />
-            <Stack distribution="fillEvenly" vertical>
-              <Stack alignment="center" distribution="fillEvenly">
-                <Stack alignment="center" spacing="extraTight">
-                  <Icon source={MobileMajor} color="subdued" />
-                  <Subheading>
-                    <TextStyle variation="subdued">Mobile</TextStyle>
-                  </Subheading>
+          <Stack vertical spacing="extraTight">
+            <DisplayText size="small">{scans.total}</DisplayText>
+            <Card subdued sectioned>
+              <Stack distribution="fillEvenly" vertical spacing="extraTight">
+                <Stack alignment="center" distribution="fillEvenly">
+                  <Stack alignment="center" spacing="extraTight">
+                    <Icon source={MobileMajor} color="subdued" />
+                    <Subheading>
+                      <TextStyle variation="subdued">Mobile</TextStyle>
+                    </Subheading>
+                  </Stack>
+                  <Stack alignment="center" spacing="tight">
+                    <DisplayText size="small">{scans.mobile}</DisplayText>
+                    {scans.total ? (
+                      <TextStyle>
+                        ({roundTwoPlaces((scans.mobile / scans.total) * 100)}%)
+                      </TextStyle>
+                    ) : null}
+                  </Stack>
                 </Stack>
-                <Stack alignment="center" spacing="tight">
-                  <DisplayText size="small">{scans.mobile}</DisplayText>
-                  {scans.total ? (
-                    <TextStyle>
-                      ({roundTwoPlaces((scans.mobile / scans.total) * 100)}%)
-                    </TextStyle>
-                  ) : null}
-                </Stack>
-              </Stack>
 
-              <Stack alignment="center" distribution="fillEvenly">
-                <Stack alignment="center" spacing="extraTight">
-                  <Icon source={DesktopMajor} color="subdued" />
-                  <Subheading>
-                    <TextStyle variation="subdued">Desktop</TextStyle>
-                  </Subheading>
-                </Stack>
-                <Stack alignment="center" spacing="tight">
-                  <DisplayText size="small">{scans.desktop}</DisplayText>
-                  {scans.total ? (
-                    <TextStyle>
-                      ({roundTwoPlaces((scans.desktop / scans.total) * 100)}%)
-                    </TextStyle>
-                  ) : null}
+                <Stack alignment="center" distribution="fillEvenly">
+                  <Stack alignment="center" spacing="extraTight">
+                    <Icon source={DesktopMajor} color="subdued" />
+                    <Subheading>
+                      <TextStyle variation="subdued">Desktop</TextStyle>
+                    </Subheading>
+                  </Stack>
+                  <Stack alignment="center" spacing="tight">
+                    <DisplayText size="small">{scans.desktop}</DisplayText>
+                    {scans.total ? (
+                      <TextStyle>
+                        ({roundTwoPlaces((scans.desktop / scans.total) * 100)}%)
+                      </TextStyle>
+                    ) : null}
+                  </Stack>
                 </Stack>
               </Stack>
-            </Stack>
-          </>
+            </Card>
+          </Stack>
         ) : (
           <DisplayText size="small">0</DisplayText>
         )}

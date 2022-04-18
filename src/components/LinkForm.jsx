@@ -256,7 +256,9 @@ export function LinkForm({
                     id="enabled"
                     name="visibility"
                     checked={fields.active.value}
-                    onChange={() => active.onChange(!fields.active.value)}
+                    onChange={() =>
+                      fields.active.onChange(!fields.active.value)
+                    }
                   />
                   <RadioButton
                     label="Disabled"
@@ -264,7 +266,9 @@ export function LinkForm({
                     id="disabled"
                     name="visibility"
                     checked={fields.active.value === false}
-                    onChange={() => active.onChange(!fields.active.value)}
+                    onChange={() =>
+                      fields.active.onChange(!fields.active.value)
+                    }
                   />
                 </Card>
               </RequireSubscription>
