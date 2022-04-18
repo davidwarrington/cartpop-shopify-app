@@ -163,6 +163,13 @@ const SettingsTranslationsPage = () => {
                     onChange={(value) =>
                       handleChangeTranslation({ key: translationKey, value })
                     }
+                    clearButton
+                    onClearButtonClick={() =>
+                      handleChangeTranslation({
+                        key: translationKey,
+                        value: null,
+                      })
+                    }
                   />
                 )
               )}
