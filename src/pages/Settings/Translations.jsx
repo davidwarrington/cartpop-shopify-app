@@ -42,8 +42,6 @@ const SettingsTranslationsPage = () => {
         res.json()
       );
 
-      console.log("apiRes", apiRes);
-
       setDefaultTranslations(apiRes.defaultTranslations);
       setTranslations(apiRes.translations);
       setMetafieldId(apiRes.metafieldId);
@@ -153,6 +151,7 @@ const SettingsTranslationsPage = () => {
               {Object.keys(defaultTranslations[locale]).map(
                 (translationKey) => (
                   <TextField
+                    key={translationKey}
                     autoComplete="off"
                     label={capitalize(translationKey.replaceAll("_", " "))}
                     placeholder={defaultTranslations[locale][translationKey]}
