@@ -81,7 +81,6 @@ const SettingsTranslationsPage = () => {
         content: "Saved translations",
       });
 
-      console.log("apiRes", apiRes);
       setPageState(PAGE_STATES.idle);
     } catch (err) {
       setToast({
@@ -123,8 +122,8 @@ const SettingsTranslationsPage = () => {
     );
   }
 
-  console.log("defaultTranslations", defaultTranslations);
-  console.log("locale", locale);
+  const currentTranslations =
+    defaultTranslations[locale] || defaultTranslations["en"];
 
   return (
     <Page
@@ -151,33 +150,29 @@ const SettingsTranslationsPage = () => {
           </Card.Section>
           <Card.Section>
             <FormLayout>
-              {defaultTranslations &&
-                defaultTranslations[locale] &&
-                Object.keys(defaultTranslations[locale]).map(
-                  (translationKey) => (
-                    <TextField
-                      key={translationKey}
-                      autoComplete="off"
-                      label={capitalize(translationKey.replaceAll("_", " "))}
-                      placeholder={defaultTranslations[locale][translationKey]}
-                      value={
-                        translations &&
-                        translations[locale] &&
-                        translations[locale][translationKey]
-                      }
-                      onChange={(value) =>
-                        handleChangeTranslation({ key: translationKey, value })
-                      }
-                      clearButton
-                      onClearButtonClick={() =>
-                        handleChangeTranslation({
-                          key: translationKey,
-                          value: null,
-                        })
-                      }
-                    />
-                  )
-                )}
+              {Object.keys(currentTranslations).map((translationKey) => (
+                <TextField
+                  key={translationKey}
+                  autoComplete="off"
+                  label={capitalize(translationKey.replaceAll("_", " "))}
+                  placeholder={currentTranslations[translationKey]}
+                  value={
+                    translations &&
+                    translations[locale] &&
+                    translations[locale][translationKey]
+                  }
+                  onChange={(value) =>
+                    handleChangeTranslation({ key: translationKey, value })
+                  }
+                  clearButton
+                  onClearButtonClick={() =>
+                    handleChangeTranslation({
+                      key: translationKey,
+                      value: null,
+                    })
+                  }
+                />
+              ))}
               {/* <PageActions primaryAction={{
                         content: "Save",
                         onAction: handleSubmit,
