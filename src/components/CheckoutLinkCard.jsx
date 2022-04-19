@@ -429,16 +429,43 @@ export function CheckoutLinkCard({
                       ""
                     )}/a/cart/${(alias && alias.value) || ""}`}
                     selectTextOnFocus
-                    connectedRight={
-                      <Stack spacing="extraTight">
+                  />
+                  <Stack
+                    alignment="center"
+                    spacing="extraTight"
+                    distribution="fillEvenly"
+                  >
+                    <Popover
+                      active={popoverActive}
+                      activator={
                         <Button
-                          primary
-                          fullWidth
-                          icon={ClipboardMinor}
-                          onClick={handleCopyAliasLink}
+                          plain
+                          icon={EditMinor}
+                          onClick={togglePopoverActive}
                         >
-                          Copy
+                          Edit link alias
                         </Button>
+                      }
+                      autofocusTarget="first-node"
+                      onClose={togglePopoverActive}
+                      sectioned
+                      preferredAlignment="left"
+                    >
+                      <TextField
+                        requiredIndicator
+                        showCharacterCount
+                        maxLength={125}
+                        prefix={`/a/cart/`}
+                        label="Link alias"
+                        helpText="The old alias will not redirect to new alias."
+                        {...alias}
+                        spellCheck={false}
+                        error={!alias.value}
+                      />
+                    </Popover>
+
+                    <Stack.Item>
+                      <Stack spacing="extraTight">
                         <Button
                           icon={ShopcodesMajor}
                           fullWidth
@@ -447,37 +474,19 @@ export function CheckoutLinkCard({
                         >
                           QR Code
                         </Button>
+                        <Stack.Item fill>
+                          <Button
+                            primary
+                            fullWidth
+                            icon={ClipboardMinor}
+                            onClick={handleCopyAliasLink}
+                          >
+                            Copy
+                          </Button>
+                        </Stack.Item>
                       </Stack>
-                    }
-                  />
-                  <Popover
-                    active={popoverActive}
-                    activator={
-                      <Button
-                        plain
-                        icon={EditMinor}
-                        onClick={togglePopoverActive}
-                      >
-                        Edit link alias
-                      </Button>
-                    }
-                    autofocusTarget="first-node"
-                    onClose={togglePopoverActive}
-                    sectioned
-                    preferredAlignment="left"
-                  >
-                    <TextField
-                      requiredIndicator
-                      showCharacterCount
-                      maxLength={125}
-                      prefix={`/a/cart/`}
-                      label="Link alias"
-                      helpText="The old alias will not redirect to new alias."
-                      {...alias}
-                      spellCheck={false}
-                      error={!alias.value}
-                    />
-                  </Popover>
+                    </Stack.Item>
+                  </Stack>
                 </Stack>
               </Card.Section>
             </RequireSubscription>
