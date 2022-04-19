@@ -218,7 +218,7 @@ export function OrderCard({ order }) {
               spellCheck={false}
               helpText={
                 <>
-                  Not visibile to customers. Shown as the referral code in the{" "}
+                  Not visible to customers. Shown as the referral code in the{" "}
                   <Link
                     external
                     url="https://help.shopify.com/en/manual/orders/conversion-summary"
