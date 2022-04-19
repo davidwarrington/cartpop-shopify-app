@@ -12,8 +12,8 @@ export const get = async (req, res) => {
     return {
       shop: shop,
       scopes: shopDoc.scopes,
-      primaryDomain: shopDoc.shopInfo?.primaryDomain?.url || null,
-      shopifyPlan: shopDoc.shopInfo?.plan || null,
+      primaryDomain: shopDoc.shopData?.primaryDomain?.url || null,
+      shopifyPlan: shopDoc.shopData?.plan || null,
       subscription: shopDoc.subscription
         ? {
             active: true,

@@ -128,7 +128,7 @@ export default function applyAuthMiddleware(app) {
             userId: session.shop,
           });
       } else {
-        if (shopDoc.shopInfo) {
+        if (shopDoc.shopData) {
           fetchShopData = false;
         }
         // Fire reauth event
