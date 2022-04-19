@@ -176,6 +176,7 @@ const EditLink = () => {
         handleDelete={handleDelete}
         handleSubmit={handleUpdate}
         handleCopy={handleCopy}
+        handleRename={() => alert("TODO:")}
       />
     </Frame>
   );
