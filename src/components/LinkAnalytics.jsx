@@ -49,147 +49,170 @@ export function LinkAnalytics({ link, hasSubscription }) {
         </Stack>
       }
     >
-      <Card.Section
-        title={
-          <Tooltip subheading content="Links viewed count as a click.">
-            Clicks
-          </Tooltip>
-        }
-      >
-        {clicks.total ? (
-          <Stack vertical spacing="extraTight">
-            <Card.Subsection>
-              <DisplayText size="small">{clicks.total}</DisplayText>
-            </Card.Subsection>
-            <Card subdued sectioned>
-              <Stack distribution="fillEvenly" vertical spacing="extraTight">
-                <Stack alignment="center" distribution="fillEvenly">
-                  <Stack alignment="center" spacing="extraTight">
-                    <Icon source={MobileMajor} color="subdued" />
-                    <Subheading>
-                      <TextStyle variation="subdued">Mobile</TextStyle>
-                    </Subheading>
-                  </Stack>
-                  <Stack alignment="center" spacing="tight">
-                    <DisplayText size="small">{clicks.mobile}</DisplayText>
-                    {clicks.total ? (
-                      <TextStyle>
-                        ({roundTwoPlaces((clicks.mobile / clicks.total) * 100)}
-                        %)
-                      </TextStyle>
-                    ) : null}
-                  </Stack>
-                </Stack>
+      {hasSubscription ? (
+        <>
+          <Card.Section
+            title={
+              <Tooltip subheading content="Links viewed count as a click.">
+                Clicks
+              </Tooltip>
+            }
+          >
+            {clicks.total ? (
+              <Stack vertical spacing="extraTight">
+                <Card.Subsection>
+                  <DisplayText size="small">{clicks.total}</DisplayText>
+                </Card.Subsection>
+                <Card subdued sectioned>
+                  <Stack
+                    distribution="fillEvenly"
+                    vertical
+                    spacing="extraTight"
+                  >
+                    <Stack alignment="center" distribution="fillEvenly">
+                      <Stack alignment="center" spacing="extraTight">
+                        <Icon source={MobileMajor} color="subdued" />
+                        <Subheading>
+                          <TextStyle variation="subdued">Mobile</TextStyle>
+                        </Subheading>
+                      </Stack>
+                      <Stack alignment="center" spacing="tight">
+                        <DisplayText size="small">{clicks.mobile}</DisplayText>
+                        {clicks.total ? (
+                          <TextStyle>
+                            (
+                            {roundTwoPlaces(
+                              (clicks.mobile / clicks.total) * 100
+                            )}
+                            %)
+                          </TextStyle>
+                        ) : null}
+                      </Stack>
+                    </Stack>
 
-                <Stack alignment="center" distribution="fillEvenly">
-                  <Stack alignment="center" spacing="extraTight">
-                    <Icon source={DesktopMajor} color="subdued" />
-                    <Subheading>
-                      <TextStyle variation="subdued">Desktop</TextStyle>
-                    </Subheading>
+                    <Stack alignment="center" distribution="fillEvenly">
+                      <Stack alignment="center" spacing="extraTight">
+                        <Icon source={DesktopMajor} color="subdued" />
+                        <Subheading>
+                          <TextStyle variation="subdued">Desktop</TextStyle>
+                        </Subheading>
+                      </Stack>
+                      <Stack alignment="center" spacing="tight">
+                        <DisplayText size="small">{clicks.desktop}</DisplayText>
+                        {clicks.total ? (
+                          <TextStyle>
+                            (
+                            {roundTwoPlaces(
+                              (clicks.desktop / clicks.total) * 100
+                            )}
+                            %)
+                          </TextStyle>
+                        ) : null}
+                      </Stack>
+                    </Stack>
                   </Stack>
-                  <Stack alignment="center" spacing="tight">
-                    <DisplayText size="small">{clicks.desktop}</DisplayText>
-                    {clicks.total ? (
-                      <TextStyle>
-                        ({roundTwoPlaces((clicks.desktop / clicks.total) * 100)}
-                        %)
-                      </TextStyle>
-                    ) : null}
-                  </Stack>
-                </Stack>
+                </Card>
               </Stack>
-            </Card>
-          </Stack>
-        ) : (
-          <DisplayText size="small">0</DisplayText>
-        )}
-      </Card.Section>
-      <Card.Section
-        title={
-          <Tooltip
-            subheading
-            content="Links scanned via QR Code will register as a scan rather than a click."
+            ) : (
+              <DisplayText size="small">0</DisplayText>
+            )}
+          </Card.Section>
+          <Card.Section
+            title={
+              <Tooltip
+                subheading
+                content="Links scanned via QR Code will register as a scan rather than a click."
+              >
+                Scans
+              </Tooltip>
+            }
           >
-            Scans
-          </Tooltip>
-        }
-      >
-        {scans.total ? (
-          <Stack vertical spacing="extraTight">
-            <DisplayText size="small">{scans.total}</DisplayText>
-            <Card subdued sectioned>
-              <Stack distribution="fillEvenly" vertical spacing="extraTight">
-                <Stack alignment="center" distribution="fillEvenly">
-                  <Stack alignment="center" spacing="extraTight">
-                    <Icon source={MobileMajor} color="subdued" />
-                    <Subheading>
-                      <TextStyle variation="subdued">Mobile</TextStyle>
-                    </Subheading>
-                  </Stack>
-                  <Stack alignment="center" spacing="tight">
-                    <DisplayText size="small">{scans.mobile}</DisplayText>
-                    {scans.total ? (
-                      <TextStyle>
-                        ({roundTwoPlaces((scans.mobile / scans.total) * 100)}%)
-                      </TextStyle>
-                    ) : null}
-                  </Stack>
-                </Stack>
+            {scans.total ? (
+              <Stack vertical spacing="extraTight">
+                <DisplayText size="small">{scans.total}</DisplayText>
+                <Card subdued sectioned>
+                  <Stack
+                    distribution="fillEvenly"
+                    vertical
+                    spacing="extraTight"
+                  >
+                    <Stack alignment="center" distribution="fillEvenly">
+                      <Stack alignment="center" spacing="extraTight">
+                        <Icon source={MobileMajor} color="subdued" />
+                        <Subheading>
+                          <TextStyle variation="subdued">Mobile</TextStyle>
+                        </Subheading>
+                      </Stack>
+                      <Stack alignment="center" spacing="tight">
+                        <DisplayText size="small">{scans.mobile}</DisplayText>
+                        {scans.total ? (
+                          <TextStyle>
+                            (
+                            {roundTwoPlaces((scans.mobile / scans.total) * 100)}
+                            %)
+                          </TextStyle>
+                        ) : null}
+                      </Stack>
+                    </Stack>
 
-                <Stack alignment="center" distribution="fillEvenly">
-                  <Stack alignment="center" spacing="extraTight">
-                    <Icon source={DesktopMajor} color="subdued" />
-                    <Subheading>
-                      <TextStyle variation="subdued">Desktop</TextStyle>
-                    </Subheading>
+                    <Stack alignment="center" distribution="fillEvenly">
+                      <Stack alignment="center" spacing="extraTight">
+                        <Icon source={DesktopMajor} color="subdued" />
+                        <Subheading>
+                          <TextStyle variation="subdued">Desktop</TextStyle>
+                        </Subheading>
+                      </Stack>
+                      <Stack alignment="center" spacing="tight">
+                        <DisplayText size="small">{scans.desktop}</DisplayText>
+                        {scans.total ? (
+                          <TextStyle>
+                            (
+                            {roundTwoPlaces(
+                              (scans.desktop / scans.total) * 100
+                            )}
+                            %)
+                          </TextStyle>
+                        ) : null}
+                      </Stack>
+                    </Stack>
                   </Stack>
-                  <Stack alignment="center" spacing="tight">
-                    <DisplayText size="small">{scans.desktop}</DisplayText>
-                    {scans.total ? (
-                      <TextStyle>
-                        ({roundTwoPlaces((scans.desktop / scans.total) * 100)}%)
-                      </TextStyle>
-                    ) : null}
-                  </Stack>
-                </Stack>
+                </Card>
               </Stack>
-            </Card>
-          </Stack>
-        ) : (
-          <DisplayText size="small">0</DisplayText>
-        )}
-      </Card.Section>
-      <Card.Section
-        title={
-          <Tooltip
-            subheading
-            content="If a customer converts from a CartPop link alias, it will count as an order."
+            ) : (
+              <DisplayText size="small">0</DisplayText>
+            )}
+          </Card.Section>
+          <Card.Section
+            title={
+              <Tooltip
+                subheading
+                content="If a customer converts from a CartPop link alias, it will count as an order."
+              >
+                Orders
+              </Tooltip>
+            }
           >
-            Orders
-          </Tooltip>
-        }
-      >
-        {/* Track order total, desktop vs mobile, and conversion % based on total clicks and orders placed */}
-        <TextStyle variation="subdued">Coming soon.</TextStyle>
-        {/* <Button fullWidth>Enable order analytics</Button> */}
-      </Card.Section>
-      <Card.Section
-        title={
-          <Tooltip
-            subheading
-            content="Orders that were placed and originated from a CartPop link."
+            {/* Track order total, desktop vs mobile, and conversion % based on total clicks and orders placed */}
+            <TextStyle variation="subdued">Coming soon.</TextStyle>
+            {/* <Button fullWidth>Enable order analytics</Button> */}
+          </Card.Section>
+          <Card.Section
+            title={
+              <Tooltip
+                subheading
+                content="Orders that were placed and originated from a CartPop link."
+              >
+                Revenue
+              </Tooltip>
+            }
           >
-            Revenue
-          </Tooltip>
-        }
-      >
-        {/* Track revenue based on currency code. Support multi-currency. */}
-        <TextStyle variation="subdued">Coming soon.</TextStyle>
-        {/* <Button fullWidth>Enable revenue analytics</Button> */}
-      </Card.Section>
-      {/* Referral sources? Countries? Languages? */}
-      {hasSubscription ? null : (
+            {/* Track revenue based on currency code. Support multi-currency. */}
+            <TextStyle variation="subdued">Coming soon.</TextStyle>
+            {/* <Button fullWidth>Enable revenue analytics</Button> */}
+          </Card.Section>
+          {/* Referral sources? Countries? Languages? */}
+        </>
+      ) : (
         <Card.Section>
           <Banner
             status="info"
