@@ -28,13 +28,30 @@ export default function applyAuthMiddleware(app) {
       return res.redirect(`/auth/toplevel?shop=${req.query.shop}`);
     }
 
-    const redirectUrl = await Shopify.Auth.beginAuth(
-      req,
-      res,
-      req.query.shop,
-      "/auth/callback",
-      app.get("use-online-tokens")
+    let redirectUrl = null;
+
+    const offlineSession = await Shopify.Utils.loadOfflineSession(
+      req.query.shop
     );
+    if (!offlineSession) {
+      // Missing offline token, let's redirect to offline
+      redirectUrl = await Shopify.Auth.beginAuth(
+        req,
+        res,
+        req.query.shop,
+        "/auth/offline/callback",
+        false // isOnline -- app.get("use-online-tokens")
+      );
+    } else {
+      // We have offline, let's continue to online
+      redirectUrl = await Shopify.Auth.beginAuth(
+        req,
+        res,
+        req.query.shop,
+        "/auth/callback",
+        true // isOnline -- app.get("use-online-tokens")
+      );
+    }
 
     res.redirect(redirectUrl);
   });
@@ -57,6 +74,22 @@ export default function applyAuthMiddleware(app) {
     );
   });
 
+  // Offline token callback
+  app.get("/auth/offline/callback", async (req, res) => {
+    await Shopify.Auth.validateAuthCallback(req, res, req.query);
+
+    const redirectUrl = await Shopify.Auth.beginAuth(
+      req,
+      res,
+      req.query.shop,
+      "/auth/callback",
+      true // isOnline -- app.get("use-online-tokens")
+    );
+
+    res.redirect(redirectUrl);
+  });
+
+  // Online token callback
   app.get("/auth/callback", async (req, res) => {
     const { db } = req;
     let fetchShopData = true;
