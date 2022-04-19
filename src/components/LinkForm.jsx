@@ -89,8 +89,11 @@ export function LinkForm({
     }),
     ref: useField((link.order && link.order.ref) || ""),
     useShopPay: useField((link.order && link.order.useShopPay) || false),
-    attributes: useDynamicList([], () => ({ label: "", value: "" })),
   };
+  const orderAttributes = useDynamicList(link.order.attribures || [], () => ({
+    label: "",
+    value: "",
+  }));
 
   const { fields, submit, submitting, dirty, reset, submitErrors } = useForm({
     fields: {
@@ -105,7 +108,10 @@ export function LinkForm({
       }),
       products,
       customer,
-      order,
+      order: {
+        ...order,
+        attributes: orderAttributes.fields,
+      },
     },
     async onSubmit(form) {
       try {
@@ -245,7 +251,7 @@ export function LinkForm({
             />
             <ProductsCard products={fields.products} />
             <CustomerCard customer={fields.customer} />
-            <OrderCard order={fields.order} />
+            <OrderCard order={fields.order} attributes={orderAttributes} />
             {newForm ? (
               <CheckoutLinkCard
                 newForm={newForm}
