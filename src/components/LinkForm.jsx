@@ -90,10 +90,13 @@ export function LinkForm({
     ref: useField((link.order && link.order.ref) || ""),
     useShopPay: useField((link.order && link.order.useShopPay) || false),
   };
-  const orderAttributes = useDynamicList(link.order.attribures || [], () => ({
-    label: "",
-    value: "",
-  }));
+  const orderAttributes = useDynamicList(
+    (link.order && link.order.attributes) || [],
+    () => ({
+      label: "",
+      value: "",
+    })
+  );
 
   const { fields, submit, submitting, dirty, reset, submitErrors } = useForm({
     fields: {
