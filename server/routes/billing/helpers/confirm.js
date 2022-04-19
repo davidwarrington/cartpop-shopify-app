@@ -18,43 +18,46 @@ export const confirm = async (req, res) => {
   const { charge_id, shop } = req.query;
 
   try {
+    // TODO: re-enable once offline tokens are being stored
     // Create client
-    const session = await Shopify.Utils.loadOfflineSession(shop);
-    const client = new Shopify.Clients.Graphql(shop, session.accessToken);
+    // const session = await Shopify.Utils.loadOfflineSession(shop);
+    // const client = new Shopify.Clients.Graphql(shop, session.accessToken);
 
-    // Send API request to cancel the subscription
-    const res = await client.query({
-      data: GET_ACTIVE_SUBSCRIPTION,
-    });
-    if (
-      !res?.body?.data?.appInstallation?.activeSubscriptions ||
-      !res.body.data.appInstallation.activeSubscriptions.length
-    ) {
-      throw `Invalid payload returned for ${shop} on ${charge_id}`;
-    }
+    // // Send API request to get the active subscription
+    // const res = await client.query({
+    //   data: GET_ACTIVE_SUBSCRIPTION,
+    // });
+    // if (
+    //   !res?.body?.data?.appInstallation?.activeSubscriptions ||
+    //   !res.body.data.appInstallation.activeSubscriptions.length
+    // ) {
+    //   throw `Invalid payload returned for ${shop} on ${charge_id}`;
+    // }
 
-    // Get the active subscription
-    const activeSubscription =
-      res?.body?.data?.appInstallation?.activeSubscriptions[0];
-    if (activeSubscription.status !== "ACTIVE") {
-      throw `${shop} subscription status is not active on charge_id ${charge_id}`;
-    }
+    // // Get the active subscription
+    // const activeSubscription =
+    //   res?.body?.data?.appInstallation?.activeSubscriptions[0];
+    // if (activeSubscription.status !== "ACTIVE") {
+    //   throw `${shop} subscription status is not active on charge_id ${charge_id}`;
+    // }
+
+    const subscriptionData = {
+      chargeId: charge_id,
+      plan: "PRO", // TODO:
+      status: "ACTIVE", // TODO: activeSubscription.status,
+      test: false, // TODO: activeSubscription.test,
+      trialDays: 0, // TODO: activeSubscription.trialDays,
+      //currentPeriodEnd: activeSubscription.currentPeriodEnd,
+      //createdAt: activeSubscription.createdAt,
+      upgradedAt: new Date(),
+    };
 
     // Update shopDoc
     await db.collection("shops").findOneAndUpdate(
       { shop },
       {
         $set: {
-          subscription: {
-            chargeId: charge_id,
-            plan: "PRO",
-            status: activeSubscription.status,
-            test: activeSubscription.test,
-            trialDays: activeSubscription.trialDays,
-            currentPeriodEnd: activeSubscription.currentPeriodEnd,
-            createdAt: activeSubscription.createdAt,
-            upgradedAt: new Date(),
-          },
+          subscription: subscriptionData,
         },
       },
       {
@@ -66,15 +69,7 @@ export const confirm = async (req, res) => {
     analytics.track({
       userId: shop,
       event: "Subscription activated",
-      properties: {
-        chargeId: charge_id,
-        name: activeSubscription.name,
-        price: activeSubscription.price,
-        isTest: activeSubscription.test,
-        status: activeSubscription.status,
-        trialDuration: activeSubscription.trialDays,
-        // trialEndsOn: charge.trial_ends_on
-      },
+      properties: subscriptionData,
     });
 
     return { success: true, shop };
