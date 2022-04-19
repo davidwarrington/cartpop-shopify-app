@@ -1,6 +1,8 @@
+import { useCallback, useState } from "react";
 import { Toast } from "@shopify/app-bridge-react";
 import {
   Badge,
+  Banner,
   Card,
   Form,
   Heading,
@@ -11,18 +13,8 @@ import {
   Stack,
   TextStyle,
   Link,
-  Banner,
-  DisplayText,
-  Subheading,
-  Icon,
-  ProgressBar,
 } from "@shopify/polaris";
-import {
-  CircleTickMajor,
-  DesktopMajor,
-  MobileMajor,
-  PhoneInMajor,
-} from "@shopify/polaris-icons";
+import { CircleTickMajor } from "@shopify/polaris-icons";
 import {
   useField,
   lengthLessThan,
@@ -33,9 +25,8 @@ import {
 
 import { PAGE_STATES } from "../constants";
 import { CheckoutLinkCard } from "./CheckoutLinkCard";
-import { Tooltip } from "./Tooltip";
 import { CustomerCard } from "./CustomerCard";
-import { NameCard } from "./NameCard";
+import { LinkName } from "./LinkName";
 import { OrderCard } from "./OrderCard";
 import { ProductsCard } from "./ProductsCard";
 import SaveBar from "./SaveBar";
@@ -55,10 +46,18 @@ export function LinkForm({
   handleSubmit,
   handleCopy,
   handlePreview,
+  handleRename,
   handleDelete,
 }) {
   const { shopData } = useShop();
   const hasSubscription = shopData && shopData.subscription ? true : false;
+
+  const [showModal, setShowModal] = useState(false);
+
+  const toggleNameModal = useCallback(
+    () => setShowModal((showModal) => !showModal),
+    []
+  );
 
   const products = useField({
     value: link.products || [],
@@ -143,6 +142,12 @@ export function LinkForm({
 
   const secondaryActions = [];
   if ((pageState !== PAGE_STATES.submitting && handleCopy) || handlePreview) {
+    if (!newForm) {
+      secondaryActions.push({
+        content: "Rename",
+        onAction: toggleNameModal,
+      });
+    }
     if (handleCopy) {
       secondaryActions.push({
         content: "Duplicate",
@@ -166,7 +171,7 @@ export function LinkForm({
       <Page
         narrowWidth={narrowWidth}
         breadcrumbs={[{ content: "Home", url: "/" }]}
-        title={pageTitle}
+        title={fields.name.value || pageTitle}
         subtitle={
           <TextStyle variation="subdued">
             Last updated on{" "}
@@ -221,18 +226,37 @@ export function LinkForm({
           ) : null}
 
           <Layout.Section>
-            <NameCard name={fields.name} />
+            {newForm ? null : (
+              <CheckoutLinkCard
+                newForm={newForm}
+                link={link}
+                linkActive={fields.active.value}
+                alias={fields.alias}
+                products={fields.products.value}
+                customer={fields.customer}
+                order={fields.order}
+              />
+            )}
+            <LinkName
+              name={fields.name}
+              showModal={showModal}
+              handleRename={handleRename}
+              toggleModal={toggleNameModal}
+            />
             <ProductsCard products={fields.products} />
             <CustomerCard customer={fields.customer} />
             <OrderCard order={fields.order} />
-            <CheckoutLinkCard
-              newForm={newForm}
-              link={link}
-              alias={fields.alias}
-              products={fields.products.value}
-              customer={fields.customer}
-              order={fields.order}
-            />
+            {newForm ? (
+              <CheckoutLinkCard
+                newForm={newForm}
+                link={link}
+                linkActive={fields.active.value}
+                alias={fields.alias}
+                products={fields.products.value}
+                customer={fields.customer}
+                order={fields.order}
+              />
+            ) : null}
           </Layout.Section>
           <Layout.Section secondary>
             {!newForm ? (
@@ -243,7 +267,7 @@ export function LinkForm({
                     <Stack alignment="center">
                       <Heading>Visibility</Heading>
                       {fields.active.value ? (
-                        <Badge status="success">Live</Badge>
+                        <Badge status="success">Enabled</Badge>
                       ) : (
                         <Badge>Disabled</Badge>
                       )}
