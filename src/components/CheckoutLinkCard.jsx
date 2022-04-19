@@ -129,6 +129,7 @@ const QRCodeSection = ({ title = "", generatedUrl, handleDownloadQrCode }) => {
 export function CheckoutLinkCard({
   newForm,
   link,
+  linkActive,
   alias,
   products,
   customer,
@@ -370,7 +371,7 @@ export function CheckoutLinkCard({
           />
         ) : null}
         {selectedIndex == 0 ? (
-          !newForm ? (
+          !newForm && linkActive ? (
             <RequireSubscription
               content={
                 <Stack vertical>
@@ -483,7 +484,11 @@ export function CheckoutLinkCard({
             </RequireSubscription>
           ) : (
             <Card.Section>
-              <Banner>Please save link to generate a link alias.</Banner>
+              <Banner>
+                {newForm
+                  ? "Please save link to generate a link alias."
+                  : "Please enable link to generate a link alias."}
+              </Banner>
             </Card.Section>
           )
         ) : null}
