@@ -424,10 +424,10 @@ export function CheckoutLinkCard({
                     labelHidden
                     label="Customer checkout link"
                     multiline={1}
-                    //prefix={`https://${shopDomain}/a/cart/`}
-                    value={`https://${shopDomain}/a/cart/${
-                      (alias && alias.value) || ""
-                    }`}
+                    value={`https://${shopDomain.replace(
+                      "https://",
+                      ""
+                    )}/a/cart/${(alias && alias.value) || ""}`}
                     selectTextOnFocus
                     connectedRight={
                       <Stack spacing="extraTight">
@@ -601,7 +601,7 @@ export function CheckoutLinkCard({
           <QRCodeSection
             generatedUrl={
               selectedIndex === 0
-                ? `https://${shopDomain}/a/cart/${
+                ? `https://${shopDomain.replace("https://", "")}/a/cart/${
                     alias && alias.value
                   }?scan=true`
                 : generatedUrl + `&scan=true`
