@@ -4,7 +4,7 @@ import {
   useAppBridge,
 } from "@shopify/app-bridge-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Redirect } from "@shopify/app-bridge/actions";
+import { ContextualSaveBar, Redirect } from "@shopify/app-bridge/actions";
 
 const RoutePropagator = () => {
   const location = useLocation();
@@ -16,6 +16,11 @@ const RoutePropagator = () => {
       navigate(payload.path);
     });
   }, [app]);
+
+  useEffect(() => {
+    const contextualSaveBar = ContextualSaveBar.create(app);
+    contextualSaveBar.dispatch(ContextualSaveBar.Action.HIDE);
+  }, [location]);
 
   return <AppBridgeRoutePropagator location={location} />;
 };
