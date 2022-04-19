@@ -241,6 +241,7 @@ export function LinkForm({
                 products={fields.products.value}
                 customer={fields.customer}
                 order={fields.order}
+                orderAttributes={orderAttributes.value}
               />
             )}
             <LinkName

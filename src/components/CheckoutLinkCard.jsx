@@ -134,6 +134,7 @@ export function CheckoutLinkCard({
   products,
   customer,
   order,
+  orderAttributes,
   accessToken,
 }) {
   const { shopData } = useShop();
@@ -242,8 +243,8 @@ export function CheckoutLinkCard({
         urlParameters += `&payment=shop_pay`;
       }
 
-      if (order.attributes && order.attributes.length) {
-        urlParameters += `&${order.attributes
+      if (orderAttributes && orderAttributes.length) {
+        urlParameters += `&${orderAttributes
           .map(
             (attribute) =>
               attribute.label &&
