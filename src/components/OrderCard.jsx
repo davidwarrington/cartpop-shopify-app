@@ -25,18 +25,20 @@ import { asChoiceField } from "@shopify/react-form";
 import { iconStyles } from "../constants";
 import { CardGrid } from "./CardGrid";
 
-export function OrderCard({ order }) {
+export function OrderCard({ order, attributes }) {
   const [showModal, setShowModal] = useState(false);
 
   const toggleModalVisibility = useCallback(() => {
     setShowModal((status) => !status);
   }, []);
 
-  const hasOrderInfo = Object.keys(order).some((key) =>
-    (order[key].value && order[key].value.length !== 0) || order[key].checked
-      ? true
-      : false
-  );
+  const hasOrderInfo =
+    attributes.fields.length ||
+    Object.keys(order).some((key) =>
+      (order[key].value && order[key].value.length !== 0) || order[key].checked
+        ? true
+        : false
+    );
 
   return (
     <>
@@ -67,7 +69,8 @@ export function OrderCard({ order }) {
             {order.note.value ||
             order.discountCode.value ||
             order.ref.value ||
-            order.useShopPay.value ? (
+            order.useShopPay.value ||
+            attributes.length ? (
               <Card.Section>
                 <CardGrid>
                   {order.discountCode.value ? (
@@ -143,7 +146,7 @@ export function OrderCard({ order }) {
                 </CardGrid>
               </Card.Section>
             ) : null}
-            {order.attributes && order.attributes.fields.length ? (
+            {attributes && attributes.fields.length ? (
               <Card.Section
                 title={
                   <Subheading>
@@ -153,7 +156,7 @@ export function OrderCard({ order }) {
                   </Subheading>
                 }
               >
-                {order.attributes.fields.map((attribute, attributeIndex) => (
+                {attributes.fields.map((attribute, attributeIndex) => (
                   <Card.Subsection key={attributeIndex}>
                     <TextStyle variation="strong">
                       {attribute.label.value || (
@@ -187,7 +190,7 @@ export function OrderCard({ order }) {
         title="Order information"
         secondaryActions={[
           {
-            content: "Save and close",
+            content: "Edit and close",
             onAction: toggleModalVisibility,
           },
         ]}
@@ -218,7 +221,7 @@ export function OrderCard({ order }) {
               spellCheck={false}
               helpText={
                 <>
-                  Not visibile to customers. Shown as the referral code in the{" "}
+                  Not visible to customers. Shown as the referral code in the{" "}
                   <Link
                     external
                     url="https://help.shopify.com/en/manual/orders/conversion-summary"
@@ -235,8 +238,8 @@ export function OrderCard({ order }) {
         <Modal.Section>
           <FormLayout>
             <Subheading>Order attributes</Subheading>
-            {order.attributes.fields && order.attributes.fields.length ? (
-              order.attributes.fields.map((attribute, attributeIndex) => (
+            {attributes.fields && attributes.fields.length ? (
+              attributes.fields.map((attribute, attributeIndex) => (
                 <Stack alignment="trailing" key={attributeIndex}>
                   <TextField
                     requiredIndicator
@@ -252,7 +255,7 @@ export function OrderCard({ order }) {
                   />
                   <Button
                     accessibilityLabel="Remove attribute"
-                    onClick={() => order.attributes.removeItem(attributeIndex)}
+                    onClick={() => attributes.removeItem(attributeIndex)}
                   >
                     Remove
                   </Button>
@@ -266,12 +269,10 @@ export function OrderCard({ order }) {
 
             <Button
               primary
-              onClick={order.attributes.addItem}
-              disabled={
-                order.attributes.fields && order.attributes.fields.length === 10
-              }
+              onClick={attributes.addItem}
+              disabled={attributes.fields && attributes.fields.length === 10}
             >
-              {!order.attributes.fields || order.attributes.fields.length !== 10
+              {!attributes.fields || attributes.fields.length !== 10
                 ? "Add attribute"
                 : "10/10 attributes reached"}
             </Button>

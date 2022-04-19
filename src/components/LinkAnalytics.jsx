@@ -1,5 +1,6 @@
 import {
   Banner,
+  Button,
   Card,
   DisplayText,
   Heading,
@@ -171,6 +172,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
       >
         {/* Track order total, desktop vs mobile, and conversion % based on total clicks and orders placed */}
         <TextStyle variation="subdued">Coming soon.</TextStyle>
+        {/* <Button fullWidth>Enable order analytics</Button> */}
       </Card.Section>
       <Card.Section
         title={
@@ -184,6 +186,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
       >
         {/* Track revenue based on currency code. Support multi-currency. */}
         <TextStyle variation="subdued">Coming soon.</TextStyle>
+        {/* <Button fullWidth>Enable revenue analytics</Button> */}
       </Card.Section>
       {/* Referral sources? Countries? Languages? */}
       {hasSubscription ? null : (
