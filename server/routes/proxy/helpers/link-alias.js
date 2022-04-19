@@ -4,6 +4,25 @@ import {
 } from "../../../helpers/app-proxy.js";
 import { getMarkup } from "./markup.js";
 
+export const linkNotFound = async (req, res) => {
+  const { shop, locale, isMobile, shopifyRequestId } = getHeaders(req);
+
+  const markup = getMarkup({
+    shop,
+    locale,
+    isMobile,
+    shopifyRequestId,
+    showSpinner: false,
+    buttonHomeType: "home", // TODO: turn into setting
+    title: "not_found_title",
+    message: "not_found_message",
+  });
+
+  return {
+    markup,
+  };
+};
+
 export const link = async (req, res) => {
   const { shop, locale, isMobile, shopifyRequestId } = getHeaders(req);
   const link = req.link;

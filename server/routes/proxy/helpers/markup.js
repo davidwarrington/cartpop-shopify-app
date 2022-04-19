@@ -5,7 +5,11 @@ export const getMarkup = ({
   isMobile = false,
   shopifyRequestId,
   locale = "en",
-  scripts = "",
+  scripts = null,
+  showSpinner = true,
+  buttonHomeType = null,
+  title = "loading_title",
+  message = "loading_message",
 }) => {
   const randomId = "2602686fb8b88d94b8051bb6bb771e56";
 
@@ -31,7 +35,7 @@ export const getMarkup = ({
                 translationMetafield.namespace
               }.${translationMetafield.key}.value | json }};
             </script>
-            ${scripts}
+            ${scripts ? scripts : ""}
             <div class="full-page-overlay">
               <div class="full-page-overlay__wrap">
                 <div class="full-page-overlay__content" role="region" aria-describedby="full-page-overlay__processing-text" aria-label="Processing order" tabindex="-1">
@@ -39,21 +43,30 @@ export const getMarkup = ({
                     <use xlink:href="#spinner-large"></use>
                   </svg>
                   <div id="full-page-overlay__processing-text">
-                    <svg class="icon-svg icon-svg--color-accent icon-svg--size-64 icon-svg--spinner full-page-overlay__icon" xmlns="http://www.w3.org/2000/svg" viewBox="-270 364 66 66"><path d="M-237 428c-17.1 0-31-13.9-31-31s13.9-31 31-31v-2c-18.2 0-33 14.8-33 33s14.8 33 33 33 33-14.8 33-33h-2c0 17.1-13.9 31-31 31z"></path></svg>
-                    <h3 class="full-page-overlay__title">
+                    ${
+                      showSpinner
+                        ? '<svg class="icon-svg icon-svg--color-accent icon-svg--size-64 icon-svg--spinner full-page-overlay__icon" xmlns="http://www.w3.org/2000/svg" viewBox="-270 364 66 66"><path d="M-237 428c-17.1 0-31-13.9-31-31s13.9-31 31-31v-2c-18.2 0-33 14.8-33 33s14.8 33 33 33 33-14.8 33-33h-2c0 17.1-13.9 31-31 31z"></path></svg>'
+                        : ""
+                    }
+                    <h2 class="full-page-overlay__title">
                       {{ shop.metafields.${translationMetafield.namespace}.${
     translationMetafield.key
-  }.value[${locale}].loading_title | default: "${
-    defaultTranslations[locale].loading_title
+  }.value[${locale}].${title} | default: "${
+    defaultTranslations[locale][title]
   }" }}
-                    </h3>
+                    </h2>
                     <p class="full-page-overlay__text">{{ shop.metafields.${
                       translationMetafield.namespace
                     }.${
     translationMetafield.key
-  }.value[request.locale.iso_code].loading_message | default: "${
-    defaultTranslations[locale].loading_message
+  }.value[request.locale.iso_code].${message} | default: "${
+    defaultTranslations[locale][message]
   }" }}</p>
+  ${
+    buttonHomeType
+      ? `<br /><a href="{{ shop.url }}">{{ shop.metafields.${translationMetafield.namespace}.${translationMetafield.key}.value[${locale}].not_found_button_label | default: "${defaultTranslations[locale].not_found_button_label}" }}</a>`
+      : ``
+  }
                     <!-- <p class="full-page-overlay__text"> If you’re not automatically redirected, <a href="?from_processing_page=1">refresh this page</a>. </p> -->
                   </div>
                 </div>

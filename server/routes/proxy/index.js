@@ -1,4 +1,4 @@
-import { generatedCheckoutLink, getHeaders } from "../../helpers/app-proxy.js";
+import { getHeaders } from "../../helpers/app-proxy.js";
 import verifyAppProxyExtensionSignatureMiddleware from "../../middleware/verify-app-proxy.js";
 import Proxy from "./helpers/index.js";
 
@@ -28,10 +28,9 @@ export default function appProxyRoutes(app) {
         return;
       }
 
-      res.set("Content-Type", "application/liquid");
-
       try {
         const { markup } = await Proxy.dynamic(req, res);
+        res.set("Content-Type", "application/liquid");
         res.status(200).send(markup);
       } catch (error) {
         // TODO: better error handling
@@ -44,6 +43,7 @@ export default function appProxyRoutes(app) {
         }
 
         // Fallback if somehow shop header is missing
+        res.set("Content-Type", "application/liquid");
         res.status(200).send(`There was an error.`);
       }
     }
@@ -74,17 +74,14 @@ export default function appProxyRoutes(app) {
     verifyAppProxyExtensionSignatureMiddleware(),
     async (req, res) => {
       const { db } = req;
-      const shop = req.headers && req.headers["x-shop-domain"];
-      const shopifyRequestId = req.headers && req.headers["x-request-id"];
-      const acceptLanguage = req.headers && req.headers["accept-language"];
-      const isMobile = req.headers && req.headers["x-is-mobile"];
+      const { shop, isMobile } = getHeaders(req);
+
+      // Parse link alias
       const linkAlias = req.params.alias;
 
       // Detect QR Scan vs Link click
       const scan = req.query.scan;
       const eventType = scan ? "scans" : "clicks";
-
-      res.set("Content-Type", "application/liquid");
 
       try {
         const link = await db.collection("links").findOne({
@@ -94,7 +91,11 @@ export default function appProxyRoutes(app) {
         });
 
         if (!link) {
-          throw `Link ${linkAlias} on ${shop} not found or is not enabled`;
+          const { markup } = await Proxy.linkNotFound(req, res);
+          res.set("Content-Type", "application/liquid");
+          res.status(200).send(markup);
+          return;
+          //throw `Link ${linkAlias} on ${shop} not found or is not enabled`;
         }
 
         // Add link to req
@@ -131,6 +132,7 @@ export default function appProxyRoutes(app) {
         // );
 
         const { markup } = await Proxy.link(req, res);
+        res.set("Content-Type", "application/liquid");
         res.status(200).send(markup);
 
         return;
@@ -145,6 +147,7 @@ export default function appProxyRoutes(app) {
         }
 
         // Fallback if somehow shop header is missing
+        res.set("Content-Type", "application/liquid");
         res.status(200).send("There was an error.");
       }
     }
