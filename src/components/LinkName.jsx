@@ -1,7 +1,7 @@
 import { Card, Modal, TextField } from "@shopify/polaris";
 
 const Container = ({ showModal, toggleModal, handleRename, children }) => {
-  if (toggleModal) {
+  if (handleRename) {
     return (
       <Modal
         open={showModal}
@@ -27,7 +27,7 @@ const Container = ({ showModal, toggleModal, handleRename, children }) => {
 export function LinkName({
   name,
   showModal = false,
-  toggleModal,
+  toggleModal = null,
   handleRename,
 }) {
   return (
