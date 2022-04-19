@@ -8,14 +8,12 @@ import {
   Icon,
   Modal,
   Popover,
-  Spinner,
   Stack,
   Tabs,
   TextContainer,
   TextField,
   TextStyle,
   hsbToHex,
-  Heading,
   Subheading,
 } from "@shopify/polaris";
 import {
@@ -425,14 +423,14 @@ export function CheckoutLinkCard({
                     id="alias-link"
                     labelHidden
                     label="Customer checkout link"
-                    multiline={3}
+                    multiline={1}
                     //prefix={`https://${shopDomain}/a/cart/`}
                     value={`https://${shopDomain}/a/cart/${
                       (alias && alias.value) || ""
                     }`}
                     selectTextOnFocus
                     connectedRight={
-                      <Stack vertical spacing="extraTight">
+                      <Stack spacing="extraTight">
                         <Button
                           primary
                           fullWidth
