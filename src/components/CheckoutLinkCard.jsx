@@ -17,7 +17,6 @@ import {
   hsbToHex,
   Heading,
   Subheading,
-  Badge,
 } from "@shopify/polaris";
 import {
   CancelSmallMinor,
@@ -370,140 +369,129 @@ export function CheckoutLinkCard({
             onSelect={handleSelectTab}
           />
         ) : null}
-        {link && selectedIndex == 0 ? (
-          <RequireSubscription
-            content={
-              <Stack vertical>
-                <TextStyle variation="strong">
-                  Please upgrade to Pro in order to leverage link aliases.
-                </TextStyle>
-                <Subheading>Benefits</Subheading>
-                <Stack spacing="tight" vertical>
-                  <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>
-                      <Tooltip content="Customize a short url to share with customers and use on marketing campaigns. Easily change products and link information without changing the url.">
-                        Link aliases
-                      </Tooltip>
-                    </TextStyle>
+        {selectedIndex == 0 ? (
+          !newForm ? (
+            <RequireSubscription
+              content={
+                <Stack vertical>
+                  <TextStyle variation="strong">
+                    Please upgrade to Pro in order to leverage link aliases.
+                  </TextStyle>
+                  <Subheading>Benefits</Subheading>
+                  <Stack spacing="tight" vertical>
+                    <Stack spacing="none">
+                      <Icon source={TickSmallMinor} color="success" />{" "}
+                      <TextStyle>
+                        <Tooltip content="Customize a short url to share with customers and use on marketing campaigns. Easily change products and link information without changing the url.">
+                          Link aliases
+                        </Tooltip>
+                      </TextStyle>
+                    </Stack>
+                    <Stack spacing="none">
+                      <Icon source={TickSmallMinor} color="success" />{" "}
+                      <TextStyle>
+                        <Tooltip content="See how many clicks a link got.">
+                          Analytics
+                        </Tooltip>
+                      </TextStyle>
+                    </Stack>
+                    {/* <Stack spacing="none">
+                      <Icon source={TickSmallMinor} color="success" />{" "}
+                      <TextStyle>
+                        <Tooltip content="Link customers straight to checkout with subscription products.">
+                          Subscription products
+                        </Tooltip>
+                      </TextStyle>
+                      <Stack.Item>
+                        <Badge>Coming soon</Badge>
+                      </Stack.Item>
+                    </Stack>
+                    <Stack spacing="none">
+                      <Icon source={TickSmallMinor} color="success" />{" "}
+                      <TextStyle>Line item properties</TextStyle>
+                      <Stack.Item>
+                        <Badge>Coming soon</Badge>
+                      </Stack.Item>
+                    </Stack> */}
                   </Stack>
-                  <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>
-                      <Tooltip content="See how many clicks a link got.">
-                        Analytics
-                      </Tooltip>
-                    </TextStyle>
-                  </Stack>
-                  {/* <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>
-                      <Tooltip content="Link customers straight to checkout with subscription products.">
-                        Subscription products
-                      </Tooltip>
-                    </TextStyle>
-                    <Stack.Item>
-                      <Badge>Coming soon</Badge>
-                    </Stack.Item>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>Line item properties</TextStyle>
-                    <Stack.Item>
-                      <Badge>Coming soon</Badge>
-                    </Stack.Item>
-                  </Stack> */}
                 </Stack>
-              </Stack>
-            }
-          >
-            {!newForm ? (
-              <Card.Section subdued title="Supported features">
-                <Stack spacing="tight">
-                  <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>Analytics</TextStyle>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>Subscription products</TextStyle>
-                  </Stack>
-                  <Stack spacing="none">
-                    <Icon source={TickSmallMinor} color="success" />{" "}
-                    <TextStyle>Line item properties</TextStyle>
-                  </Stack>
+              }
+            >
+              <Card.Section>
+                <Stack vertical spacing="extraTight">
+                  <TextField
+                    id="alias-link"
+                    labelHidden
+                    label="Customer checkout link"
+                    multiline={3}
+                    //prefix={`https://${shopDomain}/a/cart/`}
+                    value={`https://${shopDomain}/a/cart/${
+                      (alias && alias.value) || ""
+                    }`}
+                    selectTextOnFocus
+                    connectedRight={
+                      <Stack vertical spacing="extraTight">
+                        <Button
+                          primary
+                          fullWidth
+                          icon={ClipboardMinor}
+                          onClick={handleCopyAliasLink}
+                        >
+                          Copy
+                        </Button>
+                        <Button
+                          icon={ShopcodesMajor}
+                          fullWidth
+                          onClick={handleToggleQRModal}
+                          accessibilityLabel="View QR Code"
+                        >
+                          QR Code
+                        </Button>
+                      </Stack>
+                    }
+                  />
+                  <Popover
+                    active={popoverActive}
+                    activator={
+                      <Button
+                        plain
+                        icon={EditMinor}
+                        onClick={togglePopoverActive}
+                      >
+                        Edit link alias
+                      </Button>
+                    }
+                    autofocusTarget="first-node"
+                    onClose={togglePopoverActive}
+                    sectioned
+                    preferredAlignment="left"
+                  >
+                    <TextField
+                      requiredIndicator
+                      showCharacterCount
+                      maxLength={125}
+                      prefix={`/a/cart/`}
+                      label="Link alias"
+                      helpText="The old alias will not redirect to new alias."
+                      {...alias}
+                      spellCheck={false}
+                      error={!alias.value}
+                    />
+                  </Popover>
                 </Stack>
               </Card.Section>
-            ) : null}
+            </RequireSubscription>
+          ) : (
             <Card.Section>
-              <Stack vertical spacing="extraTight">
-                <TextField
-                  id="alias-link"
-                  labelHidden
-                  label="Customer checkout link"
-                  multiline={3}
-                  //prefix={`https://${shopDomain}/a/cart/`}
-                  value={`https://${shopDomain}/a/cart/${
-                    (alias && alias.value) || ""
-                  }`}
-                  selectTextOnFocus
-                  connectedRight={
-                    <Stack vertical spacing="extraTight">
-                      <Button
-                        fullWidth
-                        icon={ClipboardMinor}
-                        onClick={handleCopyAliasLink}
-                      >
-                        Copy
-                      </Button>
-                      <Button
-                        icon={ShopcodesMajor}
-                        fullWidth
-                        onClick={handleToggleQRModal}
-                        accessibilityLabel="View QR Code"
-                      >
-                        QR Code
-                      </Button>
-                    </Stack>
-                  }
-                />
-                <Popover
-                  active={popoverActive}
-                  activator={
-                    <Button
-                      plain
-                      icon={EditMinor}
-                      onClick={togglePopoverActive}
-                    >
-                      Edit link alias
-                    </Button>
-                  }
-                  autofocusTarget="first-node"
-                  onClose={togglePopoverActive}
-                  sectioned
-                  preferredAlignment="left"
-                >
-                  <TextField
-                    requiredIndicator
-                    showCharacterCount
-                    maxLength={125}
-                    prefix={`/a/cart/`}
-                    label="Link alias"
-                    helpText="The old alias will not redirect to new alias."
-                    {...alias}
-                    spellCheck={false}
-                    error={!alias.value}
-                  />
-                </Popover>
-              </Stack>
+              <Banner>Please save link to generate a link alias.</Banner>
             </Card.Section>
-          </RequireSubscription>
+          )
         ) : null}
 
         {!link || selectedIndex == 1 ? (
           <>
             {!newForm ? (
-              <Card.Section subdued title="Supported features">
+              <Card.Section subdued title="Limitations">
                 <Stack spacing="tight">
                   <Stack spacing="none">
                     <Icon source={CancelSmallMinor} color="critical" />{" "}
@@ -541,6 +529,7 @@ export function CheckoutLinkCard({
                         link ? (
                           <Stack vertical spacing="extraTight">
                             <Button
+                              primary
                               fullWidth
                               icon={ClipboardMinor}
                               onClick={handleCopyCheckoutLink}
