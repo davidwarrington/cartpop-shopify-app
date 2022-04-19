@@ -187,7 +187,7 @@ export function OrderCard({ order }) {
         title="Order information"
         secondaryActions={[
           {
-            content: "Save and close",
+            content: "Edit and close",
             onAction: toggleModalVisibility,
           },
         ]}

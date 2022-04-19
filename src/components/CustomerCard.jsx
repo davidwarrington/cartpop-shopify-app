@@ -138,7 +138,7 @@ export function CustomerCard({ customer }) {
         title="Customer information"
         secondaryActions={[
           {
-            content: "Save and close",
+            content: "Edit and close",
             onAction: toggleModalVisibility,
           },
         ]}
