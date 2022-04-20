@@ -1,9 +1,13 @@
 import { useCallback, useState } from "react";
 import { Button, Card, Heading, Stack } from "@shopify/polaris";
-import { ResourcePicker } from "@shopify/app-bridge-react";
+import { ResourcePicker, useAppBridge } from "@shopify/app-bridge-react";
 import { ProductList } from "./ProductList";
+import { userLoggedInFetch } from "../helpers";
 
 export function ProductsCard({ products }) {
+  const app = useAppBridge();
+  const fetchFunction = userLoggedInFetch(app);
+
   const [showPicker, setShowPicker] = useState(false);
 
   const togglePickerShow = useCallback(() => {
@@ -15,68 +19,51 @@ export function ProductsCard({ products }) {
   }, []);
 
   // Set all selected products (overrides existing)
-  const handleProductSelection = useCallback(({ selection }) => {
-    // TODO: prevent overwriting Quantity
-    products.onChange(selection);
-    togglePickerHide();
-  }, []);
+  const handleProductSelection = useCallback(
+    ({ selection }) => {
+      selection.map((product) =>
+        product.variants.map((variant) => {
+          const image = variant.image || (product.images && product.images[0]);
 
-  // Remove variant at specified indexes
-  const handleVariantRemove = useCallback(
-    (productIndex, variantIndex) => {
-      if (productIndex < 0 || variantIndex < 0) {
-        return;
-      }
+          const lineItem = {
+            product: variant.product,
+            handle: product.handle,
+            status: product.status,
+            vendor: product.vendor,
+            title: product.title,
+            ...variant,
+            image,
+          };
 
-      const cachedProducts = [...products.value];
-      cachedProducts[productIndex] &&
-        cachedProducts[productIndex].variants[variantIndex] &&
-        cachedProducts[productIndex].variants.splice(variantIndex, 1);
+          console.log("lineItem", lineItem);
 
-      if (
-        !cachedProducts[productIndex].variants ||
-        cachedProducts[productIndex].variants.length === 0
-      ) {
-        cachedProducts.splice(productIndex, 1);
-      }
+          products.addItem({
+            variantInfo: lineItem,
+            link_quantity: "1",
+            link_attributes: [],
+          });
+        })
+      );
 
-      if (!cachedProducts || !cachedProducts.length) {
-        return products.onChange([]);
-      }
+      // TODO: make api call to fetch product payload
+      // const productsRes = await fetchFunction(`/api/products`, {
+      //   method: "POST",
+      //   body: JSON.stringify({
+      //     variants: []
+      //   }),
+      //   headers: {
+      //     Accept: "application/json",
+      //     "Content-Type": "application/json",
+      //   },
+      // });
 
-      return products.onChange(cachedProducts);
+      // TODO: prevent overwriting Quantity
+      togglePickerHide();
     },
     [products]
   );
 
-  // Change variant quantity
-  const handleVariantQuantity = useCallback(
-    (productIndex, variantIndex, newQuantity) => {
-      if (productIndex < 0 || variantIndex < 0) {
-        return;
-      }
-
-      const cachedProducts = [...products.value];
-
-      // We need to make sure the indexes are valid
-      if (
-        !cachedProducts[productIndex] ||
-        !cachedProducts[productIndex].variants ||
-        !cachedProducts[productIndex].variants.length ||
-        !cachedProducts[productIndex].variants[variantIndex]
-      ) {
-        return;
-      }
-
-      cachedProducts[productIndex].variants[variantIndex].quantity =
-        newQuantity > 0 ? newQuantity : 1;
-
-      return products.onChange(cachedProducts);
-    },
-    [products]
-  );
-
-  const hasProducts = products && products.value.length;
+  const hasProducts = products && products.fields && products.fields.length;
 
   return (
     <>
@@ -97,17 +84,13 @@ export function ProductsCard({ products }) {
             <Stack distribution="equalSpacing" alignment="center">
               <Heading element="h2">Products</Heading>
               <Button removeUnderline onClick={togglePickerShow} plain>
-                Edit products
+                Add product
               </Button>
             </Stack>
           </Card.Section>
         ) : null}
         <Card.Section>
-          <ProductList
-            products={products.value}
-            handleVariantRemove={handleVariantRemove}
-            handleVariantQuantity={handleVariantQuantity}
-          />
+          <ProductList lineItems={products} />
         </Card.Section>
       </Card>
       {/* Learn more: https://shopify.dev/apps/tools/app-bridge/react-components/resourcepicker */}
@@ -116,16 +99,23 @@ export function ProductsCard({ products }) {
         // We use Product since the ProductVariant resource picker has terrible UX
         resourceType="Product"
         // Populated with the current selection
-        initialSelectionIds={
-          products && products.value.length
-            ? products.value.map((product) => {
-                return {
-                  id: product.id,
-                  variants: product.variants,
-                };
-              })
-            : []
-        }
+        // initialSelectionIds={
+        //   products && products.fields.length
+        //     ? products.fields.map((lineItem) => {
+        //         const productId = lineItem.variantInfo
+        //           && lineItem.variantInfo.value
+        //           && lineItem.variantInfo.value.product.id;
+        //         const variantId = lineItem.variantInfo
+        //           && lineItem.variantInfo.value
+        //           && lineItem.variantInfo.value.id;
+
+        //         return {
+        //           id: productId,
+        //           variants: [variantId],
+        //         };
+        //       })
+        //     : []
+        // }
         showDraft={false}
         showHidden={false}
         showArchived={false}

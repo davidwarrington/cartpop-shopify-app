@@ -59,12 +59,14 @@ export function LinkForm({
     []
   );
 
-  const products = useField({
-    value: link.products || [],
-    validates: [
-      //notEmpty("At least one selected product is required"),
-    ],
-  });
+  // const products = useField({
+  //   value: link.products || [],
+  //   validates: [
+  //     //notEmpty("At least one selected product is required"),
+  //   ],
+  // });
+
+  const products = useDynamicList(link.products || [], (value) => value);
 
   const customer = {
     email: useField((link.customer && link.customer.email) || ""),
@@ -109,7 +111,7 @@ export function LinkForm({
         value: link.name || "",
         validates: [notEmpty("Link name is required")],
       }),
-      products,
+      products: products.fields,
       customer,
       order: {
         ...order,
@@ -118,7 +120,11 @@ export function LinkForm({
     },
     async onSubmit(form) {
       try {
-        const result = await handleSubmit(form);
+        let formPayload = {
+          ...form,
+          products: products.value,
+        };
+        const result = await handleSubmit(formPayload);
         // TODO: check result
 
         const remoteErrors = []; // your API call goes here
@@ -241,7 +247,7 @@ export function LinkForm({
                 link={link}
                 linkActive={fields.active.value}
                 alias={fields.alias}
-                products={fields.products.value}
+                products={products.value}
                 customer={fields.customer}
                 order={fields.order}
                 orderAttributes={orderAttributes.value}
@@ -253,7 +259,7 @@ export function LinkForm({
               handleRename={handleRename}
               toggleModal={toggleNameModal}
             />
-            <ProductsCard products={fields.products} />
+            <ProductsCard products={products} />
             <CustomerCard customer={fields.customer} />
             <OrderCard order={fields.order} attributes={orderAttributes} />
             {newForm ? (
