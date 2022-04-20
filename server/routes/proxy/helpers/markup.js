@@ -2,6 +2,7 @@ import { translationMetafield } from "../../../constants.js";
 import { defaultTranslations } from "../../../default-translations.js";
 
 export const getMarkup = ({
+  link,
   isMobile = false,
   shopifyRequestId,
   locale = "en",
@@ -12,6 +13,22 @@ export const getMarkup = ({
   message = "loading_message",
 }) => {
   const randomId = "2602686fb8b88d94b8051bb6bb771e56";
+
+  const cleanLink = link
+    ? {
+        type: link.type,
+        lineItems: link.products
+          ? link.products.map((lineItem) => ({
+              variantId: lineItem.variantInfo?.id,
+              productId: lineItem.variantInfo?.product?.id || null,
+              quantity: lineItem.link_quantity,
+              poperties: lineItem.link_line_properties || null,
+            }))
+          : null,
+        customer: link.customer,
+        order: link.order,
+      }
+    : {};
 
   return `{% layout none %} 
         <html lang="{{ request.locale.iso_code }}">
@@ -26,7 +43,8 @@ export const getMarkup = ({
           </head>
           <body>
             <script>
-              const isMobile = ${isMobile};
+              const link = ${JSON.stringify(cleanLink)};
+              const isMobile = ${isMobile === 1};
               const languageCode = "{{ request.locale.iso_code }}";
               const defaultTranslations = ${JSON.stringify(
                 defaultTranslations
@@ -36,6 +54,21 @@ export const getMarkup = ({
               }.${translationMetafield.key}.value | json }};
             </script>
             ${scripts ? scripts : ""}
+            ${
+              process.env.BUGSNAG_PROXY_KEY
+                ? `<script src="//d2wy8f7a9ursnm.cloudfront.net/v7/bugsnag.min.js"></script>
+              <script>
+                Bugsnag.start({
+                  apiKey: '${process.env.BUGSNAG_PROXY_KEY}',
+                  user: {
+                    id: '{{ shop.permanent_domain }}',
+                    name: '{{ shop.name }}',
+                  },
+                  //appVersion: '4.10.0' // TODO:
+                });
+              </script>`
+                : null
+            }
             <div class="full-page-overlay">
               <div class="full-page-overlay__wrap">
                 <div class="full-page-overlay__content" role="region" aria-describedby="full-page-overlay__processing-text" aria-label="Processing order" tabindex="-1">
