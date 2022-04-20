@@ -41,6 +41,7 @@ export function LinkName({
         placeholder="BFCM Marketing Campaign"
         helpText="Internal only. Not shown to customers."
         autoComplete="off"
+        autoFocus={true}
         {...name}
       />
     </Container>
