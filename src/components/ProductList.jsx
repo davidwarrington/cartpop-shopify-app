@@ -234,7 +234,7 @@ export function ProductList({ lineItems }) {
                   icon={MobilePlusMajor}
                   onClick={() => handleAttributeAdd(lineIndex)}
                 >
-                  Add attribute
+                  Add line property
                 </Button>
                 <Button
                   onClick={() => lineItems.removeItem(lineIndex)}
