@@ -40,8 +40,6 @@ export function OrderCard({ order, attributes }) {
         : false
     );
 
-  console.log(order.discountCode);
-
   return (
     <>
       <Card
