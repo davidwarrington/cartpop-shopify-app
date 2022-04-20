@@ -233,6 +233,7 @@ export function ProductList({ lineItems }) {
                   outline
                   icon={MobilePlusMajor}
                   onClick={() => handleAttributeAdd(lineIndex)}
+                  disabled
                 >
                   Add line property
                 </Button>
