@@ -35,8 +35,6 @@ export function ProductsCard({ products }) {
             image,
           };
 
-          console.log("lineItem", lineItem);
-
           products.addItem({
             variantInfo: lineItem,
             link_quantity: "1",

@@ -59,13 +59,6 @@ export function LinkForm({
     []
   );
 
-  // const products = useField({
-  //   value: link.products || [],
-  //   validates: [
-  //     //notEmpty("At least one selected product is required"),
-  //   ],
-  // });
-
   const products = useDynamicList(link.products || [], (value) => value);
 
   const customer = {
@@ -111,18 +104,19 @@ export function LinkForm({
         value: link.name || "",
         validates: [notEmpty("Link name is required")],
       }),
-      products: products.fields,
       customer,
       order: {
         ...order,
         attributes: orderAttributes.fields,
       },
     },
+    dynamicLists: {
+      products,
+    },
     async onSubmit(form) {
       try {
         let formPayload = {
           ...form,
-          products: products.value,
         };
         const result = await handleSubmit(formPayload);
         // TODO: check result
