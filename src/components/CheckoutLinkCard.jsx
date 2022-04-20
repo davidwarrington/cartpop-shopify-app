@@ -138,6 +138,17 @@ export function CheckoutLinkCard({
   const { shopData } = useShop();
 
   const shopDomain = shopData && (shopData.primaryDomain || shopData.shop);
+  const hasLineItemProperties =
+    products &&
+    products.length &&
+    products.some(
+      (product) =>
+        product.link_line_properties && product.link_line_properties.length
+    );
+  const hasProductSellingPlan =
+    products &&
+    products.length &&
+    products.some((product) => product.link_selling_plan_id);
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [generatedUrl, setUrl] = useState("");
@@ -161,17 +172,13 @@ export function CheckoutLinkCard({
       return;
     }
 
-    // Build Product String
+    // Build Products String
     const productString = products
-      .map((product) =>
-        product.variants
-          .map(
-            (variant) =>
-              `${getIdFromGid("ProductVariant", variant.id)}:${
-                variant.quantity || 1
-              }`
-          )
-          .join(",")
+      .map(
+        (lineItem) =>
+          `${getIdFromGid("ProductVariant", lineItem.variantInfo.id)}:${
+            lineItem.link_quantity || 1
+          }`
       )
       .join(",");
 
@@ -523,8 +530,26 @@ export function CheckoutLinkCard({
             ) : null}
             <Card.Section>
               <Stack vertical>
+                {hasLineItemProperties ? (
+                  <Banner
+                    status="warning"
+                    title="One or more products contain line item properties"
+                  >
+                    Please use a link alias as Shopify does not support line
+                    item properties with checkout links.
+                  </Banner>
+                ) : null}
+                {hasProductSellingPlan ? (
+                  <Banner
+                    status="warning"
+                    title="One or more products contain a product subscription"
+                  >
+                    Please use a link alias as Shopify does not support product
+                    subscriptions with checkout links.
+                  </Banner>
+                ) : null}
                 {!generatedUrl ? (
-                  <Banner>
+                  <Banner status="info">
                     Please add a product in order to generate a link.
                   </Banner>
                 ) : (
