@@ -142,7 +142,8 @@ export function CheckoutLinkCard({
     products &&
     products.length &&
     products.some(
-      (product) => product.link_attributes && product.link_attributes.length
+      (product) =>
+        product.link_line_properties && product.link_line_properties.length
     );
   const hasProductSellingPlan =
     products &&

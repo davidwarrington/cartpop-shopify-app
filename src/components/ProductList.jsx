@@ -27,18 +27,18 @@ export function ProductList({ lineItems }) {
     (lineIndex) => {
       if (
         !lineItems.fields[lineIndex] ||
-        !lineItems.fields[lineIndex].link_attributes
+        !lineItems.fields[lineIndex].link_line_properties
       ) {
         return;
       }
 
-      if (!lineItems.fields[lineIndex].link_attributes) {
-        lineItems.fields[lineIndex].link_attributes.onChange([
+      if (!lineItems.fields[lineIndex].link_line_properties) {
+        lineItems.fields[lineIndex].link_line_properties.onChange([
           { label: "", value: "" },
         ]);
       } else {
-        lineItems.fields[lineIndex].link_attributes.onChange([
-          ...lineItems.fields[lineIndex].link_attributes.value,
+        lineItems.fields[lineIndex].link_line_properties.onChange([
+          ...lineItems.fields[lineIndex].link_line_properties.value,
           { label: "", value: "" },
         ]);
       }
@@ -50,10 +50,10 @@ export function ProductList({ lineItems }) {
   const handleAttributeRemove = useCallback(
     (lineIndex, attributeIndex) => {
       const cachedAttributes =
-        lineItems.fields[lineIndex].link_attributes.value;
+        lineItems.fields[lineIndex].link_line_properties.value;
       cachedAttributes.splice(attributeIndex, 1);
 
-      lineItems.fields[lineIndex].link_attributes.onChange([
+      lineItems.fields[lineIndex].link_line_properties.onChange([
         ...cachedAttributes,
       ]);
     },
@@ -66,17 +66,17 @@ export function ProductList({ lineItems }) {
       if (
         !property ||
         !lineItems.fields[lineIndex] ||
-        !lineItems.fields[lineIndex].link_attributes ||
-        !lineItems.fields[lineIndex].link_attributes.value[attributeIndex]
+        !lineItems.fields[lineIndex].link_line_properties ||
+        !lineItems.fields[lineIndex].link_line_properties.value[attributeIndex]
       ) {
         return;
       }
 
       const cachedAttributes =
-        lineItems.fields[lineIndex].link_attributes.value;
+        lineItems.fields[lineIndex].link_line_properties.value;
       cachedAttributes[attributeIndex][property] = value;
 
-      lineItems.fields[lineIndex].link_attributes.onChange([
+      lineItems.fields[lineIndex].link_line_properties.onChange([
         ...cachedAttributes,
       ]);
     },
@@ -158,12 +158,12 @@ export function ProductList({ lineItems }) {
                       </Stack> */}
                     </Stack>
                   </Card.Subsection>
-                  {lineItem.link_attributes &&
-                  lineItem.link_attributes.value.length ? (
+                  {lineItem.link_line_properties &&
+                  lineItem.link_line_properties.value.length ? (
                     <Card.Subsection>
                       <div style={{ maxWidth: "80%" }}>
                         <Stack vertical spacing="tight">
-                          {lineItem.link_attributes.value.map(
+                          {lineItem.link_line_properties.value.map(
                             (attribute, attributeIndex) => {
                               return (
                                 <Stack

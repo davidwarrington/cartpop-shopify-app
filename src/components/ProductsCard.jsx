@@ -38,7 +38,7 @@ export function ProductsCard({ products }) {
           products.addItem({
             variantInfo: lineItem,
             link_quantity: "1",
-            link_attributes: [],
+            link_line_properties: [],
           });
         })
       );
