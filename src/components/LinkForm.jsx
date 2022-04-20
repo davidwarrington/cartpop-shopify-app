@@ -182,10 +182,12 @@ export function LinkForm({
         breadcrumbs={[{ content: "Home", url: "/" }]}
         title={fields.name.value || pageTitle}
         subtitle={
-          <TextStyle variation="subdued">
-            Last updated on{" "}
-            {new Date(link.updatedAt || link.createdAt).toLocaleString()}
-          </TextStyle>
+          !newForm ? (
+            <TextStyle variation="subdued">
+              Last updated on{" "}
+              {new Date(link.updatedAt || link.createdAt).toLocaleString()}
+            </TextStyle>
+          ) : null
         }
         primaryAction={{
           content: "Save",
