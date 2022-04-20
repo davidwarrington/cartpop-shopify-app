@@ -15,12 +15,13 @@ export const generatedCheckoutLink = ({ shop, link }) => {
     return null;
   }
 
-  // Build Products
+  // Build Products String
   const productString = products
-    .map((product) =>
-      product.variants
-        .map((variant) => `${parseGid(variant.id)}:${variant.quantity || 1}`)
-        .join(",")
+    .map(
+      (lineItem) =>
+        `${parseGid(lineItem.variantInfo && lineItem.variantInfo.id)}:${
+          lineItem.link_quantity || 1
+        }`
     )
     .join(",");
 

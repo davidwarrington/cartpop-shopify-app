@@ -171,7 +171,7 @@ export function CheckoutLinkCard({
       return;
     }
 
-    // Build Product String
+    // Build Products String
     const productString = products
       .map(
         (lineItem) =>
