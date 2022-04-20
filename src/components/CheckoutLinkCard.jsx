@@ -530,19 +530,25 @@ export function CheckoutLinkCard({
             <Card.Section>
               <Stack vertical>
                 {hasLineItemProperties ? (
-                  <Banner title="One or more products contain line item properties">
+                  <Banner
+                    status="warning"
+                    title="One or more products contain line item properties"
+                  >
                     Please use a link alias as Shopify does not support line
                     item properties with checkout links.
                   </Banner>
                 ) : null}
                 {hasProductSellingPlan ? (
-                  <Banner title="One or more products contain a product subscription">
+                  <Banner
+                    status="warning"
+                    title="One or more products contain a product subscription"
+                  >
                     Please use a link alias as Shopify does not support product
                     subscriptions with checkout links.
                   </Banner>
                 ) : null}
                 {!generatedUrl ? (
-                  <Banner>
+                  <Banner status="info">
                     Please add a product in order to generate a link.
                   </Banner>
                 ) : (
