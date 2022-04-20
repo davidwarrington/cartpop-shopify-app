@@ -40,6 +40,8 @@ export function OrderCard({ order, attributes }) {
         : false
     );
 
+  console.log(order.discountCode);
+
   return (
     <>
       <Card
@@ -204,6 +206,8 @@ export function OrderCard({ order, attributes }) {
               maxLength={255}
               spellCheck={false}
               helpText="Automatically applied at checkout."
+              clearButton
+              onClearButtonClick={() => order.discountCode.onChange(null)}
               {...order.discountCode}
             />
             <TextField
@@ -231,6 +235,8 @@ export function OrderCard({ order, attributes }) {
                   section on the details page.
                 </>
               }
+              clearButton
+              onClearButtonClick={() => order.ref.onChange(null)}
               {...order.ref}
             />
           </FormLayout>

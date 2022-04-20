@@ -149,6 +149,8 @@ export function CustomerCard({ customer }) {
               type="email"
               label="Email"
               placeholder="example@example.com"
+              clearButton
+              onClearButtonClick={() => customer.email.onChange(null)}
               {...customer.email}
             />
             <Stack distribution="fillEvenly">
@@ -156,12 +158,16 @@ export function CustomerCard({ customer }) {
                 type="text"
                 label="First name"
                 placeholder="Sample"
+                clearButton
+                onClearButtonClick={() => customer.first_name.onChange(null)}
                 {...customer.first_name}
               />
               <TextField
                 type="text"
                 label="Last name"
                 placeholder="customer"
+                clearButton
+                onClearButtonClick={() => customer.last_name.onChange(null)}
                 {...customer.last_name}
               />
             </Stack>
