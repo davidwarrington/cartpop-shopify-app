@@ -167,13 +167,13 @@ export function ProductList({ lineItems }) {
                             </Link>
                           ) : null}
                         </TextStyle>
-                        <Subheading>
-                          {variant.title !== "Default Title" ? (
+                        {variant.title !== "Default Title" ? (
+                          <Subheading>
                             <TextStyle variation="subdued">
                               {variant.title}
                             </TextStyle>
-                          ) : null}
-                        </Subheading>
+                          </Subheading>
+                        ) : null}
                       </Stack>
                       <Stack vertical spacing="none">
                         {/* <Checkbox label="Add subscription" checked={lineItem.link_selling_plan_id ? true : false} /> */}
