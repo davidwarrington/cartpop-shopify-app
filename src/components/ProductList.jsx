@@ -94,6 +94,11 @@ export function ProductList({ lineItems }) {
         return;
       }
 
+      if (!value.length) {
+        lineItems.fields[lineIndex].link_selling_plan_id.onChange(null);
+        return;
+      }
+
       lineItems.fields[lineIndex].link_selling_plan_id.onChange(value);
     },
     [lineItems]
@@ -246,14 +251,12 @@ export function ProductList({ lineItems }) {
                               );
                             }
                           )}
-                          <p>
-                            <Caption>
-                              <TextStyle variation="subdued">
-                                Add an underscore `_` before the label to hide
-                                from customers.
-                              </TextStyle>
-                            </Caption>
-                          </p>
+                          <Caption>
+                            <TextStyle variation="subdued">
+                              Add an underscore `_` before the label to hide
+                              from customers.
+                            </TextStyle>
+                          </Caption>
                         </Stack>
                       </div>
                     </Card.Subsection>
