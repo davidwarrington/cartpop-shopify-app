@@ -39,6 +39,7 @@ export function ProductsCard({ products }) {
             variantInfo: lineItem,
             link_quantity: "1",
             link_line_properties: [],
+            link_selling_plan_id: null,
           });
         })
       );

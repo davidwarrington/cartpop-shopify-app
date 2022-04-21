@@ -21,6 +21,8 @@ import {
   useForm,
   notEmpty,
   useDynamicList,
+  submitSuccess,
+  submitFail,
 } from "@shopify/react-form";
 
 import { PAGE_STATES } from "../constants";
@@ -59,7 +61,17 @@ export function LinkForm({
     []
   );
 
-  const products = useDynamicList(link.products || [], (value) => value);
+  const products = useDynamicList(
+    link.products
+      ? link.products.map((product) => ({
+          ...product,
+          link_quantity: product.link_quantity || "1",
+          link_line_properties: product.link_line_properties || [],
+          link_selling_plan_id: product.link_selling_plan_id || null,
+        }))
+      : [],
+    (value) => value
+  );
 
   const customer = {
     email: useField((link.customer && link.customer.email) || ""),
@@ -76,11 +88,11 @@ export function LinkForm({
   const order = {
     note: useField({
       value: (link.order && link.order.note) || "",
-      validates: [lengthLessThan("5000")],
+      validates: [lengthLessThan("5001")],
     }),
     discountCode: useField({
       value: (link.order && link.order.discountCode) || "",
-      validates: [lengthLessThan("255")],
+      validates: [lengthLessThan("256")],
     }),
     ref: useField((link.order && link.order.ref) || ""),
     useShopPay: useField((link.order && link.order.useShopPay) || false),
@@ -113,26 +125,34 @@ export function LinkForm({
     dynamicLists: {
       products,
     },
-    async onSubmit(form) {
+    async onSubmit(formFields) {
       try {
-        let formPayload = {
-          ...form,
-        };
-        const result = await handleSubmit(formPayload);
-        // TODO: check result
-
-        const remoteErrors = []; // your API call goes here
-        if (remoteErrors.length > 0) {
-          return { status: "fail", errors: remoteErrors };
+        if (!formFields.products || !formFields.products.length) {
+          setToast({
+            show: true,
+            content: "Please select at least one product",
+            error: true,
+          });
+          return {
+            status: "fail",
+            errors: [{ message: "Please select at least one product" }],
+          };
         }
 
-        return { status: "success" };
+        const result = await handleSubmit(formFields);
+        return submitSuccess();
+
+        // TODO: check result
+        // const remoteErrors = []; // your API call goes here
+        // if (remoteErrors.length > 0) {
+        //   return { status: "fail", errors: remoteErrors };
+        // }
       } catch (err) {
         console.warn(err);
         return { status: "fail", errors: remoteErrors };
       }
     },
-    makeCleanAfterSubmit: true,
+    //makeCleanAfterSubmit: true,
   });
 
   const errorBanner =
@@ -182,21 +202,24 @@ export function LinkForm({
         breadcrumbs={[{ content: "Home", url: "/" }]}
         title={fields.name.value || pageTitle}
         subtitle={
-          <TextStyle variation="subdued">
-            Last updated on{" "}
-            {new Date(link.updatedAt || link.createdAt).toLocaleString()}
-          </TextStyle>
+          !newForm ? (
+            <TextStyle variation="subdued">
+              Last updated on{" "}
+              {new Date(link.updatedAt || link.createdAt).toLocaleString()}
+            </TextStyle>
+          ) : null
         }
         primaryAction={{
           content: "Save",
-          disabled: !dirty || pageState === PAGE_STATES.submitting,
+          disabled:
+            (!dirty && !products.dirty) || pageState === PAGE_STATES.submitting,
           loading: pageState === PAGE_STATES.submitting,
           onAction: submit,
         }}
         secondaryActions={secondaryActions}
       >
-        <SaveBar
-          showBar={dirty}
+        {/* <SaveBar
+          showBar={dirty || products.dirty}
           message="Unsaved products"
           save={[submit]}
           discard={[reset]}
@@ -209,7 +232,7 @@ export function LinkForm({
           // discardAction={{
           //   onAction: reset,
           // }}
-        />
+        /> */}
         {toast && toast.show ? (
           <Toast
             content={toast.content}
@@ -241,7 +264,7 @@ export function LinkForm({
                 link={link}
                 linkActive={fields.active.value}
                 alias={fields.alias}
-                products={products.value}
+                products={products && products.fields}
                 customer={fields.customer}
                 order={fields.order}
                 orderAttributes={orderAttributes.value}
@@ -262,7 +285,7 @@ export function LinkForm({
                 link={link}
                 linkActive={fields.active.value}
                 alias={fields.alias}
-                products={fields.products && fields.products.value}
+                products={products && products.fields}
                 customer={fields.customer}
                 order={fields.order}
               />
