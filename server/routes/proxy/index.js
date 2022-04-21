@@ -91,6 +91,9 @@ export default function appProxyRoutes(app) {
         });
 
         if (!link) {
+          console.warn(
+            `Could not find an active link of ${linkAlias} on ${shop}`
+          );
           const { markup } = await Proxy.linkNotFound(req, res);
           res.set("Content-Type", "application/liquid");
           res.status(200).send(markup);
