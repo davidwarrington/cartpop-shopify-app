@@ -148,7 +148,10 @@ export function CheckoutLinkCard({
   const hasProductSellingPlan =
     products &&
     products.length &&
-    products.some((product) => product.link_selling_plan_id);
+    products.some(
+      (product) =>
+        product.link_selling_plan_id && product.link_selling_plan_id.length
+    );
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [generatedUrl, setUrl] = useState("");

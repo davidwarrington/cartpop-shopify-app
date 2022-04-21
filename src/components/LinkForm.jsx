@@ -264,7 +264,7 @@ export function LinkForm({
                 link={link}
                 linkActive={fields.active.value}
                 alias={fields.alias}
-                products={products && products.fields}
+                products={products && products.value}
                 customer={fields.customer}
                 order={fields.order}
                 orderAttributes={orderAttributes.value}
