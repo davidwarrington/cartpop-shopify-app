@@ -148,6 +148,8 @@ export const getHeaders = (req) => {
   const isMobile = req.headers && req.headers["x-is-mobile"];
   const shop = req.headers && req.headers["x-shop-domain"];
 
+  console.log("req.headers", req.headers);
+
   return {
     isMobile,
     shopifyRequestId,
