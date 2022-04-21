@@ -31,6 +31,8 @@ export const getMarkup = ({
       }
     : {};
 
+  //        <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-${randomId}-160" media="all" />
+
   return `{% layout none %} 
     <html lang="{{ request.locale.iso_code }}">
       <head>
@@ -38,9 +40,9 @@ export const getMarkup = ({
         <meta name="robots" content="noindex"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
         <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
-        <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-${randomId}-160" media="all" />
         <meta name="shopify-x-request-id" content="${shopifyRequestId}">
         <!-- <meta http-equiv="refresh" content="3;URL=?from_processing_page=1"> -->
+        ${checkoutStyles}
       </head>
       <body>
         <script>
@@ -189,3 +191,169 @@ export const getScriptMarkup = ({
     handleCart();  
 </script>`;
 };
+
+const checkoutStyles = `
+<style>
+  html,body {
+    margin: 0;
+    width: 100%;
+    height: 100%
+  }
+
+  html {
+    font-family: sans-serif;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%
+  }
+
+  body {
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    line-height: 1.3em;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -webkit-font-smoothing: subpixel-antialiased
+  }
+
+  h1,h2,h3,h4,h5,h6 {
+    font-weight: normal;
+    margin: 0;
+    line-height: 1em
+  }
+
+  h2,.heading-2 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    font-size: 1.2857142857em;
+    line-height: 1.3em
+  }
+
+  p {
+    margin: 0
+  }
+
+  .icon-svg--color-accent {
+    color: #0088a6;
+    fill: currentColor
+  }
+  .icon-svg {
+    display: inline-block;
+    vertical-align: middle;
+    fill: currentColor
+  }
+  .icon-svg--size-64 {
+    width: 64px;
+    height: 64px
+  }
+  .icon-svg--spinner {
+    -webkit-animation: fade-in 0.5s ease-in-out, rotate 0.5s linear infinite;
+    animation: fade-in 0.5s ease-in-out, rotate 0.5s linear infinite
+  }
+
+  .full-page-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    overflow: auto;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    background: white;
+    color: #545454
+  }
+
+  .full-page-overlay__wrap {
+    margin: auto;
+    width: 100%;
+    padding: 10% 0
+  }
+
+  .full-page-overlay__title {
+    color: #333333;
+    margin-bottom: 0.5em
+  }
+
+  .full-page-overlay__content {
+    margin: 0 auto;
+    max-width: 36em;
+    padding-left: 1em;
+    padding-right: 1em;
+    zoom:1}
+
+  .full-page-overlay__content:after,.full-page-overlay__content:before {
+    content: "";
+    display: table
+  }
+
+  .full-page-overlay__content:after {
+    clear: both
+  }
+
+  .full-page-overlay__content form {
+    margin: 1.5em 0
+  }
+
+  .full-page-overlay__content:focus {
+    outline: 0
+  }
+
+  .full-page-overlay__icon {
+    margin-bottom: 1.5em
+  }
+
+  @-webkit-keyframes fade-in {
+    0% {
+        opacity: 0;
+        visibility: hidden
+    }
+
+    100% {
+        opacity: 1;
+        visibility: visible
+    }
+  }
+
+  @keyframes fade-in {
+      0% {
+          opacity: 0;
+          visibility: hidden
+      }
+
+      100% {
+          opacity: 1;
+          visibility: visible
+      }
+  }
+  @-webkit-keyframes rotate {
+    0% {
+        -webkit-transform: rotate(0);
+        transform: rotate(0)
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg)
+    }
+  }
+  @keyframes rotate {
+    0% {
+        -webkit-transform: rotate(0);
+        transform: rotate(0)
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg)
+    }
+  }
+</style>
+`;
