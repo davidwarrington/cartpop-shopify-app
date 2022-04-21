@@ -1,5 +1,6 @@
 import {
   Button,
+  Caption,
   Card,
   Checkbox,
   Link,
@@ -83,6 +84,21 @@ export function ProductList({ lineItems }) {
     [lineItems]
   );
 
+  // Change line item selling plan id
+  const handleSellingPlanChange = useCallback(
+    (lineIndex, value) => {
+      if (
+        !lineItems.fields[lineIndex] ||
+        !lineItems.fields[lineIndex].link_selling_plan_id
+      ) {
+        return;
+      }
+
+      lineItems.fields[lineIndex].link_selling_plan_id.onChange(value);
+    },
+    [lineItems]
+  );
+
   // Return message when no product is selected
   if (!lineItems || !lineItems.fields || !lineItems.fields.length) {
     return (
@@ -152,10 +168,22 @@ export function ProductList({ lineItems }) {
                           </TextStyle>
                         </Subheading>
                       </Stack>
-                      {/* <Stack vertical spacing="none">
-                        <Checkbox label="Add subscription" checked={false} />
-                        <Select label="Subscription" labelInline options={[{ label: "Weekly"}]} />
-                      </Stack> */}
+                      <Stack vertical spacing="none">
+                        {/* <Checkbox label="Add subscription" checked={lineItem.link_selling_plan_id ? true : false} /> */}
+                        <TextField
+                          label="Selling plan id"
+                          value={
+                            lineItem.link_selling_plan_id
+                              ? lineItem.link_selling_plan_id.value
+                              : ""
+                          }
+                          onChange={(value) =>
+                            handleSellingPlanChange(lineIndex, value)
+                          }
+                          autoComplete="off"
+                        />
+                        {/* <Select label="Subscription" labelInline options={[{ label: "Weekly"}]} /> */}
+                      </Stack>
                     </Stack>
                   </Card.Subsection>
                   {lineItem.link_line_properties &&
@@ -170,6 +198,7 @@ export function ProductList({ lineItems }) {
                                   alignment="trailing"
                                   wrap={false}
                                   spacing="extraTight"
+                                  key={attributeIndex}
                                 >
                                   <Stack.Item fill>
                                     <TextField
@@ -217,6 +246,14 @@ export function ProductList({ lineItems }) {
                               );
                             }
                           )}
+                          <p>
+                            <Caption>
+                              <TextStyle variation="subdued">
+                                Add an underscore `_` before the label to hide
+                                from customers.
+                              </TextStyle>
+                            </Caption>
+                          </p>
                         </Stack>
                       </div>
                     </Card.Subsection>
@@ -240,7 +277,6 @@ export function ProductList({ lineItems }) {
                   outline
                   icon={MobilePlusMajor}
                   onClick={() => handleAttributeAdd(lineIndex)}
-                  disabled
                 >
                   Add line property
                 </Button>

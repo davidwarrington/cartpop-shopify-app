@@ -59,7 +59,17 @@ export function LinkForm({
     []
   );
 
-  const products = useDynamicList(link.products || [], (value) => value);
+  const products = useDynamicList(
+    link.products
+      ? link.products.map((product) => ({
+          ...product,
+          link_quantity: product.quantity || "1",
+          link_line_properties: product.link_line_properties || [],
+          link_selling_plan_id: product.link_selling_plan_id || null,
+        }))
+      : [],
+    (value) => value
+  );
 
   const customer = {
     email: useField((link.customer && link.customer.email) || ""),

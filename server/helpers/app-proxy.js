@@ -8,7 +8,7 @@ import crypto from "crypto";
 export const generatedCheckoutLink = ({ shop, link }) => {
   if (!link) return null;
 
-  const { products, customer, order } = link;
+  const { products } = link;
 
   // Products are required for chekout link
   if (!products || !products.length) {
@@ -26,6 +26,19 @@ export const generatedCheckoutLink = ({ shop, link }) => {
     .join(",");
 
   // Build remainder of parameters
+  const urlParameters = generateQueryString(link);
+
+  // Create full url
+  let checkoutUrl = shop ? `https://${shop.replace("https://", "")}` : "";
+  checkoutUrl += `/cart/${productString}?${urlParameters}`;
+  return checkoutUrl;
+};
+
+/*
+  Generate the url query string, specifically
+*/
+export const generateQueryString = (link) => {
+  const { customer, order } = link;
   let urlParameters = "";
 
   if (customer && Object.keys(customer).length) {
@@ -95,10 +108,7 @@ export const generatedCheckoutLink = ({ shop, link }) => {
     urlParameters += `&access_token=${accessToken}`;
   }
 
-  // Create full url
-  let checkoutUrl = shop ? `https://${shop.replace("https://", "")}` : "";
-  checkoutUrl += `/cart/${productString}?${urlParameters}`;
-  return checkoutUrl;
+  return urlParameters;
 };
 
 export const verifyAppProxyExtensionSignature = (
