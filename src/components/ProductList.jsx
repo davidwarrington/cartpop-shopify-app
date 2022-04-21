@@ -163,14 +163,16 @@ export function ProductList({ lineItems }) {
                               )}`}
                               external
                             >
-                              {variant.title}
+                              {variant.product.title || variant.title}
                             </Link>
                           ) : null}
                         </TextStyle>
                         <Subheading>
-                          <TextStyle variation="subdued">
-                            {variant.title}
-                          </TextStyle>
+                          {variant.title !== "Default Title" ? (
+                            <TextStyle variation="subdued">
+                              {variant.title}
+                            </TextStyle>
+                          ) : null}
                         </Subheading>
                       </Stack>
                       <Stack vertical spacing="none">

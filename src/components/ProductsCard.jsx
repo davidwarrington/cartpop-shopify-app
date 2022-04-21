@@ -26,12 +26,14 @@ export function ProductsCard({ products }) {
           const image = variant.image || (product.images && product.images[0]);
 
           const lineItem = {
-            product: variant.product,
-            handle: product.handle,
-            status: product.status,
-            vendor: product.vendor,
-            title: product.title,
             ...variant,
+            product: {
+              ...variant.product,
+              title: product.title,
+              handle: product.handle,
+              status: product.status,
+              vendor: product.vendor,
+            },
             image,
           };
 
