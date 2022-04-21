@@ -146,9 +146,7 @@ export const getHeaders = (req) => {
     req.headers["accept-language"].split(",")[0];
   const shopifyRequestId = req.headers && req.headers["x-request-id"];
   const isMobile = req.headers && req.headers["x-is-mobile"];
-  const shop = req.headers && req.headers["x-shop-domain"];
-
-  console.log("req.headers", req.headers);
+  const shop = req.query && req.query.shop;
 
   return {
     isMobile,
