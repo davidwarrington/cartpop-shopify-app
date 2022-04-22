@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { TitleBar } from "@shopify/app-bridge-react";
 import {
   LanguageMinor,
+  LinkMinor,
   PaymentsMajor,
   QuickSaleMajor,
   SettingsMajor,
@@ -33,6 +34,12 @@ const SettingsPage = () => {
     //   icon: SettingsMajor,
     //   url: "/settings/general",
     // },
+    {
+      content: "Links",
+      helpText: "View and update your link settings",
+      icon: LinkMinor,
+      url: "/settings/links",
+    },
     {
       content: "Billing",
       helpText: "View and update your CartPop subscription plan",

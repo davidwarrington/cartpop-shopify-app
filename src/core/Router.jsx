@@ -4,6 +4,7 @@ import {
   Home,
   SettingsIndex,
   SettingsGeneral,
+  SettingsLinks,
   SettingsReorder,
   SettingsBilling,
   SettingsTranslations,
@@ -41,6 +42,7 @@ const Settings = () => (
   <Routes>
     <Route path="/" element={<SettingsIndex />} />
     <Route path="general" element={<SettingsGeneral />} />
+    <Route path="links" element={<SettingsLinks />} />
     <Route path="billing" element={<SettingsBilling />} />
     <Route path="reorder" element={<SettingsReorder />} />
     <Route path="translations" element={<SettingsTranslations />} />
