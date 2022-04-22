@@ -18,10 +18,12 @@ const ShopProvider = ({ shop, children }) => {
     const resData = await fetchFunction(`/api/shop`).then((res) => res.json());
     /*
         {
+            settings,
+            scopes,
             shop,
+            primaryDomain,
             shopifyPlan,
             subscription,
-            storefrontAccessToken
         }
     */
     setSubmitting(false);

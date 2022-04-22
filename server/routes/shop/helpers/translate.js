@@ -65,8 +65,6 @@ export const updateTranslations = async (req, res) => {
   const shop = session.shop;
   const payload = req.body;
 
-  console.log("payload", payload);
-
   try {
     // Fetch shopDoc
     const shopDoc = await db.collection("shops").findOne({ shop });

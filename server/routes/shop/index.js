@@ -70,4 +70,26 @@ export default function apiShop(app) {
       }
     }
   );
+
+  /*
+        Put api/shop/settings
+        
+        > Update shop settings
+    */
+  app.put(
+    `${apiRoutePrefix}/settings`,
+    verifyRequest(app),
+    apiSession(app),
+    async (req, res) => {
+      try {
+        const success = await Shop.updateSettings(req, res);
+        res.status(200).send({
+          success: success,
+        });
+      } catch (error) {
+        console.log(`Failed to process api request: ${error}`);
+        res.status(500).send(error.message);
+      }
+    }
+  );
 }
