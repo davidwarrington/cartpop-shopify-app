@@ -4,6 +4,11 @@ export const updateSettings = async (req, res) => {
   const payload = req.body;
 
   try {
+    // Get current shopDoc,
+    const shopDoc = await db.collection("shops").findOne({
+      shop,
+    });
+
     // Update shop settings
     const updatedShopDoc = await db.collection("shops").updateOne(
       {
@@ -12,6 +17,7 @@ export const updateSettings = async (req, res) => {
       {
         $set: {
           settings: {
+            ...shopDoc.settings,
             ...payload,
           },
         },
