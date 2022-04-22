@@ -12,6 +12,7 @@ export const getMarkup = ({
 
   const cleanLink = link
     ? {
+        id: link._id,
         type: link.type,
         lineItems: link.products
           ? link.products.map((lineItem) => ({
@@ -114,7 +115,9 @@ export const getScriptMarkup = ({
         if (lineItems && lineItems.length) {
           lineItems.map(lineItem => {
             // Map line item properties
-            let lineProperties = {};
+            let lineProperties = {
+              _cartpop: link.id,
+            };
             lineItem.poperties 
               && lineItem.poperties.length
               && lineItem.poperties.map(property => {
