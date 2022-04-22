@@ -134,6 +134,12 @@ export default function appProxyRoutes(app) {
         //   true
         // );
 
+        // Get shopDoc for link settings
+        const shopDoc = await db.collection("shops").findOne({
+          shop,
+        });
+        req.shopDoc = shopDoc;
+
         const { markup } = await Proxy.link(req, res);
         res.set("Content-Type", "application/liquid");
         res.status(200).send(markup);

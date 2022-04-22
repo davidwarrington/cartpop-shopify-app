@@ -1,6 +1,7 @@
 export { default as Home } from "./Home";
 export { default as SettingsIndex } from "./Settings/Index";
 export { default as SettingsGeneral } from "./Settings/General";
+export { default as SettingsLinks } from "./Settings/Links";
 export { default as SettingsReorder } from "./Settings/Reorder";
 export { default as SettingsBilling } from "./Settings/Billing";
 export { default as SettingsTranslations } from "./Settings/Translations";

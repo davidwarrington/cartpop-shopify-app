@@ -90,11 +90,11 @@ const bugsnagScript = () => {
 
 export const getScriptMarkup = ({
   clearCart = false,
-  redirectionType = "checkout",
+  redirectLocation,
   urlQueryString = "",
 }) => {
   return `<script>
-    const redirectionType = "${redirectionType}";
+    const redirectionType = "${redirectLocation}";
     const handleCart = async function () {
       if (!link) return;
 
@@ -169,17 +169,14 @@ export const getScriptMarkup = ({
           return; // TODO: show error message and notify Bugsnag
         }
 
-        let redirectionUrl = '';
-        // Navigate to checkout or cart depending on setting
-        if (redirectionType === "checkout") {
-            // Checkout
-            redirectionUrl = '/checkout?';
-        } else if ("cart") {
+        // Navigate to checkout or cart depending on setting -- defualt to checkout
+        let redirectionUrl = '/checkout?';
+        if (redirectionType === "home") {
+          // Home
+          redirectionUrl = "{{ shop.secure_url }}?";
+        } else if (redirectionType === "cart") {
             // Cart
             redirectionUrl = "{{ shop.secure_url }}{{ routes.cart_url }}?";
-        } else {
-            // Home
-            redirectionUrl = "{{ shop.secure_url }}?";
         }
 
         redirectionUrl += "${urlQueryString}";

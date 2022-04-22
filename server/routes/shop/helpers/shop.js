@@ -10,6 +10,7 @@ export const get = async (req, res) => {
     }
 
     return {
+      settings: shopDoc.settings || {},
       shop: shop,
       scopes: shopDoc.scopes,
       primaryDomain: shopDoc.shopData?.primaryDomain?.url || null,
