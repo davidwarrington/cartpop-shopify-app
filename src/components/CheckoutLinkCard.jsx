@@ -538,8 +538,16 @@ export function CheckoutLinkCard({
                     status="warning"
                     title="One or more products contain line item properties"
                   >
-                    Please use a link alias as Shopify does not support line
-                    item properties with checkout links.
+                    Please use a{" "}
+                    <Button
+                      plain
+                      removeUnderline
+                      onClick={() => handleSelectTab(0)}
+                    >
+                      link alias
+                    </Button>{" "}
+                    as Shopify does not support line item properties with
+                    checkout links.
                   </Banner>
                 ) : null}
                 {hasProductSellingPlan ? (
@@ -547,8 +555,16 @@ export function CheckoutLinkCard({
                     status="warning"
                     title="One or more products contain a product subscription"
                   >
-                    Please use a link alias as Shopify does not support product
-                    subscriptions with checkout links.
+                    Please use a{" "}
+                    <Button
+                      plain
+                      removeUnderline
+                      onClick={() => handleSelectTab(0)}
+                    >
+                      link alias
+                    </Button>{" "}
+                    as Shopify does not support product subscriptions with
+                    checkout links.
                   </Banner>
                 ) : null}
                 {!generatedUrl ? (
