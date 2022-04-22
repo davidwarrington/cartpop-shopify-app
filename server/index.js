@@ -177,7 +177,7 @@ export async function createServer(
   // Make sure shop is installed
   app.use("/*", async (req, res, next) => {
     const { db } = req;
-    const shop = req.query.shop;
+    const { shop } = req.query;
 
     try {
       // If no shop then we continue
@@ -191,7 +191,7 @@ export async function createServer(
         .collection("shops")
         .findOne({ shop: shop, isInstalled: true });
       if (!shopDoc) {
-        res.redirect(`/auth?shop=${shop}`);
+        res.redirect(`/auth?${new URLSearchParams(req.query).toString()}`);
         return;
       }
 

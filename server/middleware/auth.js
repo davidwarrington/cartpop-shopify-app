@@ -25,7 +25,7 @@ const GET_SHOP_DATA = `{
 export default function applyAuthMiddleware(app) {
   app.get("/auth", async (req, res) => {
     if (!req.signedCookies[app.get("top-level-oauth-cookie")]) {
-      return res.redirect(`/auth/toplevel?shop=${req.query.shop}`);
+      return res.redirect(`/auth/toplevel?${new URLSearchParams(req.query).toString()}`);
     }
 
     let redirectUrl = null;
