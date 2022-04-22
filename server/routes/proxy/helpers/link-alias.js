@@ -61,6 +61,7 @@ export const linkNotFound = async (req, res) => {
 export const link = async (req, res) => {
   const { shop, locale, isMobile, shopifyRequestId } = getHeaders(req);
   const link = req.link;
+  const shopDoc = req.shopDoc;
   let scripts = ``;
 
   const hasLineProperties = true;
@@ -71,7 +72,8 @@ export const link = async (req, res) => {
     const urlQueryString = generateQueryString(link);
 
     scripts = getScriptMarkup({
-      clearCart: true,
+      clearCart: shopDoc?.settings?.linksClearCart === false ? false : true,
+      redirectLocation: shopDoc?.settings?.linksRedirectLocation || "checkout",
       urlQueryString,
     });
   } else {

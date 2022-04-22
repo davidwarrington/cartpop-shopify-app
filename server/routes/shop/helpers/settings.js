@@ -4,8 +4,6 @@ export const updateSettings = async (req, res) => {
   const payload = req.body;
 
   try {
-    console.log("payload", payload);
-
     // Update shop settings
     const updatedShopDoc = await db.collection("shops").updateOne(
       {
@@ -13,7 +11,9 @@ export const updateSettings = async (req, res) => {
       },
       {
         $set: {
-          ...payload,
+          settings: {
+            ...payload,
+          },
         },
       }
     );

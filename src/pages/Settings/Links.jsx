@@ -34,9 +34,9 @@ const SettingsLinksPage = () => {
       linksClearCart: useField(
         settings && settings.linksClearCart === false ? false : true
       ),
-      linksRedirectLocation: useField({
-        value: (settings && settings.linksRedirectLocation) || "checkout",
-      }),
+      linksRedirectLocation: useField(
+        (settings && settings.linksRedirectLocation) || "checkout"
+      ),
     },
     async onSubmit(formFields) {
       try {
