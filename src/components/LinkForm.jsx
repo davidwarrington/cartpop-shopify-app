@@ -195,6 +195,8 @@ export function LinkForm({
     }
   }
 
+  const productsValue = (products && products.value) || [];
+
   return (
     <Form onSubmit={submit}>
       <Page
@@ -264,7 +266,7 @@ export function LinkForm({
                 link={link}
                 linkActive={fields.active.value}
                 alias={fields.alias}
-                products={products && products.value}
+                products={productsValue}
                 customer={fields.customer}
                 order={fields.order}
                 orderAttributes={orderAttributes.value}
@@ -285,7 +287,7 @@ export function LinkForm({
                 link={link}
                 linkActive={fields.active.value}
                 alias={fields.alias}
-                products={products && products.fields}
+                products={productsValue}
                 customer={fields.customer}
                 order={fields.order}
               />
