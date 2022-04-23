@@ -28,7 +28,7 @@ export default function topLevelAuthRedirect({
 
           redirect.dispatch(
             Redirect.Action.REMOTE,
-            'https://${hostName}/auth/toplevel?shop=${serializedQuery}',
+            'https://${hostName}/auth/toplevel?${serializedQuery}',
           );
         }
       });
