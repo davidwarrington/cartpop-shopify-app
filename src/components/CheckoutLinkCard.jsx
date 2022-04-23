@@ -17,6 +17,7 @@ import {
   Subheading,
 } from "@shopify/polaris";
 import {
+  AlertMinor,
   CancelSmallMinor,
   ClipboardMinor,
   EditMinor,
@@ -373,7 +374,21 @@ export function CheckoutLinkCard({
             fitted
             tabs={[
               { id: "alias", content: "Link alias" },
-              { id: "raw", content: "Checkout link" },
+              {
+                id: "raw",
+                content: (
+                  <Stack
+                    alignment="center"
+                    distribution="center"
+                    spacing="extraTight"
+                  >
+                    <Stack.Item>Checkout link</Stack.Item>
+                    {hasProductSellingPlan || hasLineItemProperties ? (
+                      <Icon source={AlertMinor} color="warning" />
+                    ) : null}
+                  </Stack>
+                ),
+              },
             ]}
             selected={selectedIndex}
             onSelect={handleSelectTab}
