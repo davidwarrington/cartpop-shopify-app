@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Button,
   Caption,
@@ -327,6 +327,36 @@ export function Product({ lineItem, lineIndex, lineItems }) {
 }
 
 function SellingPlanPicker({ data, loading, link_selling_plan_id }) {
+  const sellingPlanOptions = [];
+
+  const sellingPlanGroups =
+    (data &&
+      data.productVariant &&
+      nodesFromEdges(data.productVariant.sellingPlanGroups.edges)) ||
+    null;
+  const sellingPlans =
+    (sellingPlanGroups &&
+      sellingPlanGroups[0] &&
+      sellingPlanGroups[0].sellingPlans &&
+      nodesFromEdges(sellingPlanGroups[0].sellingPlans.edges)) ||
+    null;
+  const sellingPlanId =
+    link_selling_plan_id && link_selling_plan_id.value
+      ? parseGid(link_selling_plan_id.value)
+      : null;
+  const requiresSellingPlan =
+    data &&
+    data.productVariant.product &&
+    data.productVariant.product.requiresSellingPlan;
+
+  useEffect(() => {
+    // If a product requires a selling plan,
+    // but none is selected, select first plan id
+    if (requiresSellingPlan && !sellingPlanId && sellingPlans) {
+      link_selling_plan_id.onChange(sellingPlans[0].id);
+    }
+  }, [data]);
+
   if (loading) {
     return <Spinner size="small" />;
   }
@@ -335,29 +365,10 @@ function SellingPlanPicker({ data, loading, link_selling_plan_id }) {
     return null;
   }
 
-  const sellingPlanGroups =
-    data &&
-    data.productVariant &&
-    nodesFromEdges(data.productVariant.sellingPlanGroups.edges);
-
-  const sellingPlans =
-    sellingPlanGroups &&
-    sellingPlanGroups[0] &&
-    sellingPlanGroups[0].sellingPlans &&
-    nodesFromEdges(sellingPlanGroups[0].sellingPlans.edges);
-
   if (!sellingPlans) {
     return null;
   }
 
-  const sellingPlanId =
-    link_selling_plan_id && link_selling_plan_id.value
-      ? parseGid(link_selling_plan_id.value)
-      : null;
-  const sellingPlanOptions = [];
-  const requiresSellingPlan =
-    data.productVariant.product &&
-    data.productVariant.product.requiresSellingPlan;
   if (!requiresSellingPlan) {
     sellingPlanOptions.unshift({ label: "None", value: "" });
   }
