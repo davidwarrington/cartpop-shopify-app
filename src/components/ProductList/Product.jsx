@@ -3,7 +3,7 @@ import {
   Button,
   Caption,
   Card,
-  Checkbox,
+  Label,
   Link,
   Select,
   Spinner,
@@ -326,7 +326,7 @@ export function Product({ lineItem, lineIndex, lineItems }) {
   );
 }
 
-function SellingPlanPicker({ data, loading, link_selling_plan_id }) {
+function SellingPlanPicker({ loading, data, link_selling_plan_id }) {
   const sellingPlanOptions = [];
 
   const sellingPlanGroups =
@@ -358,6 +358,14 @@ function SellingPlanPicker({ data, loading, link_selling_plan_id }) {
   }, [data]);
 
   if (loading) {
+    if (sellingPlanId) {
+      return (
+        <Stack vertical spacing="extraTight">
+          <Label>Subscription</Label>
+          <Button loading={true} disclosure="select" />
+        </Stack>
+      );
+    }
     return <Spinner size="small" />;
   }
 
