@@ -1,3 +1,4 @@
+import { parseGid } from "@shopify/admin-graphql-api-utilities";
 import { translationMetafield } from "../../../constants.js";
 import { defaultTranslations } from "../../../default-translations.js";
 
@@ -22,7 +23,7 @@ export const getMarkup = ({
                 ? parseInt(lineItem.link_quantity)
                 : 1,
               selling_pan_id: lineItem.link_selling_plan_id
-                ? parseInt(lineItem.link_selling_plan_id)
+                ? parseGid(lineItem.link_selling_plan_id)
                 : null,
               poperties: lineItem.link_line_properties || null,
             }))
