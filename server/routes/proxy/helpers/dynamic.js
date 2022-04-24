@@ -7,15 +7,11 @@ import { contentLoader, getMarkup, getScriptMarkup } from "./markup.js";
 
 export const dynamic = async (req, res) => {
   const { shop, locale, isMobile, shopifyRequestId } = getHeaders(req);
-  const { products, order, customer, email, discount, payment } = req.query;
+  const { products, customer, email, discount, payment } = req.query;
   const { clearCart, redirectLocation } = getShopLinkSettings(req.shopDoc);
 
   if (customer) {
     // TODO: look up customer. Check access scopes.
-  }
-
-  if (order) {
-    // look up order. Check access scopes.
   }
 
   const formattedLink = {

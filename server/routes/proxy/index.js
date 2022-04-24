@@ -14,7 +14,14 @@ export default function appProxyRoutes(app) {
   /*
         Dynamic link
         
-        The root is reserved for dynamic links such as reorder scenarios
+        The root is reserved for dynamic links for marketing and automation flows.
+        It accepts the following url parameters:
+        - products=variantId:quantity:sellingPlanId:variantId:quantity:sellingPlanId
+        - email=example@email.com
+        - discount=FREESHIP
+        - payment=shop_pay
+
+        Note: For reorder links, use the /order:id subroute.
     */
   app.get(
     `${apiRoutePrefix}`,
@@ -50,13 +57,12 @@ export default function appProxyRoutes(app) {
   );
 
   /* 
-        Generate dynamic link
+        Generate repeat order based on an order's id
 
-        We call this in the dynamic link creator to getch the checkout link.
-        We'll also log additional browser analytics like mobile vs desktop
+        Merchant can call this link to generate reorder links for replenishment flows
     */
   app.get(
-    `${apiRoutePrefix}/dynamic`,
+    `${apiRoutePrefix}/order/:id`,
     verifyAppProxyExtensionSignatureMiddleware(),
     async (req, res) => {
       //TODO:
