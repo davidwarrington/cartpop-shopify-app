@@ -95,8 +95,28 @@ export const getScriptMarkup = ({
         const clearCart = ${clearCart};
         if (clearCart) {
             // Locale aware url: https://shopify.dev/themes/internationalization/multiple-currencies-languages#locale-aware-urls + https://shopify.dev/api/liquid/objects/routes#routes-cart_clear_url
-            const clearCart = await fetch('{{ routes.cart_clear_url }}.js');
-            const clearRes = await clearCart.json();
+
+            // Clear cart
+            const clearCartItems = await fetch('{{ routes.cart_clear_url }}.js');
+            const clearRes = await clearCartItems.json();
+            
+            const cartNote = clearRes.note ? true : false;
+            const cartAttributes = clearRes.attributes && Object.keys(clearRes.attributes).length ? true : false;
+
+            // If cart already has a note or attributes, clear them
+            if (cartNote || cartAttributes) {
+              const clearCartAttributes = await fetch('{{ routes.cart_update_url }}.js', {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                  note: null,
+                  attributes: null
+                })
+              });
+              const clearRes2 = await clearCartAttributes.json();
+            }
         }
 
         const cartItems = [];
