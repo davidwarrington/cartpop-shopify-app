@@ -155,3 +155,10 @@ export const getHeaders = (req) => {
     shop,
   };
 };
+
+export const getShopLinkSettings = (shopDoc) => {
+  return {
+    clearCart: shopDoc?.settings?.linksClearCart === false ? false : true,
+    redirectLocation: shopDoc?.settings?.linksRedirectLocation || "checkout",
+  };
+};
