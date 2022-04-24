@@ -1,15 +1,22 @@
-import { getHeaders, getShopLinkSettings } from "../../../helpers/app-proxy.js";
+import {
+  generateQueryString,
+  getHeaders,
+  getShopLinkSettings,
+} from "../../../helpers/app-proxy.js";
 import { contentLoader, getMarkup, getScriptMarkup } from "./markup.js";
 
 export const dynamic = async (req, res) => {
   const { shop, locale, isMobile, shopifyRequestId } = getHeaders(req);
-  const { products, order, customer } = req.query;
+  const { products, order, customer, email, discount, payment } = req.query;
   const { clearCart, redirectLocation } = getShopLinkSettings(req.shopDoc);
 
-  const scripts = getScriptMarkup({
-    clearCart,
-    redirectLocation,
-  });
+  if (customer) {
+    // TODO: look up customer. Check access scopes.
+  }
+
+  if (order) {
+    // look up order. Check access scopes.
+  }
 
   const formattedLink = {
     id: null,
@@ -24,7 +31,27 @@ export const dynamic = async (req, res) => {
           productParts.length >= 3 ? parseInt(productParts[2]) : null,
       };
     }),
+    customer: email
+      ? {
+          email,
+        }
+      : null,
+    order:
+      discount || payment
+        ? {
+            discount: discount || null,
+            useShopPay: payment ? true : false,
+          }
+        : null,
   };
+
+  const urlQueryString = generateQueryString(formattedLink);
+
+  const scripts = getScriptMarkup({
+    clearCart,
+    redirectLocation,
+    urlQueryString,
+  });
 
   const markup = getMarkup({
     link: formattedLink,
