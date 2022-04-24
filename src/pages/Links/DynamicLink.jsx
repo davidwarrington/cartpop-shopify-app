@@ -335,7 +335,6 @@ const LinkUrl = ({ url, setToast }) => {
       selectTextOnFocus
       connectedRight={
         <ButtonGroup spacing="extraTight">
-          <Button disclosure>Settings</Button>
           <Button primary onClick={handleCopyCheckoutLink} disabled={!url}>
             Copy link
           </Button>
