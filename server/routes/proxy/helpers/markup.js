@@ -24,13 +24,6 @@ export const getMarkup = ({
         ${checkoutStyles}
       </head>
       <body>
-        {%- liquid
-          assign product_id = 6048348831944 | times: 1
-          echo product_id
-          assign products_obj = collections.all.products | where: 'id', product_id
-          echo products_obj
-          echo products_obj[0].handle
-        -%}
         <script>
           const link = ${JSON.stringify(link)};
           const isMobile = ${isMobile === 1};
