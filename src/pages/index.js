@@ -6,4 +6,5 @@ export { default as SettingsReorder } from "./Settings/Reorder";
 export { default as SettingsBilling } from "./Settings/Billing";
 export { default as SettingsTranslations } from "./Settings/Translations";
 export { default as NewLink } from "./Links/NewLink";
+export { default as DynamicLink } from "./Links/DynamicLink";
 export { default as EditLink } from "./Links/EditLink";

@@ -3,7 +3,7 @@ import { Stack, TextContainer, TextStyle } from "@shopify/polaris";
 //import ProductImagePlaceholder from "../assets/placeholder-product-image.png";
 import { Product } from "./Product";
 
-export function ProductList({ lineItems }) {
+export function ProductList({ lineItems, lineProperty = true }) {
   // Return message when no product is selected
   if (!lineItems || !lineItems.fields || !lineItems.fields.length) {
     return (
@@ -27,6 +27,7 @@ export function ProductList({ lineItems }) {
       lineIndex={lineIndex}
       lineItem={lineItem}
       lineItems={lineItems}
+      lineProperty={lineProperty}
     />
   ));
 }

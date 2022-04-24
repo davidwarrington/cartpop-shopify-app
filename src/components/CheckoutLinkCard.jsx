@@ -2,9 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   Banner,
   Button,
-  ButtonGroup,
   Card,
-  ColorPicker,
   Icon,
   Modal,
   Popover,
@@ -13,7 +11,6 @@ import {
   TextContainer,
   TextField,
   TextStyle,
-  hsbToHex,
   Subheading,
 } from "@shopify/polaris";
 import {
@@ -25,105 +22,17 @@ import {
   TickSmallMinor,
 } from "@shopify/polaris-icons";
 import { Toast } from "@shopify/app-bridge-react";
-import QRCode from "react-qr-code";
 import { getIdFromGid } from "../helpers";
 import { useShop } from "../core/ShopProvider";
 import { RequireSubscription } from "./RequireSubscription";
 import { Tooltip } from "./Tooltip";
+import QRCodeGenerator from "./QRCodeGenerator";
 
 const CardContainer = ({ showTitle, sectioned, children }) => (
   <Card sectioned={sectioned} title={showTitle ? "Checkout Link" : ""}>
     {children}
   </Card>
 );
-
-const QRCodeSection = ({ title = "", generatedUrl, handleDownloadQrCode }) => {
-  const [color, setColor] = useState({
-    hue: 0,
-    brightness: 0,
-    saturation: 0,
-  });
-
-  const [popoverActive, setPopoverActive] = useState(false);
-
-  const togglePopoverActive = useCallback(
-    () => setPopoverActive((popoverActive) => !popoverActive),
-    []
-  );
-
-  return (
-    <>
-      <Card.Subsection>
-        <Stack distribution="center">
-          <div
-            style={{
-              padding: "20px",
-            }}
-          >
-            <QRCode
-              muted
-              id="qr-code-link"
-              value={generatedUrl}
-              size="150"
-              title={title}
-              fgColor={hsbToHex(color)}
-            />
-          </div>
-        </Stack>
-      </Card.Subsection>
-
-      <Card.Subsection>
-        <Stack>
-          <Popover
-            active={popoverActive}
-            onClose={togglePopoverActive}
-            activator={
-              <Button
-                plain
-                onClick={togglePopoverActive}
-                accessibilityLabel="QR Code color"
-              >
-                <div
-                  style={{
-                    width: "2.5rem",
-                    height: "2.5rem",
-                    borderRadius: "50%",
-                    background: hsbToHex(color),
-                    boxShadow: "inset 0 0 0 1px rgb(0 0 0 / 19%)",
-                  }}
-                />
-              </Button>
-            }
-            sectioned
-          >
-            <ColorPicker onChange={setColor} color={color} />
-          </Popover>
-
-          <Stack.Item fill>
-            <ButtonGroup fullWidth>
-              <Button
-                download
-                primary
-                size="large"
-                onClick={() => handleDownloadQrCode("png")}
-              >
-                Download PNG
-              </Button>
-              <Button
-                download
-                primary
-                size="large"
-                onClick={() => handleDownloadQrCode("svg")}
-              >
-                Download SVG
-              </Button>
-            </ButtonGroup>
-          </Stack.Item>
-        </Stack>
-      </Card.Subsection>
-    </>
-  );
-};
 
 export function CheckoutLinkCard({
   newForm,
@@ -281,37 +190,6 @@ export function CheckoutLinkCard({
   const handleToggleQRModal = useCallback(() => {
     setShowQrModal((visibility) => !visibility);
   }, []);
-
-  const handleDownloadQrCode = useCallback(
-    (fileType) => {
-      const svg = document.getElementById("qr-code-link");
-      const svgData = new XMLSerializer().serializeToString(svg);
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      const dataImageUrl = `data:image/svg+xml;base64,${btoa(svgData)}`;
-
-      const img = new Image();
-      img.src = dataImageUrl;
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-
-        const downloadLink = document.createElement("a");
-        downloadLink.download = "QRCode";
-        if (fileType === "svg") {
-          downloadLink.href = `${dataImageUrl}`;
-        } else {
-          const pngFile = canvas.toDataURL("image/png");
-          downloadLink.href = `${pngFile}`;
-        }
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-      };
-    },
-    [generatedUrl]
-  );
 
   const handleCopyCheckoutLink = useCallback(() => {
     const textarea = document.getElementById("generated-link");
@@ -666,7 +544,7 @@ export function CheckoutLinkCard({
           </Stack>
         </Modal.Section>
         <Modal.Section>
-          <QRCodeSection
+          <QRCodeGenerator
             generatedUrl={
               selectedIndex === 0
                 ? `https://${shopDomain.replace("https://", "")}/a/cart/${
@@ -674,7 +552,6 @@ export function CheckoutLinkCard({
                   }?scan=true`
                 : generatedUrl + `&scan=true`
             }
-            handleDownloadQrCode={handleDownloadQrCode}
           />
         </Modal.Section>
       </Modal>

@@ -1,4 +1,3 @@
-import { parseGid } from "@shopify/admin-graphql-api-utilities";
 import { translationMetafield } from "../../../constants.js";
 import { defaultTranslations } from "../../../default-translations.js";
 
@@ -6,36 +5,14 @@ export const getMarkup = ({
   link,
   isMobile = false,
   shopifyRequestId,
-  bodyContent,
+  bodyContent = "",
   scripts = null,
 }) => {
   const randomId = "2602686fb8b88d94b8051bb6bb771e56";
 
-  const cleanLink = link
-    ? {
-        id: link._id,
-        type: link.type,
-        lineItems: link.products
-          ? link.products.map((lineItem) => ({
-              variantId: lineItem.variantInfo?.id,
-              productId: lineItem.variantInfo?.product?.id || null,
-              quantity: lineItem.link_quantity
-                ? parseInt(lineItem.link_quantity)
-                : 1,
-              selling_pan_id: lineItem.link_selling_plan_id
-                ? parseGid(lineItem.link_selling_plan_id)
-                : null,
-              poperties: lineItem.link_line_properties || null,
-            }))
-          : null,
-        customer: link.customer,
-        order: link.order,
-      }
-    : {};
-
   //        <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-${randomId}-160" media="all" />
 
-  return `{% layout none %} 
+  return `{% layout none %}
     <html lang="{{ request.locale.iso_code }}">
       <head>
         <meta charset="utf-8">
@@ -48,7 +25,7 @@ export const getMarkup = ({
       </head>
       <body>
         <script>
-          const link = ${JSON.stringify(cleanLink)};
+          const link = ${JSON.stringify(link)};
           const isMobile = ${isMobile === 1};
           const languageCode = "{{ request.locale.iso_code }}";
           const defaultTranslations = ${JSON.stringify(defaultTranslations)};
@@ -58,7 +35,9 @@ export const getMarkup = ({
         </script>
         ${scripts ? scripts : ""}
         ${bugsnagScript()}
-        ${bodyContent}
+        <div id="content">
+          ${bodyContent}
+        </div>
       </body>
     </html>
     `;
@@ -74,7 +53,7 @@ export const translatedLiquid = (locale, property) => {
 
 const bugsnagScript = () => {
   if (process.env.BUGSNAG_PROXY_KEY) {
-    return;
+    return "";
   }
 
   return `<script src="//d2wy8f7a9ursnm.cloudfront.net/v7/bugsnag.min.js"></script>
@@ -91,33 +70,56 @@ const bugsnagScript = () => {
 };
 
 export const getScriptMarkup = ({
+  locale = "en",
   clearCart = false,
   redirectLocation,
   urlQueryString = "",
 }) => {
-  return `<script>
+  return `
+  <script>
     const redirectionType = "${redirectLocation}";
     const handleCart = async function () {
-      if (!link) return;
+      try {
+        if (!link) return;
 
-      let cartRes = null;
+        let cartRes = null;
 
         // Optionally clear cart before adding link items: https://shopify.dev/api/ajax/reference/cart#post-locale-cart-clear-js
         const clearCart = ${clearCart};
         if (clearCart) {
             // Locale aware url: https://shopify.dev/themes/internationalization/multiple-currencies-languages#locale-aware-urls + https://shopify.dev/api/liquid/objects/routes#routes-cart_clear_url
-            const clearCart = await fetch('{{ routes.cart_clear_url }}.js');
-            const clearRes = await clearCart.json();
+
+            // Clear cart
+            const clearCartItems = await fetch('{{ routes.cart_clear_url }}.js');
+            const clearRes = await clearCartItems.json();
+            
+            const cartNote = clearRes.note ? true : false;
+            const cartAttributes = clearRes.attributes && Object.keys(clearRes.attributes).length ? true : false;
+
+            // If cart already has a note or attributes, clear them
+            if (cartNote || cartAttributes) {
+              const clearCartAttributes = await fetch('{{ routes.cart_update_url }}.js', {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                  note: null,
+                  attributes: null
+                })
+              });
+              const clearRes2 = await clearCartAttributes.json();
+            }
         }
 
         const cartItems = [];
         const { lineItems} = link;
-       
+      
         if (lineItems && lineItems.length) {
           lineItems.map(lineItem => {
             // Map line item properties
             let lineProperties = {
-              _cartpop: link.id,
+              _cartpop: link.id || link.type,
             };
             lineItem.poperties 
               && lineItem.poperties.length
@@ -127,9 +129,9 @@ export const getScriptMarkup = ({
 
             // Push line item to array
             cartItems.push({
-              id: parseInt(lineItem.variantId.split("/")[4]),
+              id: lineItem.variantId,
               quantity: lineItem.quantity || 1,
-              selling_plan: lineItem.selling_pan_id || null,
+              selling_plan: lineItem.selling_plan_id || null,
               properties: lineProperties || {},
             })
           })
@@ -169,7 +171,7 @@ export const getScriptMarkup = ({
         // }
 
         if (!cartRes || !cartRes.items || !cartRes.items.length) {
-          console.warn("No items!");
+          throw "No items!";
           return; // TODO: show error message and notify Bugsnag
         }
 
@@ -187,10 +189,81 @@ export const getScriptMarkup = ({
 
         window.location.replace(redirectionUrl);
         return true;
+      } catch (err) {
+        console.warn(err);
+        document.getElementById("content").innerHTML = \`${contentNotFound(
+          locale
+        )}\`;
+      }
     };
     
     handleCart();  
 </script>`;
+};
+
+export const contentLoader = (locale) => {
+  return `
+    <div class="full-page-overlay">
+      <div class="full-page-overlay__wrap">
+        <div class="full-page-overlay__content" role="region" aria-describedby="full-page-overlay__processing-text" aria-label="Processing order" tabindex="-1">
+          <svg class="icon-svg icon-svg--color-accent icon-svg--size-64 icon-svg--spinner full-page-overlay__icon" aria-hidden="true" focusable="false">
+            <use xlink:href="#spinner-large"></use>
+          </svg>
+
+          <div id="full-page-overlay__processing-text">
+            <svg class="icon-svg icon-svg--color-accent icon-svg--size-64 icon-svg--spinner full-page-overlay__icon" xmlns="http://www.w3.org/2000/svg" viewBox="-270 364 66 66"><path d="M-237 428c-17.1 0-31-13.9-31-31s13.9-31 31-31v-2c-18.2 0-33 14.8-33 33s14.8 33 33 33 33-14.8 33-33h-2c0 17.1-13.9 31-31 31z"></path></svg>
+
+            <h2 class="full-page-overlay__title">
+              ${translatedLiquid(locale, "loading_title")}
+            </h2>
+            <p class="full-page-overlay__text">
+              ${translatedLiquid(locale, "loading_message")}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+export const contentNotFound = (locale) => {
+  return `
+    <div class="full-page-overlay">
+      <div class="full-page-overlay__wrap">
+        <div class="full-page-overlay__content" role="region" aria-describedby="full-page-overlay__processing-text" aria-label="Processing order" tabindex="-1">
+          <div id="full-page-overlay__processing-text">
+            <svg width="40" height="40" viewBox="0 0 40 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+              <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                <g id="back-soon-3" sketch:type="MSArtboardGroup" transform="translate(-230.000000, -519.000000)">
+                  <g id="what-went-wrong?" sketch:type="MSLayerGroup" transform="translate(231.000000, 444.000000)">
+                    <g id="warning" transform="translate(0.000000, 77.000000)" sketch:type="MSShapeGroup">
+                      <path d="M17.593,0.492 C18.217,-0.589 19.778,-0.589 20.402,0.492 L37.766,30.567 C38.39,31.648 37.61,33 36.361,33 L1.634,33 C0.386,33 -0.395,31.648 0.229,30.567 L17.593,0.492 L17.593,0.492 Z" id="Stroke-1" stroke="#E9BE33" stroke-width="2" stroke-linejoin="round"></path>
+                      <path d="M20.75,28 C20.75,28.966 19.966,29.75 19,29.75 C18.033,29.75 17.25,28.966 17.25,28 C17.25,27.034 18.033,26.25 19,26.25 C19.966,26.25 20.75,27.034 20.75,28" id="Fill-2" fill="#E9BE33"></path>
+                      <path d="M19,23 L19,8" id="Stroke-3" stroke="#E9BE33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </svg>
+            <br /><br />
+            
+            <h2 class="full-page-overlay__title">
+              ${translatedLiquid(locale, "not_found_title")}
+            </h2>
+            <p class="full-page-overlay__text">
+              ${translatedLiquid(locale, "not_found_message")}
+            </p>
+            <br /><a href="{{ shop.url }}">${translatedLiquid(
+              locale,
+              "not_found_button_label"
+            )}</a>
+
+            <!-- <p class="full-page-overlay__text"> If you’re not automatically redirected, <a href="?from_processing_page=1">refresh this page</a>. </p> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 };
 
 const checkoutStyles = `
