@@ -1,13 +1,9 @@
 import { useCallback, useState } from "react";
 import { Button, Card, Heading, Stack } from "@shopify/polaris";
-import { ResourcePicker, useAppBridge } from "@shopify/app-bridge-react";
+import { ResourcePicker } from "@shopify/app-bridge-react";
 import { ProductList } from "./ProductList";
-import { userLoggedInFetch } from "../helpers";
 
 export function ProductsCard({ products }) {
-  const app = useAppBridge();
-  const fetchFunction = userLoggedInFetch(app);
-
   const [showPicker, setShowPicker] = useState(false);
 
   const togglePickerShow = useCallback(() => {
@@ -46,19 +42,6 @@ export function ProductsCard({ products }) {
         })
       );
 
-      // TODO: make api call to fetch product payload
-      // const productsRes = await fetchFunction(`/api/products`, {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     variants: []
-      //   }),
-      //   headers: {
-      //     Accept: "application/json",
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-
-      // TODO: prevent overwriting Quantity
       togglePickerHide();
     },
     [products]

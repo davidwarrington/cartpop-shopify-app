@@ -9,6 +9,7 @@ import {
   SettingsBilling,
   SettingsTranslations,
   NewLink,
+  DynamicLink,
   EditLink,
 } from "../pages";
 import AppProvider from "./AppProvider";
@@ -34,6 +35,7 @@ const Links = () => (
   <Routes>
     {/* TODO: <Route path="/" element={<LinksIndex />} /> */}
     <Route path="new" element={<NewLink />} />
+    <Route path="dynamic" element={<DynamicLink />} />
     <Route path=":id" element={<EditLink />} />
   </Routes>
 );

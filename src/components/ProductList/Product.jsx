@@ -68,7 +68,7 @@ const GET_PRODUCT = gql`
   }
 `;
 
-export function Product({ lineItem, lineIndex, lineItems }) {
+export function Product({ lineItem, lineIndex, lineItems, lineProperty }) {
   const { data, error, loading } = useQuery(GET_PRODUCT, {
     variables: {
       variantId: lineItem.variantInfo.value.id,
@@ -303,13 +303,17 @@ export function Product({ lineItem, lineIndex, lineItems }) {
             </Stack>
 
             <Stack distribution="equalSpacing">
-              <Button
-                outline
-                icon={MobilePlusMajor}
-                onClick={() => handleAttributeAdd(lineIndex)}
-              >
-                Add line property
-              </Button>
+              {lineProperty ? (
+                <Button
+                  outline
+                  icon={MobilePlusMajor}
+                  onClick={() => handleAttributeAdd(lineIndex)}
+                >
+                  Add line property
+                </Button>
+              ) : (
+                <Stack.Item />
+              )}
               <Button
                 onClick={() => lineItems.removeItem(lineIndex)}
                 accessibilityLabel="Remove product"
