@@ -11,7 +11,7 @@ export const dynamic = async (req, res) => {
   const { clearCart, redirectLocation } = getShopLinkSettings(req.shopDoc);
 
   if (customer) {
-    // TODO: look up customer. Check access scopes.
+    // TODO: look up customer given id. Check access scopes.
   }
 
   const formattedLink = {
@@ -35,7 +35,7 @@ export const dynamic = async (req, res) => {
     order:
       discount || payment
         ? {
-            discount: discount || null,
+            discountCode: discount || null,
             useShopPay: payment ? true : false,
           }
         : null,
