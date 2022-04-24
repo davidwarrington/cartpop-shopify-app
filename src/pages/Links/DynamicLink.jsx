@@ -55,11 +55,9 @@ const DynamicLink = () => {
             selected={selectedTab}
             onSelect={handleTabChange}
           />
-          {url ? (
-            <Card.Section>
-              <LinkUrl url={url} toast={toast} setToast={setToast} />
-            </Card.Section>
-          ) : null}
+          <Card.Section>
+            <LinkUrl url={url} toast={toast} setToast={setToast} />
+          </Card.Section>
           <Card.Section flush>
             {selectedTab === 0 ? (
               <ProductLink url={url} setUrl={setUrl} shopDomain={shopDomain} />
