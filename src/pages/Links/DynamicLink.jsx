@@ -2,7 +2,9 @@ import { parseGid } from "@shopify/admin-graphql-api-utilities";
 import { ResourcePicker, TitleBar, Toast } from "@shopify/app-bridge-react";
 import {
   Button,
+  ButtonGroup,
   Card,
+  ChoiceList,
   FooterHelp,
   Frame,
   Heading,
@@ -14,7 +16,7 @@ import {
   TextField,
   TextStyle,
 } from "@shopify/polaris";
-import { useDynamicList } from "@shopify/react-form";
+import { useDynamicList, useField } from "@shopify/react-form";
 import { useCallback, useEffect, useState } from "react";
 import { ProductList } from "../../components/ProductList";
 import QRCodeGenerator from "../../components/QRCodeGenerator";
@@ -107,7 +109,12 @@ export default DynamicLink;
 
 const ProductLink = ({ shopDomain, url, setUrl }) => {
   const [showPicker, setShowPicker] = useState(false);
+  const [advancedSettings, setSettings] = useState([]);
 
+  const handleChoiceListChange = useCallback((value) => setSettings(value), []);
+
+  const discount = useField(null);
+  const email = useField(null);
   const products = useDynamicList([], (value) => value);
 
   useEffect(() => {
@@ -123,16 +130,26 @@ const ProductLink = ({ shopDomain, url, setUrl }) => {
           return lineItem;
         })
         .join(",");
-      setUrl(
-        `https://${shopDomain.replace(
-          "https://",
-          ""
-        )}/a/cart?products=${productString}`
-      );
+
+      let generatedUrl = `https://${shopDomain.replace(
+        "https://",
+        ""
+      )}/a/cart?products=${productString}`;
+      if (discount && discount.value) {
+        generatedUrl += `&discount=${discount.value}`;
+      }
+      if (email && email.value) {
+        generatedUrl += `&email=${email.value}`;
+      }
+      if (advancedSettings.includes("payment")) {
+        generatedUrl += `&payment=shop_pay`;
+      }
+
+      setUrl(generatedUrl);
     } else {
       setUrl(null);
     }
-  }, [products]);
+  }, [products, discount, email, advancedSettings]);
 
   const togglePicker = useCallback(() => {
     setShowPicker((currentValue) => !currentValue);
@@ -176,25 +193,60 @@ const ProductLink = ({ shopDomain, url, setUrl }) => {
   );
 
   return (
-    <>
+    <div>
       <Stack distribution="fillEvenly" spacing="none">
         <Stack.Item>
-          <Card.Section>
-            <ProductList lineItems={products} lineProperty={false} />
-          </Card.Section>
-          <Card.Section>
-            <Button
-              fullWidth
-              onClick={togglePicker}
-              primary={!products.fields || !products.fields.length}
-            >
-              {products.fields && products.fields.length
-                ? "Select another product"
-                : "Select a product"}
-            </Button>
-          </Card.Section>
+          <div
+            style={{
+              borderRight: "1px solid #e1e3e5",
+            }}
+          >
+            <Card.Section>
+              <ProductList lineItems={products} lineProperty={false} />
+            </Card.Section>
+            <Card.Section>
+              <Button
+                fullWidth={url ? true : false}
+                onClick={togglePicker}
+                primary={!products.fields || !products.fields.length}
+              >
+                {products.fields && products.fields.length
+                  ? "Select another product"
+                  : "Select a product"}
+              </Button>
+            </Card.Section>
+            {url ? (
+              <Card.Section title="Additional settings">
+                <ChoiceList
+                  allowMultiple
+                  title="Additional settings"
+                  titleHidden
+                  choices={[
+                    {
+                      label: "Discount or Gift card code",
+                      value: "discount",
+                      renderChildren: (isSelected) =>
+                        isSelected && <TextField type="text" {...discount} />,
+                    },
+                    {
+                      label: "Customer email",
+                      value: "email",
+                      renderChildren: (isSelected) =>
+                        isSelected && <TextField type="email" {...email} />,
+                    },
+                    {
+                      label: "Redirect to Shop Pay",
+                      value: "payment",
+                    },
+                  ]}
+                  selected={advancedSettings}
+                  onChange={handleChoiceListChange}
+                />
+              </Card.Section>
+            ) : null}
+          </div>
         </Stack.Item>
-        {products.fields && products.fields.length ? (
+        {url ? (
           <Stack.Item>
             <LinkOutput url={url} />
           </Stack.Item>
@@ -229,7 +281,7 @@ const ProductLink = ({ shopDomain, url, setUrl }) => {
         onCancel={togglePickerHide}
         onSelection={handleProductSelection}
       />
-    </>
+    </div>
   );
 };
 
@@ -243,15 +295,9 @@ const CustomerLink = () => {
 
 const LinkOutput = ({ url }) => {
   return (
-    <div
-      style={{
-        borderLeft: "1px solid #e1e3e5",
-      }}
-    >
-      <Card.Section subdued title="Generated QR Code">
-        <QRCodeGenerator generatedUrl={url} />
-      </Card.Section>
-    </div>
+    <Card.Section subdued title="Generated QR Code">
+      <QRCodeGenerator generatedUrl={url} />
+    </Card.Section>
   );
 };
 
@@ -288,9 +334,12 @@ const LinkUrl = ({ url, setToast }) => {
       disabled={!url}
       selectTextOnFocus
       connectedRight={
-        <Button primary onClick={handleCopyCheckoutLink} disabled={!url}>
-          Copy link
-        </Button>
+        <ButtonGroup spacing="extraTight">
+          <Button disclosure>Settings</Button>
+          <Button primary onClick={handleCopyCheckoutLink} disabled={!url}>
+            Copy link
+          </Button>
+        </ButtonGroup>
       }
     />
   );
