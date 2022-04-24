@@ -389,16 +389,22 @@ function SellingPlanPicker({ loading, data, link_selling_plan_id }) {
   );
 
   return (
-    <Select
-      label={
-        <Stack alignment="center" spacing="tight">
-          <Stack.Item>Subscription</Stack.Item>
-          {sellingPlanId ? <Caption>(ID: {sellingPlanId})</Caption> : null}
-        </Stack>
-      }
-      options={sellingPlanOptions}
-      value={sellingPlanId ? composeGid("SellingPlan", sellingPlanId) : ""}
-      onChange={(value) => link_selling_plan_id.onChange(value)}
-    />
+    <div
+      style={{
+        maxWidth: "250px",
+      }}
+    >
+      <Select
+        label={
+          <Stack alignment="center" spacing="tight">
+            <Stack.Item>Subscription</Stack.Item>
+            {sellingPlanId ? <Caption>(ID: {sellingPlanId})</Caption> : null}
+          </Stack>
+        }
+        options={sellingPlanOptions}
+        value={sellingPlanId ? composeGid("SellingPlan", sellingPlanId) : ""}
+        onChange={(value) => link_selling_plan_id.onChange(value)}
+      />
+    </div>
   );
 }
