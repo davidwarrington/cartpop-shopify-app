@@ -24,3 +24,7 @@ jobs:
         run: npm install
       - name: Run unit tests
         run: npm test
+      - name: Check if app builds successfully
+        run: |
+          npm runn build
+          exit 1
