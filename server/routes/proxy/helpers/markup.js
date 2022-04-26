@@ -10,10 +10,10 @@ export const getMarkup = ({
 }) => {
   const randomId = "2602686fb8b88d94b8051bb6bb771e56";
 
-  //        <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-${randomId}-160" media="all" />
+  // <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-${randomId}-160" media="all" />
 
   return `{% layout none %}
-    <html lang="{{ request.locale.iso_code }}">
+    <html lang="{{ request.locale.iso_code }}" class="floating-labels">
       <head>
         <meta charset="utf-8">
         <meta name="robots" content="noindex"/>
@@ -21,11 +21,22 @@ export const getMarkup = ({
         <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
         <meta name="shopify-x-request-id" content="${shopifyRequestId}">
         <!-- <meta http-equiv="refresh" content="3;URL=?from_processing_page=1"> -->
+        <link rel="stylesheet" href="${process.env.HOST}/src/assets/proxy/index.css?v=${process.env.SOURCE_VERSION || 1}" media="all" />
         ${checkoutStyles}
       </head>
       <body>
         <script>
+          const shop = {{ shop | json }};
           const link = ${JSON.stringify(link)};
+          {% assign product = collections.all.products | where: 'id', ${link.lineItems[0].productId} | first %}
+          const product = {
+            ...{{ product | json }},
+            featured_image: "{{ product.featured_image | image_url: width: 400 }}",
+            rating: {
+              rating_count: "{{product.metafields.rating.rating_count.value | default: nill }}",
+              rating_avg: "{{product.metafields.rating.rating_avg.value | default: nill }}",
+            }
+          };
           const isMobile = ${isMobile === 1};
           const languageCode = "{{ request.locale.iso_code }}";
           const defaultTranslations = ${JSON.stringify(defaultTranslations)};
@@ -33,11 +44,13 @@ export const getMarkup = ({
             translationMetafield.namespace
           }.${translationMetafield.key}.value | json }};
         </script>
+        <div id="app"></div>
         ${scripts ? scripts : ""}
         ${bugsnagScript()}
         <div id="content">
           ${bodyContent}
         </div>
+        <script type="module" src="${process.env.HOST}/src/assets/proxy/index.js?v=${process.env.SOURCE_VERSION || 1}"></script>
       </body>
     </html>
     `;
@@ -77,6 +90,7 @@ export const getScriptMarkup = ({
 }) => {
   return `
   <script>
+    let redirectionUrl = '';
     const redirectionType = "${redirectLocation}";
     const handleCart = async function () {
       try {
@@ -176,7 +190,7 @@ export const getScriptMarkup = ({
         }
 
         // Navigate to checkout or cart depending on setting -- defualt to checkout
-        let redirectionUrl = '/checkout?';
+        redirectionUrl = '/checkout?';
         if (redirectionType === "home") {
           // Home
           redirectionUrl = "{{ shop.secure_url }}?";

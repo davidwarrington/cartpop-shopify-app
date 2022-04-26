@@ -75,7 +75,9 @@ export const link = async (req, res) => {
               variantId: lineItem.variantInfo?.id
                 ? parseGid(lineItem.variantInfo.id)
                 : "",
-              productId: lineItem.variantInfo?.product?.id || null,
+              productId: lineItem.variantInfo?.product?.id
+                ? parseGid(lineItem.variantInfo.product.id)
+                : null,
               quantity: lineItem.link_quantity
                 ? parseInt(lineItem.link_quantity)
                 : 1,
