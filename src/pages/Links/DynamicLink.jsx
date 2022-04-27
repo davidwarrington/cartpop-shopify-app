@@ -7,7 +7,6 @@ import {
   ChoiceList,
   FooterHelp,
   Frame,
-  Heading,
   Link,
   List,
   Page,
@@ -18,9 +17,11 @@ import {
 } from "@shopify/polaris";
 import { useDynamicList, useField } from "@shopify/react-form";
 import { useCallback, useEffect, useState } from "react";
+
+import { useShop } from "../../core/ShopProvider";
 import { ProductList } from "../../components/ProductList";
 import QRCodeGenerator from "../../components/QRCodeGenerator";
-import { useShop } from "../../core/ShopProvider";
+import { RequireSubscription } from "../../components/RequireSubscription";
 
 const pageTitle = "Generate a dynamic payment link";
 
@@ -48,47 +49,53 @@ const DynamicLink = () => {
         breadcrumbs={[{ content: "Dashboard", url: "/" }]}
       >
         <Card>
-          <Tabs
-            tabs={[
-              { id: "product", content: "Product" },
-              // { id:"customer", content: "Customer" },
-              // { id:"order", content: "Order" },
-            ]}
-            selected={selectedTab}
-            onSelect={handleTabChange}
-          />
-          <Card.Section>
-            <LinkUrl url={url} toast={toast} setToast={setToast} />
-          </Card.Section>
-          <Card.Section flush>
-            {selectedTab === 0 ? (
-              <ProductLink url={url} setUrl={setUrl} shopDomain={shopDomain} />
-            ) : null}
-            {selectedTab === 1 ? <OrderLink /> : null}
-            {selectedTab === 2 ? <CustomerLink /> : null}
-          </Card.Section>
-          <Card.Section subdued title="Supported url parameters">
-            <List>
-              <List.Item>
-                <TextStyle variation="strong">products=</TextStyle>
-                <TextStyle variation="subdued">
-                  variantId:quantity:sellingPlanId
-                </TextStyle>
-              </List.Item>
-              <List.Item>
-                <TextStyle variation="strong">email=</TextStyle>
-                <TextStyle variation="subdued">email@example.com</TextStyle>
-              </List.Item>
-              <List.Item>
-                <TextStyle variation="strong">payment=</TextStyle>
-                <TextStyle variation="subdued">shop_pay</TextStyle>
-              </List.Item>
-              <List.Item>
-                <TextStyle variation="strong">discount=</TextStyle>
-                <TextStyle variation="subdued">FREESHIP</TextStyle>
-              </List.Item>
-            </List>
-          </Card.Section>
+          <RequireSubscription title="Please upgrade to Pro to unlock dynamic links.">
+            <Tabs
+              tabs={[
+                { id: "product", content: "Product" },
+                // { id:"customer", content: "Customer" },
+                // { id:"order", content: "Order" },
+              ]}
+              selected={selectedTab}
+              onSelect={handleTabChange}
+            />
+            <Card.Section>
+              <LinkUrl url={url} toast={toast} setToast={setToast} />
+            </Card.Section>
+            <Card.Section flush>
+              {selectedTab === 0 ? (
+                <ProductLink
+                  url={url}
+                  setUrl={setUrl}
+                  shopDomain={shopDomain}
+                />
+              ) : null}
+              {selectedTab === 1 ? <OrderLink /> : null}
+              {selectedTab === 2 ? <CustomerLink /> : null}
+            </Card.Section>
+            <Card.Section subdued title="Supported url parameters">
+              <List>
+                <List.Item>
+                  <TextStyle variation="strong">products=</TextStyle>
+                  <TextStyle variation="subdued">
+                    variantId:quantity:sellingPlanId
+                  </TextStyle>
+                </List.Item>
+                <List.Item>
+                  <TextStyle variation="strong">email=</TextStyle>
+                  <TextStyle variation="subdued">email@example.com</TextStyle>
+                </List.Item>
+                <List.Item>
+                  <TextStyle variation="strong">payment=</TextStyle>
+                  <TextStyle variation="subdued">shop_pay</TextStyle>
+                </List.Item>
+                <List.Item>
+                  <TextStyle variation="strong">discount=</TextStyle>
+                  <TextStyle variation="subdued">FREESHIP</TextStyle>
+                </List.Item>
+              </List>
+            </Card.Section>
+          </RequireSubscription>
         </Card>
         {toast && toast.show ? (
           <Toast
@@ -99,7 +106,19 @@ const DynamicLink = () => {
         ) : null}
       </Page>
       <FooterHelp>
-        Learn more about <Link>Dynamic Payment Links</Link>.
+        Learn more about{" "}
+        <Link
+          onClick={() => {
+            if (Beacon) {
+              Beacon("article", "626575876c886c75aabe9b5d", {
+                type: "modal",
+              });
+            }
+          }}
+        >
+          Dynamic Payment Links
+        </Link>
+        .
       </FooterHelp>
     </Frame>
   );
