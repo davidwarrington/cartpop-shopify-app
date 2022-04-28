@@ -12,6 +12,7 @@ import {
   TextField,
   TextStyle,
   Subheading,
+  List,
 } from "@shopify/polaris";
 import {
   AlertMinor,
@@ -70,11 +71,22 @@ export function CheckoutLinkCard({
     newForm || !shopData.subscription ? 1 : 0
   );
   const [popoverActive, setPopoverActive] = useState(false);
+  const [showCheckoutLink, setShowCheckoutLink] = useState(
+    hasLineItemProperties || hasProductSellingPlan ? false : true
+  );
 
   const togglePopoverActive = useCallback(
     () => setPopoverActive((popoverActive) => !popoverActive),
     []
   );
+
+  useEffect(() => {
+    if (hasProductSellingPlan || hasLineItemProperties) {
+      setShowCheckoutLink(false);
+    } else {
+      setShowCheckoutLink(true);
+    }
+  }, [hasLineItemProperties, hasProductSellingPlan]);
 
   // Compute url whenever a parameter changes
   useEffect(() => {
@@ -426,45 +438,53 @@ export function CheckoutLinkCard({
             ) : null}
             <Card.Section>
               <Stack vertical>
-                {hasLineItemProperties ? (
+                {hasLineItemProperties || hasProductSellingPlan ? (
                   <Banner
                     status="warning"
-                    title="One or more products contain line item properties"
+                    title="Checkout links do not support the following feature:"
+                    action={{
+                      content: "Show link anyway",
+                      onAction: () => setShowCheckoutLink(true),
+                    }}
+                    secondaryAction={{
+                      content: "Show link alias",
+                      onAction: () => handleSelectTab(0),
+                    }}
                   >
-                    Please use a{" "}
-                    <Button
-                      plain
-                      removeUnderline
-                      onClick={() => handleSelectTab(0)}
-                    >
-                      link alias
-                    </Button>{" "}
-                    as Shopify does not support line item properties with
-                    checkout links.
-                  </Banner>
-                ) : null}
-                {hasProductSellingPlan ? (
-                  <Banner
-                    status="warning"
-                    title="One or more products contain a product subscription"
-                  >
-                    Please use a{" "}
-                    <Button
-                      plain
-                      removeUnderline
-                      onClick={() => handleSelectTab(0)}
-                    >
-                      link alias
-                    </Button>{" "}
-                    as Shopify does not support product subscriptions with
-                    checkout links.
+                    <Stack vertical>
+                      <List>
+                        {hasLineItemProperties ? (
+                          <List.Item>
+                            One or more products contain a line item property
+                          </List.Item>
+                        ) : null}
+                        {hasProductSellingPlan ? (
+                          <List.Item>
+                            One or more products contain a product subscription
+                          </List.Item>
+                        ) : null}
+                      </List>
+
+                      <p>
+                        This link requires using a{" "}
+                        <Button
+                          plain
+                          removeUnderline
+                          onClick={() => handleSelectTab(0)}
+                        >
+                          link alias
+                        </Button>{" "}
+                        which supports subscriptions, line item properties,
+                        &amp; much more.
+                      </p>
+                    </Stack>
                   </Banner>
                 ) : null}
                 {!generatedUrl ? (
                   <Banner status="info">
                     Please add a product in order to generate a link.
                   </Banner>
-                ) : (
+                ) : showCheckoutLink ? (
                   <Stack vertical>
                     <TextField
                       id="generated-link"
@@ -518,7 +538,7 @@ export function CheckoutLinkCard({
                       </Stack>
                     ) : null}
                   </Stack>
-                )}
+                ) : null}
               </Stack>
             </Card.Section>
           </>
