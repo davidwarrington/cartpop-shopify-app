@@ -20,5 +20,5 @@ export const subscriptionPlan = {
   key: "PRO",
   name: "Pro",
   price: "10",
-  trialDuration: 0,
+  trialDuration: 7,
 };
