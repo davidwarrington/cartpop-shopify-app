@@ -41,7 +41,7 @@ export const dynamic = async (req, res) => {
         : null,
   };
 
-  const urlQueryString = generateQueryString(formattedLink);
+  const urlQueryString = generateQueryString({ link: formattedLink });
 
   const scripts = getScriptMarkup({
     clearCart,

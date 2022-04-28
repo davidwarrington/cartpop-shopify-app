@@ -5,7 +5,13 @@ import crypto from "crypto";
     Helper function to build Shopify checkout links
     Learn more: https://help.shopify.com/en/manual/products/details/checkout-link
 */
-export const generatedCheckoutLink = ({ shop, link }) => {
+export const generatedCheckoutLink = ({
+  shop,
+  link,
+  discount,
+  payment,
+  email,
+}) => {
   if (!link) return null;
 
   const { products } = link;
@@ -26,7 +32,12 @@ export const generatedCheckoutLink = ({ shop, link }) => {
     .join(",");
 
   // Build remainder of parameters
-  const urlParameters = generateQueryString(link);
+  const urlParameters = generateQueryString({
+    link,
+    discount,
+    payment,
+    email,
+  });
 
   // Create full url
   let checkoutUrl = shop ? `https://${shop.replace("https://", "")}` : "";
@@ -37,13 +48,13 @@ export const generatedCheckoutLink = ({ shop, link }) => {
 /*
   Generate the url query string, specifically
 */
-export const generateQueryString = (link) => {
+export const generateQueryString = ({ link, email, discount, payment }) => {
   const { customer, order } = link;
   let urlParameters = "";
 
   if (customer && Object.keys(customer).length) {
-    if (customer.email) {
-      urlParameters += `&checkout[email]=${customer.email}`;
+    if (email || customer.email) {
+      urlParameters += `&checkout[email]=${email || customer.email}`;
     }
 
     if (customer.first_name) {
@@ -75,24 +86,24 @@ export const generateQueryString = (link) => {
     }
   }
 
-  if (order && Object.keys(order).length) {
-    if (order.discountCode) {
-      urlParameters += `&discount=${order.discountCode}`;
+  if (discount || (order && Object.keys(order).length)) {
+    if (discount || order?.discountCode) {
+      urlParameters += `&discount=${discount || order.discountCode}`;
     }
 
-    if (order.note) {
+    if (order?.note) {
       urlParameters += `&note=${encodeURIComponent(order.note)}`;
     }
 
-    if (order.ref) {
+    if (order?.ref) {
       urlParameters += `&ref=${encodeURIComponent(order.ref)}`;
     }
 
-    if (order.useShopPay) {
-      urlParameters += `&payment=shop_pay`;
+    if (payment || order?.useShopPay) {
+      urlParameters += `&payment=${payment || "shop_pay"}`;
     }
 
-    if (order.attributes && order.attributes.length) {
+    if (order?.attributes && order?.attributes.length) {
       urlParameters += `&${order.attributes
         .map(
           (attribute) =>
