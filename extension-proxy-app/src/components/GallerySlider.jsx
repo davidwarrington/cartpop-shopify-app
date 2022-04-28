@@ -1,4 +1,8 @@
 const GallerySlider = ({ product }) => {
+  if (!product.featured_image) {
+    return null;
+  }
+
   return (
     <div className="relative overflow-auto pt-2 bg-gray-50">
       <div className="relative w-full flex gap-6 snap-mandatory snap-x overflow-x-auto pb-2">
