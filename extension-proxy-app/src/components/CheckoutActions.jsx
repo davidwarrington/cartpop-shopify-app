@@ -10,7 +10,7 @@ const CheckoutActions = () => {
   };
 
   return (
-    <div className="border-t p-5">
+    <div className="px-5">
       <button
         className="block py-5 flex align-center items-center justify-center text-white text-base font-medium bg-[#5931f5] rounded-lg w-full bg-blue hover:bg-[#5931f5]/75"
         onClick={() => handleCheckoutRedirect("shop_pay")}
