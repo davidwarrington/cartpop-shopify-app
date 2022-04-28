@@ -21,14 +21,16 @@ export const getMarkup = ({
         <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
         <meta name="shopify-x-request-id" content="${shopifyRequestId}">
         <!-- <meta http-equiv="refresh" content="3;URL=?from_processing_page=1"> -->
-        <link rel="stylesheet" href="${process.env.HOST}/src/assets/proxy/index.css?v=${process.env.SOURCE_VERSION || 1}" media="all" />
+        <link rel="stylesheet" href="${process.env.HOST}/src/assets/proxy/index.css?v=${process.env.SOURCE_VERSION || randomId}" media="all" />
         ${checkoutStyles}
       </head>
       <body>
         <script>
           const shop = {{ shop | json }};
           const link = ${JSON.stringify(link)};
-          {% assign product = collections.all.products | where: 'id', ${link.lineItems[0].productId} | first %}
+          {% assign product = collections.all.products | where: 'id', ${
+            link.lineItems[0].productId
+          } | first %}
           const product = {
             ...{{ product | json }},
             featured_image: "{{ product.featured_image | image_url: width: 400 }}",
@@ -50,7 +52,11 @@ export const getMarkup = ({
         <div id="content">
           ${bodyContent}
         </div>
-        <script type="module" src="${process.env.HOST}/src/assets/proxy/index.js?v=${process.env.SOURCE_VERSION || 1}"></script>
+        <script type="module" src="${
+          process.env.HOST
+        }/src/assets/proxy/index.js?v=${
+    process.env.SOURCE_VERSION || randomId
+  }"></script>
       </body>
     </html>
     `;
