@@ -32,16 +32,23 @@ export const linkNotFound = async (req, res) => {
 
 export const link = async (req, res) => {
   const { shop, locale, isMobile, shopifyRequestId } = getHeaders(req);
+  const { email, discount, payment } = req.query;
   const link = req.link;
   const { clearCart, redirectLocation } = getShopLinkSettings(req.shopDoc);
   let scripts = ``;
 
+  // TODO: fix this...
   const hasLineProperties = true;
   const hasSubscription = false;
 
   // We need to use cart api if a link has one of these
   if (hasLineProperties || hasSubscription) {
-    const urlQueryString = generateQueryString(link);
+    const urlQueryString = generateQueryString({
+      link,
+      email,
+      discount,
+      payment,
+    });
 
     scripts = getScriptMarkup({
       clearCart,
@@ -51,7 +58,11 @@ export const link = async (req, res) => {
   } else {
     // Generate checkout link
     const generatedLink = generatedCheckoutLink({
+      shop,
       link,
+      email,
+      discount,
+      payment,
     });
     if (!generatedLink) {
       throw `Checkout link generation failed on ${link} on ${shop}`;
