@@ -305,29 +305,27 @@ export function CheckoutLinkCard({
                     <Stack spacing="none">
                       <Icon source={TickSmallMinor} color="success" />{" "}
                       <TextStyle>
-                        <Tooltip content="See how many clicks a link got.">
+                        <Tooltip content="Add a selling plan to a product automatically.">
+                          Product subscriptions
+                        </Tooltip>
+                      </TextStyle>
+                    </Stack>
+                    <Stack spacing="none">
+                      <Icon source={TickSmallMinor} color="success" />{" "}
+                      <TextStyle>
+                        <Tooltip content="Add specific line properties to products automatically.">
+                          Product line properties
+                        </Tooltip>
+                      </TextStyle>
+                    </Stack>
+                    <Stack spacing="none">
+                      <Icon source={TickSmallMinor} color="success" />{" "}
+                      <TextStyle>
+                        <Tooltip content="See how many clicks or qr scans a link got.">
                           Analytics
                         </Tooltip>
                       </TextStyle>
                     </Stack>
-                    {/* <Stack spacing="none">
-                      <Icon source={TickSmallMinor} color="success" />{" "}
-                      <TextStyle>
-                        <Tooltip content="Link customers straight to checkout with subscription products.">
-                          Subscription products
-                        </Tooltip>
-                      </TextStyle>
-                      <Stack.Item>
-                        <Badge>Coming soon</Badge>
-                      </Stack.Item>
-                    </Stack>
-                    <Stack spacing="none">
-                      <Icon source={TickSmallMinor} color="success" />{" "}
-                      <TextStyle>Line item properties</TextStyle>
-                      <Stack.Item>
-                        <Badge>Coming soon</Badge>
-                      </Stack.Item>
-                    </Stack> */}
                   </Stack>
                 </Stack>
               }
@@ -443,12 +441,12 @@ export function CheckoutLinkCard({
                     status="warning"
                     title="Checkout links do not support the following feature:"
                     action={{
-                      content: "Show link anyway",
-                      onAction: () => setShowCheckoutLink(true),
-                    }}
-                    secondaryAction={{
                       content: "Show link alias",
                       onAction: () => handleSelectTab(0),
+                    }}
+                    secondaryAction={{
+                      content: "Show checkout link anyway",
+                      onAction: () => setShowCheckoutLink(true),
                     }}
                   >
                     <Stack vertical>
