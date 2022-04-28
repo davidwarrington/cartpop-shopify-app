@@ -197,6 +197,23 @@ export function OrderCard({ order, attributes }) {
       >
         <Modal.Section>
           <FormLayout>
+            <Checkbox
+              label="Redirect to Shop Pay"
+              helpText={
+                <>
+                  Automatically redirect a customer to{" "}
+                  <Link external url="https://shop.app/what-shop-does">
+                    Shop Pay
+                  </Link>
+                  .
+                </>
+              }
+              {...asChoiceField(order.useShopPay)}
+            />
+          </FormLayout>
+        </Modal.Section>
+        <Modal.Section>
+          <FormLayout>
             <TextField
               showCharacterCount
               type="text"
@@ -280,23 +297,6 @@ export function OrderCard({ order, attributes }) {
                 ? "Add attribute"
                 : "10/10 attributes reached"}
             </Button>
-          </FormLayout>
-        </Modal.Section>
-        <Modal.Section>
-          <FormLayout>
-            <Checkbox
-              label="Redirect to Shop Pay"
-              helpText={
-                <>
-                  Automatically redirect a customer to{" "}
-                  <Link external url="https://shop.app/what-shop-does">
-                    Shop Pay
-                  </Link>
-                  .
-                </>
-              }
-              {...asChoiceField(order.useShopPay)}
-            />
           </FormLayout>
         </Modal.Section>
       </Modal>
