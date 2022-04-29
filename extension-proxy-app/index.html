@@ -5,9 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CartPop Dev App</title>
   </head>
+  <style>
+    :root {
+      --bg-color: rgb(255, 242, 222);
+      --color-brand: #3b8ede;
+    }
+  </style>
   <body>
     <script>
-      const shop = { error: "json not allowed for this object" };
+      const theme = {
+        backgroundColor: "rgb(255,242,222)",
+        logoUrl:
+          "https://creatives.attn.tv/muddybites/Source%3DLogo_adb93692.png",
+        backgroundUrl: null,
+        brandColor: "#3b8ede",
+      };
+      const shop = {
+        id: 6711312447,
+        name: "Checkout Promotions (Dev)",
+        shopDomain: "orders-demo.myshopify.com",
+        domain: "orders-demo.myshopify.com",
+        paymentTypes: [
+          "american_express",
+          "apple_pay",
+          "bitcoin",
+          "bitcoin_cash",
+          "dai",
+          "diners_club",
+          "discover",
+          "dogecoin",
+          "ethereum",
+          "facebook_pay",
+          "google_pay",
+          "litecoin",
+          "master",
+          "shopify_pay",
+          "usdc",
+          "visa",
+        ],
+        //paymentTypes: ["american_express","apple_pay","bitcoin","bitcoin_cash","dai","diners_club","discover","dogecoin","ethereum","facebook_pay","google_pay","litecoin","master","usdc","visa"],
+        routes: {
+          clearCart: "/cart/clear",
+          updateCart: "/cart/update",
+          addToCart: "/cart/add",
+        },
+        currency: "USD",
+        locale: "en",
+      };
       const link = {
         id: "6266e0d8870aacd3cf0f6bc0",
         type: "checkout",
