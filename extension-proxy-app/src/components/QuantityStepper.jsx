@@ -26,8 +26,9 @@ const QuantityStepper = () => {
   }, []);
 
   return (
-    <div className="flex flex-row h-14 w-full border border-gray-300 rounded-md shadow-sm relative bg-transparent focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
+    <div className="w-2/5 flex flex-row h-14 border border-gray-300 rounded-md shadow-sm relative bg-transparent focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600 px-4">
       <button
+        type="button"
         onClick={handleDecrement}
         disabled={quantity == 1 ? true : false}
         data-action="decrement"
@@ -45,13 +46,16 @@ const QuantityStepper = () => {
         </svg>
       </button>
       <input
-        type="number"
-        className="appearance-none outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 text-base"
+        pattern="[0-9]*"
+        type="text"
+        inputmode="numeric"
+        className="appearance-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 text-base border-transparent focus:border-transparent focus:ring-0"
         name="quantity"
         value={quantity}
         //onChange={(value) => setQuantity(value)}
       />
       <button
+        type="button"
         onClick={handleIncrement}
         data-action="increment"
         className="flex justify-center items-center text-gray-600 hover:text-indigo-600 h-full w-20 rounded-r cursor-pointer"
@@ -76,20 +80,3 @@ const QuantityStepper = () => {
 };
 
 export default QuantityStepper;
-
-// <div className="border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-//               <label
-//                 for="quantity"
-//                 className="block text-xs font-medium text-gray-900 pb-1"
-//               >
-//                 Quantity
-//               </label>
-//               <input
-//                 type="text"
-//                 name="quantity"
-//                 id="quantity"
-//                 className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
-//                 placeholder="1"
-//                 value="1"
-//               />
-//             </div>
