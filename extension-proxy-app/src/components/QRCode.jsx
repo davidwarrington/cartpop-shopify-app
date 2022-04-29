@@ -2,8 +2,8 @@ import QRCode from "react-qr-code";
 
 const GeneratedQRCode = ({ product }) => {
   return (
-    <div className="relative flex justify-center overflow-auto py-9 px-2 bg-gray-50">
-      <div className="bg-white border rounded-md p-5">
+    <div className="relative h-64 flex justify-center overflow-auto p-2 bg-gray-50">
+      <div className="bg-white border rounded-md py-6 px-10">
         <QRCode
           muted
           id="qr-code-link"
