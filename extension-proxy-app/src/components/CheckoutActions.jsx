@@ -1,10 +1,10 @@
-const CheckoutActions = () => {
+const CheckoutActions = ({ completeButtonRef }) => {
   const handleCheckoutRedirect = ({ payment = "" }) => {
     if (payment == "shop_pay") {
-      console.log("redirectionUrl", redirectionUrl);
-      window.location.replace(redirectionUrl);
+      window.location.replace(
+        redirectionUrl.replace("&payment=shop_pa", "") + "&payment=shop_pay"
+      );
     } else {
-      console.log("redirectionUrl", redirectionUrl);
       window.location.replace(redirectionUrl);
     }
   };
@@ -12,8 +12,9 @@ const CheckoutActions = () => {
   return (
     <div className="px-5">
       <button
+        ref={completeButtonRef}
         className="block py-5 flex align-center items-center justify-center text-white text-base font-medium bg-[#5931f5] rounded-lg w-full bg-blue hover:bg-[#5931f5]/75"
-        onClick={() => handleCheckoutRedirect("shop_pay")}
+        onClick={() => handleCheckoutRedirect({ payment: "shop_pay" })}
       >
         <span>Pay with</span>
         <svg
@@ -66,7 +67,7 @@ const CheckoutActions = () => {
         </svg>
       </button>
 
-      <div class="relative my-4">
+      <div class="relative my-2">
         <div class="absolute inset-0 flex items-center" aria-hidden="true">
           <div class="w-full border-t border-gray-200"></div>
         </div>
