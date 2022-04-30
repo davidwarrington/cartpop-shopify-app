@@ -24,6 +24,7 @@ const ShopProvider = ({ shop, children }) => {
             primaryDomain,
             shopifyPlan,
             subscription,
+            shopLocales,
         }
     */
     setSubmitting(false);
