@@ -21,16 +21,13 @@ const CountriesSelector = ({ country }) => {
     return <Select disabled={true} label="Country" />;
   }
 
-  return (
-    <Select
-      label="Country"
-      options={data.shop.shipsToCountries.map((country) => ({
-        label: getName(country),
-        value: country,
-      }))}
-      {...country}
-    />
-  );
+  const countryOptions = data.shop.shipsToCountries.map((country) => ({
+    label: getName(country),
+    value: country,
+  }));
+  countryOptions.unshift({ label: "None", value: "" });
+
+  return <Select label="Country" options={countryOptions} {...country} />;
 };
 
 export default CountriesSelector;
