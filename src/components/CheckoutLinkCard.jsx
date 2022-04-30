@@ -148,6 +148,10 @@ export function CheckoutLinkCard({
       if (customer.zipcode && customer.zipcode.value) {
         urlParameters += `&checkout[shipping_address][zip]=${customer.zipcode.value}`;
       }
+
+      if (customer.country && customer.country.value) {
+        urlParameters += `&checkout[shipping_address][country]=${customer.country.value}`;
+      }
     }
 
     const hasOrderInfo =

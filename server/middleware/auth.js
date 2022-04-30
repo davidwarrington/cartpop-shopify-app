@@ -14,6 +14,11 @@ const GET_SHOP_DATA = `{
       url
       sslEnabled
     }
+    shopLocales {
+      locale
+      primary
+      published
+    }
     plan {
       displayName
       partnerDevelopment

@@ -13,6 +13,7 @@ export const get = async (req, res) => {
       settings: shopDoc.settings || {},
       shop: shop,
       scopes: shopDoc.scopes,
+      shopLocales: shopDoc.shopData?.shopLocales || null,
       primaryDomain: shopDoc.shopData?.primaryDomain?.url || null,
       shopifyPlan: shopDoc.shopData?.plan || null,
       subscription: shopDoc.subscription
