@@ -16,8 +16,10 @@ import {
   EmailMajor,
   LocationMajor,
 } from "@shopify/polaris-icons";
+import { getName } from "country-list";
 import { iconStyles } from "../constants";
 import { CardGrid } from "./CardGrid";
+import CountriesSelector from "./CountriesSelector";
 
 export function CustomerCard({ customer }) {
   const [showModal, setShowModal] = useState(false);
@@ -96,7 +98,8 @@ export function CustomerCard({ customer }) {
               customer.address2.value ||
               customer.city.value ||
               customer.province.value ||
-              customer.zipcode.value ? (
+              customer.zipcode.value ||
+              customer.country.value ? (
                 <Stack alignment="center" spacing="tight" wrap={false}>
                   <div style={iconStyles}>
                     <Icon source={LocationMajor} color="base" />
@@ -117,7 +120,8 @@ export function CustomerCard({ customer }) {
                     </Stack.Item>
                     <Stack.Item>
                       {customer.zipcode.value && customer.zipcode.value}
-                      {customer.country.value && ", " + customer.country.value}
+                      {customer.country.value &&
+                        ", " + getName(customer.country.value)}
                     </Stack.Item>
                   </Stack>
                 </Stack>
@@ -203,6 +207,7 @@ export function CustomerCard({ customer }) {
                 placeholder="10022"
                 {...customer.zipcode}
               />
+              <CountriesSelector country={customer.country} />
             </Stack>
           </FormLayout>
         </Modal.Section>

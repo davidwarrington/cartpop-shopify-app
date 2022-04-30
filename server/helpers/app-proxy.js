@@ -84,6 +84,10 @@ export const generateQueryString = ({ link, email, discount, payment }) => {
     if (customer.zipcode) {
       urlParameters += `&checkout[shipping_address][zip]=${customer.zipcode}`;
     }
+
+    if (customer.country) {
+      urlParameters += `&checkout[shipping_address][country]=${customer.country}`;
+    }
   }
 
   if (discount || (order && Object.keys(order).length)) {
