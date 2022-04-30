@@ -35,6 +35,10 @@ const VariantSelector = ({ product }) => {
 
   const [selected, setSelected] = useState(options[0]);
 
+  if (!product.variants || product.hasOnlyDefaultVariant) {
+    return null;
+  }
+
   return (
     <div className="w-full min-w-[50%]">
       <label
