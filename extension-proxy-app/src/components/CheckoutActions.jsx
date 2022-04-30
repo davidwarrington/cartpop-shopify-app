@@ -1,11 +1,14 @@
 const CheckoutActions = ({ shop, completeButtonRef }) => {
+  const isCrypto = false;
   const hasShopPay =
     (shop.paymentTypes && shop.paymentTypes.includes("shopify_pay")) || false;
 
   const handleCheckoutRedirect = ({ payment = "" }) => {
-    if (payment == "shop_pay") {
+    console.log("redirectionUrl", redirectionUrl);
+
+    if (hasShopPay && payment == "shop_pay") {
       window.location.replace(
-        redirectionUrl.replace("&payment=shop_pa", "") + "&payment=shop_pay"
+        redirectionUrl.replace("&payment=shop_pay", "") + "&payment=shop_pay"
       );
     } else {
       window.location.replace(redirectionUrl);
@@ -88,13 +91,13 @@ const CheckoutActions = ({ shop, completeButtonRef }) => {
       <div className="flex justify-center">
         <button
           onClick={handleCheckoutRedirect}
-          className={`block text-base font-medium text-brand hover:text-brand/70 ${
+          className={`block text-base font-medium ${
             hasShopPay
-              ? "md:py-2"
-              : "border py-5 px-10 rounded w-full hover:bg-gray-300 hover:text-gray-800 hover:border-transparent"
+              ? "md:py-2 text-brand hover:text-brand/70"
+              : "border py-5 px-10 rounded-md w-full text-white bg-gray-800 hover:bg-gray-900 hover:border-transparent"
           }`}
         >
-          Continue to checkout
+          {isCrypto ? "Connect wallet" : "Continue to checkout"}
         </button>
       </div>
     </div>
