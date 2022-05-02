@@ -171,7 +171,10 @@ export function App() {
   }
 
   return (
-    <LocaleProvider>
+    <LocaleProvider
+      defaultTranslations={defaultTranslations}
+      locale={languageCode}
+    >
       <ShopProvider shop={shop}>
         <Transition.Root show={open} as={Fragment}>
           <Dialog
