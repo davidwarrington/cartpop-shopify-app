@@ -1,7 +1,10 @@
-const CheckoutActions = ({ shop, completeButtonRef }) => {
+import { useShop } from "../hooks";
+
+const CheckoutActions = ({ completeButtonRef }) => {
+  const { paymentTypes } = useShop();
   const isCrypto = false;
   const hasShopPay =
-    (shop.paymentTypes && shop.paymentTypes.includes("shopify_pay")) || false;
+    (paymentTypes && paymentTypes.includes("shopify_pay")) || false;
 
   const handleCheckoutRedirect = ({ payment = "" }) => {
     console.log("redirectionUrl", redirectionUrl);
