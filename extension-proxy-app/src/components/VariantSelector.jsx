@@ -3,34 +3,14 @@ import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 
-const people = [
-  {
-    id: 1,
-    name: "Wade Cooper",
-    avatar:
-      "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    id: 2,
-    name: "Arlene Mccoy",
-    avatar:
-      "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    id: 3,
-    name: "Devon Webb",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
-  },
-];
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const VariantSelector = ({ product }) => {
+const VariantSelector = ({ product, variantId, setVariantId }) => {
   const options = product.variants.map((variant) => ({
     label: variant.options[0],
+    value: variant.id,
   }));
 
   const [selected, setSelected] = useState(options[0]);
@@ -52,9 +32,13 @@ const VariantSelector = ({ product }) => {
         name="location"
         className="w-full h-14 block text-base sm:text-sm bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
         //defaultValue="Canada"
+        value={variantId}
+        onChange={(event) => setVariantId(event.target.value)}
       >
         {options.map((option) => (
-          <option>{option.label}</option>
+          <option select={option.value === variantId} value={option.value}>
+            {option.label}
+          </option>
         ))}
       </select>
     </div>
