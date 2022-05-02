@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useState, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
-import { CheckoutActions, Product } from "./components/index";
+import { CheckoutActions, LineItems } from "./components/index";
 import { LocaleProvider, ShopProvider } from "./hooks/index";
 
 export function App() {
@@ -271,10 +271,10 @@ export function App() {
                         </div>
                       </div>
 
-                      <Product
-                        product={product}
-                        shop={shop}
-                        showQrCode={showQrCode}
+                      <LineItems
+                        lineItems={link.lineItems}
+                        products={[product]}
+                        showQrCode={false} // TODO:
                       />
 
                       <div className="py-4">

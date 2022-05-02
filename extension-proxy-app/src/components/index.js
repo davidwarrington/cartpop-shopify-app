@@ -1,21 +1,25 @@
 import CheckoutActions from "./CheckoutActions";
-import ModalContainer from "./ModalContainer";
 import GallerySlider from "./GallerySlider";
-import Product from "./Product";
+import LineItems from "./LineItems";
+import ModalContainer from "./ModalContainer";
+import LineItem from "./LineItem";
 import ProductPrice from "./ProductPrice";
 import ProductRating from "./ProductRating";
 import QRCode from "./QRCode";
 import QuantityStepper from "./QuantityStepper";
+import UrgencyBanner from "./UrgencyBanner";
 import VariantSelector from "./VariantSelector";
 
 export {
   CheckoutActions,
   GallerySlider,
+  LineItems,
+  LineItem,
   ModalContainer,
-  Product,
   ProductRating,
   ProductPrice,
   QRCode,
   QuantityStepper,
+  UrgencyBanner,
   VariantSelector,
 };
