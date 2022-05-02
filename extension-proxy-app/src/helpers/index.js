@@ -1,5 +1,7 @@
 import Cart from "./cart.js";
 
-export {
-    Cart,
-}
+const classNames = (...classes) => {
+  return classes.filter(Boolean).join(" ");
+};
+
+export { classNames, Cart };
