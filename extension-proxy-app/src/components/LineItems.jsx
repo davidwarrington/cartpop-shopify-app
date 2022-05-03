@@ -1,31 +1,14 @@
-import { useState } from "react";
+import { useCart } from "../hooks/useCart";
 import { LineItem } from "./index";
 
-const LineItems = ({ lineItems, products }) => {
-  const [cartLineItems, setCartLineItems] = useState(lineItems || []);
+const LineItems = ({ products }) => {
+  const { lineItems } = useCart();
 
-  const handleLineItemChange = ({ index, value }) => {
-    if (index < 0) {
-      return;
-    }
-
-    setCartLineItems((lineItems) => {
-      const cachedLineItems = [...lineItems];
-
-      if (!cachedLineItems[index]) {
-        return cachedLineItems;
-      }
-
-      cachedLineItems[index] = value;
-      return cachedLineItems;
-    });
-  };
-
-  if (!cartLineItems || !cartLineItems.length) {
+  if (!lineItems || !lineItems.length) {
     return null;
   }
 
-  return cartLineItems.map((lineItem, lineItemIndex) => (
+  return lineItems.map((lineItem, lineItemIndex) => (
     <LineItem
       key={lineItemIndex}
       lineItem={lineItem}

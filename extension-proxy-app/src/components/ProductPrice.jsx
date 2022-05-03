@@ -1,9 +1,9 @@
 import { useShop } from "../hooks";
 
-const ProductPrice = ({ shop, selectedVariant, quantity = 1 }) => {
+const ProductPrice = ({ selectedVariant, quantity = 1 }) => {
   const { locale, currency } = useShop();
 
-  if (!selectedVariant || !shop) {
+  if (!selectedVariant) {
     return null;
   }
 
@@ -13,14 +13,6 @@ const ProductPrice = ({ shop, selectedVariant, quantity = 1 }) => {
 
   return (
     <div className="flex gap-2 items-center">
-      <div className="text-gray-900 text-xl">
-        {new Intl.NumberFormat(locale, {
-          style: "currency",
-          currency: currency,
-          currencyDisplay: "narrowSymbol",
-          maximumSignificantDigits: 4,
-        }).format(productTotalPrice)}
-      </div>
       {productComparePrice && productComparePrice !== productTotalPrice ? (
         <div className="line-through">
           {new Intl.NumberFormat(locale, {
@@ -31,6 +23,14 @@ const ProductPrice = ({ shop, selectedVariant, quantity = 1 }) => {
           }).format(productComparePrice)}
         </div>
       ) : null}
+      <div className="text-gray-900 text-xl">
+        {new Intl.NumberFormat(locale, {
+          style: "currency",
+          currency: currency,
+          currencyDisplay: "narrowSymbol",
+          maximumSignificantDigits: 4,
+        }).format(productTotalPrice)}
+      </div>
     </div>
   );
 };
