@@ -9,7 +9,6 @@ import {
   contentLoader,
   contentNotFound,
   getMarkup,
-  getScriptMarkup,
   translatedLiquid,
 } from "./markup.js";
 
@@ -48,12 +47,6 @@ export const link = async (req, res) => {
       email,
       discount,
       payment,
-    });
-
-    scripts = getScriptMarkup({
-      clearCart,
-      redirectLocation,
-      urlQueryString,
     });
   } else {
     // Generate checkout link
