@@ -7,6 +7,7 @@ import ProductPrice from "./ProductPrice";
 import ProductRating from "./ProductRating";
 import QRCode from "./QRCode";
 import QuantityStepper from "./QuantityStepper";
+import TopBar from "./TopBar";
 import UrgencyBanner from "./UrgencyBanner";
 import VariantSelector from "./VariantSelector";
 
@@ -20,6 +21,7 @@ export {
   ProductPrice,
   QRCode,
   QuantityStepper,
+  TopBar,
   UrgencyBanner,
   VariantSelector,
 };
