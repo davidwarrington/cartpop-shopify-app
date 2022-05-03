@@ -9,7 +9,6 @@ import {
   contentLoader,
   contentNotFound,
   getMarkup,
-  getScriptMarkup,
   translatedLiquid,
 } from "./markup.js";
 
@@ -41,13 +40,7 @@ export const link = async (req, res) => {
 
   // We need to use cart api if a link has one of these
   if (hasLineProperties || hasSubscription) {
-    const urlQueryString = generateQueryString(link);
-
-    scripts = getScriptMarkup({
-      clearCart,
-      redirectLocation,
-      urlQueryString,
-    });
+    //const urlQueryString = generateQueryString(link);
   } else {
     // Generate checkout link
     const generatedLink = generatedCheckoutLink({

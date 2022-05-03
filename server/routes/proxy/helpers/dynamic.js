@@ -3,7 +3,7 @@ import {
   getHeaders,
   getShopLinkSettings,
 } from "../../../helpers/app-proxy.js";
-import { contentLoader, getMarkup, getScriptMarkup } from "./markup.js";
+import { contentLoader, getMarkup } from "./markup.js";
 
 export const dynamic = async (req, res) => {
   const { shop, locale, isMobile, shopifyRequestId } = getHeaders(req);
@@ -43,11 +43,11 @@ export const dynamic = async (req, res) => {
 
   const urlQueryString = generateQueryString(formattedLink);
 
-  const scripts = getScriptMarkup({
-    clearCart,
-    redirectLocation,
-    urlQueryString,
-  });
+  // const scripts = getScriptMarkup({
+  //   clearCart,
+  //   redirectLocation,
+  //   urlQueryString,
+  // });
 
   const markup = getMarkup({
     link: formattedLink,
@@ -55,7 +55,6 @@ export const dynamic = async (req, res) => {
     locale,
     isMobile,
     shopifyRequestId,
-    scripts,
     bodyContent: contentLoader(locale),
   });
 

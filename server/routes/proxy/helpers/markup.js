@@ -5,8 +5,9 @@ export const getMarkup = ({
   link,
   isMobile = false,
   shopifyRequestId,
-  bodyContent = "",
-  scripts = null,
+  clearCart,
+  redirectLocation,
+  urlQueryString,
 }) => {
   const randomId = "2602686fb8b88d94b8051bb6bb771e56";
 
@@ -21,13 +22,34 @@ export const getMarkup = ({
         <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
         <meta name="shopify-x-request-id" content="${shopifyRequestId}">
         <!-- <meta http-equiv="refresh" content="3;URL=?from_processing_page=1"> -->
-        <link rel="stylesheet" href="${process.env.HOST}/src/assets/proxy/index.css?v=${process.env.SOURCE_VERSION || randomId}" media="all" />
+        <link rel="stylesheet" href="${
+          process.env.HOST
+        }/src/assets/proxy/index.css?v=${
+    process.env.SOURCE_VERSION || randomId
+  }" media="all" />
         ${checkoutStyles}
       </head>
       <body>
         <script>
-          const shop = {{ shop | json }};
-          const link = ${JSON.stringify(link)};
+          const shop = {
+            id: {{ shop.id }},
+            name: "{{ shop.name }}",
+            shopDomain: "{{ shop.domain }}",
+            domain: "{{ shop.permanent_domain }}",
+            paymentTypes: {{ shop.enabled_payment_types | json }},
+            routes: {
+              cartClear:  "{{ routes.cart_clear_url  }}",
+              cartUpdate: "{{ routes.cart_update_url  }}",
+              cartAdd: "{{ routes.cart_add_url  }}",
+            },
+            currency: "{{ shop.currency }}",
+            locale: "{{ request.locale.name }}",
+          };
+          const link = {
+            clearCart: ${clearCart},
+            redirectionType: "${redirectLocation}",
+            ...${JSON.stringify(link)},
+          };
           {% assign product = collections.all.products | where: 'id', ${
             link.lineItems[0].productId
           } | first %}
@@ -39,6 +61,7 @@ export const getMarkup = ({
               rating_avg: "{{product.metafields.rating.rating_avg.value | default: nill }}",
             }
           };
+          const urlQueryString = ${urlQueryString};
           const isMobile = ${isMobile === 1};
           const languageCode = "{{ request.locale.iso_code }}";
           const defaultTranslations = ${JSON.stringify(defaultTranslations)};
@@ -47,11 +70,7 @@ export const getMarkup = ({
           }.${translationMetafield.key}.value | json }};
         </script>
         <div id="app"></div>
-        ${scripts ? scripts : ""}
         ${bugsnagScript()}
-        <div id="content">
-          ${bodyContent}
-        </div>
         <script type="module" src="${
           process.env.HOST
         }/src/assets/proxy/index.js?v=${
@@ -86,139 +105,6 @@ const bugsnagScript = () => {
         //appVersion: '4.10.0' // TODO:
       });
     </script>`;
-};
-
-export const getScriptMarkup = ({
-  locale = "en",
-  clearCart = false,
-  redirectLocation,
-  urlQueryString = "",
-}) => {
-  return `
-  <script>
-    let redirectionUrl = '';
-    const redirectionType = "${redirectLocation}";
-    const handleCart = async function () {
-      try {
-        if (!link) return;
-
-        let cartRes = null;
-
-        // Optionally clear cart before adding link items: https://shopify.dev/api/ajax/reference/cart#post-locale-cart-clear-js
-        const clearCart = ${clearCart};
-        if (clearCart) {
-            // Locale aware url: https://shopify.dev/themes/internationalization/multiple-currencies-languages#locale-aware-urls + https://shopify.dev/api/liquid/objects/routes#routes-cart_clear_url
-
-            // Clear cart
-            const clearCartItems = await fetch('{{ routes.cart_clear_url }}.js');
-            const clearRes = await clearCartItems.json();
-            
-            const cartNote = clearRes.note ? true : false;
-            const cartAttributes = clearRes.attributes && Object.keys(clearRes.attributes).length ? true : false;
-
-            // If cart already has a note or attributes, clear them
-            if (cartNote || cartAttributes) {
-              const clearCartAttributes = await fetch('{{ routes.cart_update_url }}.js', {
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                method: 'POST',
-                body: JSON.stringify({
-                  note: null,
-                  attributes: null
-                })
-              });
-              const clearRes2 = await clearCartAttributes.json();
-            }
-        }
-
-        const cartItems = [];
-        const { lineItems} = link;
-      
-        if (lineItems && lineItems.length) {
-          lineItems.map(lineItem => {
-            // Map line item properties
-            let lineProperties = {
-              _cartpop: link.id || link.type,
-            };
-            lineItem.poperties 
-              && lineItem.poperties.length
-              && lineItem.poperties.map(property => {
-                lineProperties[property.label] = property.value
-              });
-
-            // Push line item to array
-            cartItems.push({
-              id: lineItem.variantId,
-              quantity: lineItem.quantity || 1,
-              selling_plan: lineItem.selling_plan_id || null,
-              properties: lineProperties || {},
-            })
-          })
-        }
-
-        // TODO: add conversion tracking attributes
-        
-        // Add new products to cart: https://shopify.dev/api/ajax/reference/cart#post-locale-cart-add-js
-        const cartItemsRes = await fetch('{{ routes.cart_add_url }}.js',
-            {
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                method: 'POST',
-                body: JSON.stringify({
-                  items: cartItems
-                })
-            }
-        );
-        cartRes = await cartItemsRes.json();
-
-        // Add cart attributes, note, etc.
-        // if (Object.keys(cartPayload).length) {
-        //   const updateCartRes = await fetch('{{ routes.cart_update_url }}.js',
-        //     {
-        //         headers: {
-        //           'Content-Type': 'application/json',
-        //         },
-        //         method: 'POST',
-        //         body: JSON.stringify({
-        //           ...cartPayload,
-        //         })
-        //     }
-        //   );
-
-        //   cartRes = await updateCartRes.json();
-        // }
-
-        if (!cartRes || !cartRes.items || !cartRes.items.length) {
-          throw "No items!";
-          return; // TODO: show error message and notify Bugsnag
-        }
-
-        // Navigate to checkout or cart depending on setting -- defualt to checkout
-        redirectionUrl = '/checkout?';
-        if (redirectionType === "home") {
-          // Home
-          redirectionUrl = "{{ shop.secure_url }}?";
-        } else if (redirectionType === "cart") {
-            // Cart
-            redirectionUrl = "{{ shop.secure_url }}{{ routes.cart_url }}?";
-        }
-
-        redirectionUrl += "${urlQueryString}";
-
-        window.location.replace(redirectionUrl);
-        return true;
-      } catch (err) {
-        console.warn(err);
-        document.getElementById("content").innerHTML = \`${contentNotFound(
-          locale
-        )}\`;
-      }
-    };
-    
-    handleCart();  
-</script>`;
 };
 
 export const contentLoader = (locale) => {
