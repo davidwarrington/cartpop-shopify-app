@@ -1,4 +1,4 @@
-import { translationMetafield } from "../../../constants.js";
+import { lineitemKey, translationMetafield } from "../../../constants.js";
 import { defaultTranslations } from "../../../default-translations.js";
 
 export const getMarkup = ({
@@ -119,7 +119,7 @@ export const getScriptMarkup = ({
           lineItems.map(lineItem => {
             // Map line item properties
             let lineProperties = {
-              _cartpop: link.id || link.type,
+              "${lineitemKey}": link.id || link.type,
             };
             lineItem.poperties 
               && lineItem.poperties.length
