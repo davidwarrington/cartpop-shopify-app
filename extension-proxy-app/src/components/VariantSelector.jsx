@@ -4,9 +4,12 @@ import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { classNames } from "../helpers";
 
-const VariantSelector = ({ product, variantId, setVariantId }) => {
-  const canEditVariant = false;
-
+const VariantSelector = ({
+  product,
+  variantId,
+  setVariantId,
+  canEditVariant,
+}) => {
   const options = product.variants.map((variant) => ({
     label: variant.title,
     value: variant.id,

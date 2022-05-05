@@ -1,8 +1,6 @@
 import { useCallback } from "react";
 
-const QuantityStepper = ({ quantity, setQuantity }) => {
-  const canEditQuantity = false; // TODO:
-
+const QuantityStepper = ({ quantity, setQuantity, canEditQuantity }) => {
   const handleIncrement = useCallback(() => {
     setQuantity((value) => {
       // TODO: don't let quantity exceed inventory if tracked
