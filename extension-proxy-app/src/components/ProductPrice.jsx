@@ -12,9 +12,9 @@ const ProductPrice = ({ selectedVariant, quantity = 1 }) => {
     (selectedVariant.compare_at_price / 100) * parseInt(quantity);
 
   return (
-    <div className="flex gap-2 items-center">
+    <div className="flex gap-1 items-center">
       {productComparePrice && productComparePrice !== productTotalPrice ? (
-        <div className="line-through">
+        <div className="line-through text-xl text-gray-500">
           {new Intl.NumberFormat(locale, {
             style: "currency",
             currency: currency,
