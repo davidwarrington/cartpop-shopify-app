@@ -15,7 +15,7 @@ const VariantSelector = ({ product, variantId, setVariantId }) => {
 
   const [selected, setSelected] = useState(options[0]);
 
-  if (!product.variants || product.hasOnlyDefaultVariant) {
+  if (!product.variants || product.has_only_default_variant) {
     return null;
   }
 
