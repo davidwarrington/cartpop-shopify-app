@@ -2,36 +2,47 @@
 import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import { classNames } from "../helpers";
 
 const VariantSelector = ({ product, variantId, setVariantId }) => {
+  const canEditVariant = false;
+
   const options = product.variants.map((variant) => ({
-    label: variant.options[0],
+    label: variant.title,
     value: variant.id,
   }));
 
-  const [selected, setSelected] = useState(options[0]);
+  const [selected, setSelected] = useState(options ? options[0].label : null);
 
-  if (!product.variants || product.has_only_default_variant) {
+  if (
+    !product.variants ||
+    product.has_only_default_variant ||
+    (product.variants.length === 1 &&
+      product.variants[0].title === "Default Title")
+  ) {
     return null;
+  }
+
+  if (!canEditVariant) {
+    return (
+      <div className="w-full min-w-[50%] flex items-center">
+        <div>{selected}</div>
+      </div>
+    );
   }
 
   return (
     <div className="w-full min-w-[50%]">
       <label
-        htmlFor="location"
+        htmlFor="variant"
         className="hidden block text-sm font-medium text-gray-700"
       >
-        {product.options[0]}
+        {product.options.map((option) => option.name).join(" / ")}
       </label>
       <select
-        id="location"
-        name="location"
-        className="w-full h-14 block text-base sm:text-sm bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-        //defaultValue="Canada"
+        id="variant"
+        name="variant"
+        className="w-full h-14 md:h-12 block text-base sm:text-sm bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
         value={variantId}
         onChange={(event) => setVariantId(event.target.value)}
       >
