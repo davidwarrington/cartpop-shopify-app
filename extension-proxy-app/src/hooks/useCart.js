@@ -3,10 +3,10 @@ import { useShop } from "./useShop";
 
 const CartContext = createContext({});
 
-const CartProvider = ({ initialLineItems, setStatus, children }) => {
+const CartProvider = ({ link, setStatus, children }) => {
   const { routes } = useShop();
 
-  const [lineItems, setLineItems] = useState(initialLineItems | []);
+  const [lineItems, setLineItems] = useState(link.lineItems || []);
 
   useEffect(() => {
     if (!lineItems || !lineItems.length) {
@@ -15,60 +15,62 @@ const CartProvider = ({ initialLineItems, setStatus, children }) => {
 
     // Add initial line item properties
     const initialAdd = async () => {
-      setStatus("loading");
+      try {
+        setStatus("loading");
 
-      await add({
-        routes,
-        cartItems: lineItems.map((lineItem) => ({
-          id: lineItem.variantId,
-          quantity: lineItem.quantity,
-          properties: lineItems.properties,
-          selling_plan: lineItem.selling_plan_id,
-        })),
-      });
-
-      setStatus("idle");
+        await add({
+          routes,
+          cartItems: lineItems.map((lineItem) => ({
+            id: lineItem.variantId,
+            quantity: lineItem.quantity,
+            properties: lineItems.properties,
+            selling_plan: lineItem.selling_plan_id,
+          })),
+        });
+        setStatus("idle");
+      } catch (e) {
+        setStatus("error");
+      }
     };
-    initialAdd();
+    // TODO: initialAdd();
   }, []);
 
   const handleCheckout = async () => {
     // Clear cart on load
     if (link.clearCart) {
-      await Cart.clear();
+      await clear();
     }
 
-    const newCartRes = await Cart.add({
-      routes,
-      cartItems: cartLineItems.map((lineItem) => ({
+    const newCartRes = await add(
+      lineItems.map((lineItem) => ({
         id: lineItem.variantId,
         quantity: lineItem.quantity,
         properties: lineItems.properties,
         selling_plan: lineItem.selling_plan_id,
-      })),
-    });
+      }))
+    );
     console.log("newCartRes", newCartRes);
-    setCartRes(newCartRes);
+    // TODO:setCartRes(newCartRes);
   };
 
   //   // Update linte item
-  //   const handleLineItemChange = ({ index, value }) => {
-  //     if (index < 0) {
-  //         return;
-  //     }
+  const handleLineItemChange = ({ index, value }) => {
+    if (index < 0) {
+      return;
+    }
 
-  //     setCartLineItems((lineItems) => {
-  //         const cachedLineItems = [...lineItems];
+    setLineItems((lineItems) => {
+      const cachedLineItems = [...lineItems];
 
-  //         // Make sure line item at index exists
-  //         if (!cachedLineItems[index]) {
-  //             return cachedLineItems;
-  //         }
+      // Make sure line item at index exists
+      if (!cachedLineItems[index]) {
+        return cachedLineItems;
+      }
 
-  //         cachedLineItems[index] = value;
-  //         return cachedLineItems;
-  //     });
-  // };
+      cachedLineItems[index] = value;
+      return cachedLineItems;
+    });
+  };
 
   // Add new lineItems to cart
   const add = async (cartItems) => {
@@ -127,9 +129,12 @@ const CartProvider = ({ initialLineItems, setStatus, children }) => {
     <CartContext.Provider
       value={{
         lineItems,
+        link,
         clear,
         add,
         update,
+        handleLineItemChange,
+        handleCheckout,
       }}
     >
       {children}
@@ -138,9 +143,25 @@ const CartProvider = ({ initialLineItems, setStatus, children }) => {
 };
 
 const useCart = () => {
-  const { add, clear, update, lineItems } = useContext(CartContext);
+  const {
+    add,
+    clear,
+    update,
+    lineItems,
+    link,
+    handleLineItemChange,
+    handleCheckout,
+  } = useContext(CartContext);
 
-  return { add, clear, update, lineItems };
+  return {
+    add,
+    clear,
+    update,
+    lineItems,
+    link,
+    handleLineItemChange,
+    handleCheckout,
+  };
 };
 
 export { CartProvider, useCart };
