@@ -13,7 +13,11 @@ import {
   TextStyle,
   Thumbnail,
 } from "@shopify/polaris";
-import { DeleteMinor, MobilePlusMajor } from "@shopify/polaris-icons";
+import {
+  DeleteMinor,
+  MobilePlusMajor,
+  PlusMinor,
+} from "@shopify/polaris-icons";
 
 import { useShop } from "../../core/ShopProvider";
 import { getIdFromGid } from "../../helpers";
@@ -302,13 +306,9 @@ export function Product({ lineItem, lineIndex, lineItems, lineProperty }) {
               </div>
             </Stack>
 
-            <Stack distribution="equalSpacing">
+            <Stack distribution="equalSpacing" alignment="center">
               {lineProperty ? (
-                <Button
-                  outline
-                  icon={MobilePlusMajor}
-                  onClick={() => handleAttributeAdd(lineIndex)}
-                >
+                <Button outline onClick={() => handleAttributeAdd(lineIndex)}>
                   Add line property
                 </Button>
               ) : (
