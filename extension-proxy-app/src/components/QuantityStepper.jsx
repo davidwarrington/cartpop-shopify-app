@@ -1,6 +1,8 @@
 import { useCallback } from "react";
 
 const QuantityStepper = ({ quantity, setQuantity }) => {
+  const canEditQuantity = false; // TODO:
+
   const handleIncrement = useCallback(() => {
     setQuantity((value) => {
       // TODO: don't let quantity exceed inventory if tracked
@@ -23,14 +25,24 @@ const QuantityStepper = ({ quantity, setQuantity }) => {
     });
   }, []);
 
+  if (!canEditQuantity && quantity === 1) {
+    return null;
+  }
+
+  // if (!canEditQuantity) {
+  //   return (
+  //     <div className="w-2/5 flex flex-row  h-14 md:h-12 items-center justify-center font-bold">{quantity}</div>
+  //   )
+  // }
+
   return (
-    <div className="w-2/5 flex flex-row h-14 border border-gray-300 rounded-md shadow-sm relative bg-transparent focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600 px-4">
+    <div className="min-w-[120px] w-2/5 flex flex-row h-14 md:h-12 border border-gray-300 rounded-md shadow-sm relative bg-transparent focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600 px-4">
       <button
         type="button"
         onClick={handleDecrement}
-        disabled={quantity == 1 ? true : false}
+        disabled={!canEditQuantity || quantity == 1 ? true : false}
         data-action="decrement"
-        className="flex justify-center items-center text-gray-600 disabled:text-gray-300 hover:text-indigo-600 h-full w-20 rounded-l cursor-pointer outline-none"
+        className="flex justify-center items-center text-gray-600 disabled:text-gray-300 hover:text-indigo-600 h-full w-20 rounded-l cursor-pointer outline-none disabled:cursor-default"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -50,13 +62,15 @@ const QuantityStepper = ({ quantity, setQuantity }) => {
         className="appearance-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 text-base border-transparent focus:border-transparent focus:ring-0"
         name="quantity"
         value={quantity}
+        disabled={!canEditQuantity}
         //onChange={(value) => setQuantity(value)}
       />
       <button
         type="button"
         onClick={handleIncrement}
         data-action="increment"
-        className="flex justify-center items-center text-gray-600 hover:text-indigo-600 h-full w-20 rounded-r cursor-pointer"
+        className="flex justify-center items-center text-gray-600 disabled:text-gray-300 hover:text-indigo-600 h-full w-20 rounded-r cursor-pointer outline-none disabled:cursor-default"
+        disabled={!canEditQuantity}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
