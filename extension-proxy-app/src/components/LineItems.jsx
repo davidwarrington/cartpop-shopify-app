@@ -14,7 +14,6 @@ const LineItems = ({ products }) => {
       lineItem={lineItem}
       lineItemIndex={lineItemIndex}
       products={products}
-      handleLineItemChange={handleLineItemChange}
     />
   ));
 };
