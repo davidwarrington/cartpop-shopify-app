@@ -13,6 +13,10 @@ import {
   Stack,
   TextStyle,
   Link,
+  Select,
+  Button,
+  Checkbox,
+  FooterHelp,
 } from "@shopify/polaris";
 import { CircleTickMajor } from "@shopify/polaris-icons";
 import {
@@ -259,6 +263,13 @@ export function LinkForm({
             </Layout.Section>
           ) : null}
 
+          {(!newForm && fields.active.value) ||
+          (link.analytics && link.analytics.clicks) ? (
+            <Layout.Section>
+              <LinkAnalytics link={link} hasSubscription={hasSubscription} />
+            </Layout.Section>
+          ) : null}
+
           <Layout.Section>
             {newForm ? null : (
               <CheckoutLinkCard
@@ -332,9 +343,37 @@ export function LinkForm({
                 </Card>
               </RequireSubscription>
             ) : null}
-            {!newForm && fields.active.value ? (
-              <LinkAnalytics link={link} hasSubscription={hasSubscription} />
-            ) : null}
+            <Card title="Settings">
+              <Card.Section>
+                <Stack vertical spacing="tight">
+                  <Select
+                    label="Link destination"
+                    options={[
+                      {
+                        label: "Checkout",
+                        value: "checkout",
+                      },
+                      {
+                        label: "Cart",
+                        value: "cart",
+                      },
+                      {
+                        label: "Landing page",
+                        value: "landing_page",
+                      },
+                    ]}
+                  />
+
+                  <Button fullWidth>Edit page design</Button>
+                </Stack>
+              </Card.Section>
+              <Card.Section subdued>
+                <Checkbox
+                  label="Clear customer's existing cart when adding the link's products."
+                  checked={true}
+                />
+              </Card.Section>
+            </Card>
             {newForm ? (
               <Stack vertical alignment="center">
                 <Stack.Item />
@@ -372,6 +411,13 @@ export function LinkForm({
                   : []
               }
             ></PageActions>
+          </Layout.Section>
+          <Layout.Section />
+          <Layout.Section fullWidth>
+            <FooterHelp>
+              Need to change customer facing copy?{" "}
+              <Link>Edit translations</Link>
+            </FooterHelp>
           </Layout.Section>
         </Layout>
       </Page>
