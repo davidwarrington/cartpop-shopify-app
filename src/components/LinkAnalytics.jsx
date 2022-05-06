@@ -1,9 +1,11 @@
 import {
   Banner,
+  Button,
   Card,
   DisplayText,
   Heading,
   Icon,
+  Link,
   Stack,
   Subheading,
   TextStyle,
@@ -44,8 +46,13 @@ export function LinkAnalytics({ link, hasSubscription }) {
     <Card
       title={
         <Stack distribution="equalSpacing" alignment="center">
-          <Heading>Analytics</Heading>
-          <TextStyle variation="subdued">All time</TextStyle>
+          <Stack.Item>
+            <Stack alignment="center" spacing="tight">
+              <Heading>Analytics</Heading>
+              <TextStyle variation="subdued">All time</TextStyle>
+            </Stack>
+          </Stack.Item>
+          <Link removeUnderline>View report</Link>
         </Stack>
       }
     >
