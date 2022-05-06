@@ -4,9 +4,10 @@ import { Dialog, Transition } from "@headlessui/react";
 import { CheckoutActions, LineItems, TopBar } from "./components/index";
 import { LocaleProvider, ShopProvider } from "./hooks/index";
 import { CartProvider } from "./hooks/useCart";
+import { APP_STATES } from "./constants";
 
 export function App() {
-  const [status, setStatus] = useState("loading");
+  const [status, setStatus] = useState(APP_STATES.idle);
   const [showQrCode, setShowQr] = useState(false);
   const [open, setOpen] = useState(false);
   const completeButtonRef = useRef(null);
@@ -26,24 +27,30 @@ export function App() {
   // Redirect back to shop when click on the X
   // Merchant can customize back to product or homepage
   const handleShopRedirect = () => {
-    setStatus("loading");
+    setStatus(APP_STATES.loading);
     window.location.replace((shop.routes && shop.routes.home) || shop.url);
     // TODO: check setting and optionally redirect to product
   };
 
   if (!link || !shop) {
+    console.warn("Missing link and/or shop", { link, shop });
     return null; // TODO: show error
   }
 
-  if (status === "loading") {
+  if (status === APP_STATES.loading) {
     return (
       <LocaleProvider
         defaultTranslations={defaultTranslations}
         locale={languageCode}
       >
         <ShopProvider shop={shop}>
-          <CartProvider initialLineItems={link.lineItems} setStatus={setStatus}>
-            <Transition.Root show={open} as={Fragment}>
+          <CartProvider
+            initialLineItems={link.lineItems}
+            setStatus={setStatus}
+            link={link}
+          >
+            loading here
+            {/* <Transition.Root show={open} as={Fragment}>
               <Dialog
                 as="div"
                 className="fixed inset-0 overflow-hidden"
@@ -125,7 +132,7 @@ export function App() {
                   </div>
                 </div>
               </Dialog>
-            </Transition.Root>
+            </Transition.Root> */}
           </CartProvider>
         </ShopProvider>
       </LocaleProvider>
@@ -138,7 +145,7 @@ export function App() {
       locale={languageCode}
     >
       <ShopProvider shop={shop}>
-        <CartProvider initialLineItems={link.lineItems} setStatus={setStatus}>
+        <CartProvider setStatus={setStatus} link={link}>
           <Transition.Root show={open} as={Fragment}>
             <Dialog
               as="div"
@@ -159,18 +166,25 @@ export function App() {
                     leaveFrom="translate-y-0"
                     leaveTo="translate-y-full"
                   >
-                    <div className="pointer-events-auto w-screen max-w-md">
+                    <div className="pointer-events-auto w-screen max-w-lg">
                       <div className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl rounded-tl-lg rounded-tr-lg md:rounded-lg">
                         <div className="h-0 flex-1 overflow-y-auto">
                           <TopBar />
+                          {link.settings && link.settings.shippingBanner ? (
+                            <div className="p-2 bg-gray-500 text-white font-medium text-center border-t-0">
+                              {link.settings.shippingBanner}
+                            </div>
+                          ) : null}
                         </div>
 
-                        <LineItems
-                          link={link}
-                          lineItems={link.lineItems}
-                          products={[product]}
-                          showQrCode={false} // TODO:
-                        />
+                        {link.products ? (
+                          <LineItems
+                            link={link}
+                            lineItems={link.lineItems}
+                            products={link.products}
+                            showQrCode={false} // TODO:
+                          />
+                        ) : null}
 
                         <div className="py-4">
                           <CheckoutActions
