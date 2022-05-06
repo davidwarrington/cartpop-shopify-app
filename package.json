@@ -23,6 +23,7 @@
     "@apollo/client": "^3.5.10",
     "@bugsnag/js": "^7.16.2",
     "@bugsnag/plugin-express": "^7.16.3",
+    "@google-cloud/vision": "^2.4.2",
     "@shopify/admin-graphql-api-utilities": "^1.0.9",
     "@shopify/app-bridge": "^2.0.22",
     "@shopify/app-bridge-react": "^2.0.22",
