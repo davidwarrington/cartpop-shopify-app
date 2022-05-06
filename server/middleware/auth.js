@@ -190,7 +190,7 @@ export default function applyAuthMiddleware(app) {
         const res = await client.query({ data: GET_SHOP_DATA });
         // Check if data response was successful
         if (!res?.body?.data?.shop) {
-          console.warn(`Missing shop data on ${shop}`);
+          console.warn(`Missing shop data on ${session.shop}`, res?.body);
         } else {
           const shopData = res.body.data.shop;
 
