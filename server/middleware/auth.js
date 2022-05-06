@@ -119,7 +119,7 @@ export default function applyAuthMiddleware(app) {
         path: "/webhooks",
       });
       if (!response["APP_UNINSTALLED"].success) {
-        console.log(
+        console.warn(
           `Failed to register APP_UNINSTALLED webhook: ${response.result}`
         );
       }
@@ -158,6 +158,7 @@ export default function applyAuthMiddleware(app) {
             $set: {
               isInstalled: true,
               installedAt: new Date(),
+              uninstalledAt: null,
             },
           }
         );
@@ -206,6 +207,16 @@ export default function applyAuthMiddleware(app) {
           );
         }
       }
+
+      // TODO:
+      // analytics.identify({
+      //   userId: session.shop,
+      //   traits: {
+      //     name: session.shop,
+      //     email: 'mbolton@example.com',
+      //     plan: 'Enterprise',
+      //   }
+      // });
 
       // Redirect to app with shop parameter upon auth
       res.redirect(`/?shop=${session.shop}&host=${host}`);
