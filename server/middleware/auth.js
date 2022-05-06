@@ -14,16 +14,16 @@ const GET_SHOP_DATA = `{
       url
       sslEnabled
     }
-    shopLocales {
-      locale
-      primary
-      published
-    }
     plan {
       displayName
       partnerDevelopment
       shopifyPlus
     }
+  }
+  shopLocales {
+    locale
+    primary
+    published
   }
 }`;
 
@@ -192,7 +192,10 @@ export default function applyAuthMiddleware(app) {
         if (!res?.body?.data?.shop) {
           console.warn(`Missing shop data on ${session.shop}`, res?.body);
         } else {
-          const shopData = res.body.data.shop;
+          const shopData = {
+            ...res.body.data.shop,
+            shopLocales: res.body.data.shopLocales,
+          };
 
           // Save shopData to shop document
           await db.collection("shops").updateOne(
@@ -229,7 +232,11 @@ export default function applyAuthMiddleware(app) {
         case e instanceof Shopify.Errors.CookieNotFound:
         case e instanceof Shopify.Errors.SessionNotFound:
           // This is likely because the OAuth session cookie expired before the merchant approved the request
-          res.redirect(`/auth?shop=${req.query.shop}`);
+          res.redirect(
+            `/auth?shop=${
+              session && session.shop ? session.shop : req.query.shop
+            }`
+          );
           break;
         default:
           res.status(500);
