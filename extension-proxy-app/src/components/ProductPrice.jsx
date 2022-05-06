@@ -7,9 +7,9 @@ const ProductPrice = ({ selectedVariant, quantity = 1 }) => {
     return null;
   }
 
-  const productTotalPrice = (selectedVariant.price / 100) * parseInt(quantity);
+  const productTotalPrice = selectedVariant.price * parseInt(quantity);
   const productComparePrice =
-    (selectedVariant.compare_at_price / 100) * parseInt(quantity);
+    selectedVariant.compare_at_price * parseInt(quantity);
 
   return (
     <div className="flex gap-1 items-center">

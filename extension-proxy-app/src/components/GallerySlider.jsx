@@ -1,8 +1,4 @@
 const GallerySlider = ({ product }) => {
-  if (!product.featured_image) {
-    return null;
-  }
-
   if (!product.images || !product.images.length) {
     return null;
   }
@@ -13,8 +9,8 @@ const GallerySlider = ({ product }) => {
         <div className="p-5">
           <img
             className="w-64 h-64 rounded-lg bg-white border object-contain"
-            src={product.images[0]}
-            alt=""
+            src={product.images[0].src}
+            alt={product.images[0].alt || ""}
           />
         </div>
       </div>
@@ -32,8 +28,8 @@ const GallerySlider = ({ product }) => {
           >
             <img
               className="shrink-0 w-60 h-60 rounded-lg bg-white border object-contain"
-              src={image}
-              alt=""
+              src={image.src}
+              alt={image.alt || ""}
             />
           </div>
         ))}
