@@ -67,11 +67,13 @@ export const upgrade = async (req, res) => {
     });
 
     if (!res?.body?.data?.appSubscriptionCreate?.confirmationUrl) {
+      console.warn(res?.body?.data);
       throw `Invalid payload returned for ${shop}`;
     }
 
     return res.body.data.appSubscriptionCreate.confirmationUrl;
   } catch (err) {
+    console.warn("api/billing (upgrade)", err);
     throw err;
   }
 };

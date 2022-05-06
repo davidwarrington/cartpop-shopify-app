@@ -97,7 +97,7 @@ export const downgrade = async (req, res) => {
 
     return { success: true };
   } catch (err) {
-    console.warn("err!!");
+    console.warn("api/billing (downgrade)", err);
     throw err;
   }
 };
