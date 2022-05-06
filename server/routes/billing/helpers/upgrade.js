@@ -48,7 +48,9 @@ export const upgrade = async (req, res) => {
     // Create Graphql Client
     const client = new Shopify.Clients.Graphql(shop, session.accessToken);
 
-    const isTestCharge = shopDoc.shopData?.plan?.partnerDevelopment || false;
+    const isTestCharge = shopDoc.shopData?.plan?.partnerDevelopment
+      ? true
+      : false;
 
     const subscriptionInput = {
       name: `${subscriptionPlan.key}`,
@@ -67,7 +69,11 @@ export const upgrade = async (req, res) => {
     });
 
     if (!res?.body?.data?.appSubscriptionCreate?.confirmationUrl) {
-      console.warn("api/billing (upgrade)", res?.body);
+      console.warn("api/billing (upgrade): _body_", res?.body);
+      console.warn(
+        "api/billing (upgrade) _subscriptionInput_:",
+        subscriptionInput
+      );
       throw `Invalid payload returned for ${shop}`;
     }
 
