@@ -1,3 +1,5 @@
+import vision from "@google-cloud/vision";
+
 import { getHeaders } from "../../helpers/app-proxy.js";
 import verifyAppProxyExtensionSignatureMiddleware from "../../middleware/verify-app-proxy.js";
 import Proxy from "./helpers/index.js";
@@ -5,6 +7,55 @@ import Proxy from "./helpers/index.js";
 const apiRoutePrefix = `/proxy/links`;
 
 export default function appProxyRoutes(app) {
+  /* 
+        Specific link
+
+        When a link alias is used we route logic here
+    */
+
+  app.post(
+    `${apiRoutePrefix}/scan`,
+    verifyAppProxyExtensionSignatureMiddleware(),
+    async (req, res) => {
+      const { db } = req;
+
+      if (!req.body) {
+        console.warn("No query");
+        res.set("Content-Type", "application/liquid");
+        res.status(200).send(`There was an error.`);
+        return;
+      }
+
+      const imageBase64 = req.body.image;
+
+      // Creates a client
+      const client = new vision.ImageAnnotatorClient();
+
+      // Buffer image
+      const image = Buffer.from(imageBase64, "base64");
+
+      // Performs label detection on the image file
+      const [result] = await client.textDetection(image);
+      const labels = result.textAnnotations;
+
+      if (labels) {
+        console.log("Labels:", labels[0].description);
+      }
+
+      // labels.forEach(label => {
+      //     console.log(label);
+      //     console.log("Description: ", label.description.split("\n"));
+      // });
+
+      res.status(200).send({
+        description: labels[0].description,
+      });
+      return;
+
+      // TODO:
+    }
+  );
+
   /*
         App proxy Routes
         > Note: we must verify the headers to ensure they are not being called outside the context of a specific store
@@ -31,7 +82,35 @@ export default function appProxyRoutes(app) {
       const { shop } = getHeaders(req);
 
       if (!order && !products && !customer && shop) {
-        res.redirect(`https://${shop}`);
+        const randomId = "2602686fb8b88d94b8051bb6bb771e9";
+
+        res.set("Content-Type", "application/liquid");
+        res.status(200).send(`
+              {% layout none %}
+              <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="robots" content="noindex"/>
+                <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+                <link rel="stylesheet" href="${
+                  process.env.HOST
+                }/src/assets/scanner/index.css?v=${
+          process.env.SOURCE_VERSION || randomId
+        }" media="all" />
+              </head>
+                <body>
+                  <div id="app"></div>
+                  <script type="module" src="${
+                    process.env.HOST
+                  }/src/assets/scanner/index.js?v=${
+          process.env.SOURCE_VERSION || randomId
+        }"></script>
+                </body>
+              </html>
+            `);
+
+        //res.redirect(`https://${shop}`);
         return;
       }
 

@@ -7,17 +7,16 @@ import { contentLoader, getMarkup } from "./markup.js";
 
 export const dynamic = async (req, res) => {
   const { shop, locale, isMobile, shopifyRequestId } = getHeaders(req);
-  const { products, customer, email, discount, payment } = req.query;
+  const { products, product, customer, email, discount, payment } = req.query;
   const { clearCart, redirectLocation } = getShopLinkSettings(req.shopDoc);
 
   if (customer) {
     // TODO: look up customer given id. Check access scopes.
   }
 
-  const formattedLink = {
-    id: null,
-    type: "dynamic",
-    lineItems: products.split(",").map((product) => {
+  let lineItems = [];
+  if (products) {
+    lineItems = products.split(",").map((product) => {
       const productParts = product.split(":");
 
       return {
@@ -26,7 +25,23 @@ export const dynamic = async (req, res) => {
         selling_plan_id:
           productParts.length >= 3 ? parseInt(productParts[2]) : null,
       };
-    }),
+    });
+  } else if (product) {
+    // TODO: get product
+
+    lineItems = [
+      {
+        variantId: null, // TODO:
+        quantity: 1,
+        selling_plan_id: null,
+      },
+    ];
+  }
+
+  const formattedLink = {
+    id: null,
+    type: "dynamic",
+    lineItems: lineItems,
     customer: email
       ? {
           email,
