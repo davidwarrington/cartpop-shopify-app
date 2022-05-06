@@ -16,11 +16,9 @@ export const remove = async (req, res) => {
       .collection("links")
       .deleteOne({ _id: ObjectId(`${linkId}`) });
 
-    console.log("mongoRes", mongoRes);
-
-    // if (!mongoRes) {
-    //   throw `Could not delete link`;
-    // }
+    if (!mongoRes || !mongoRes.acknowledged) {
+      throw `Could not delete link`;
+    }
 
     return true;
   } catch (err) {
