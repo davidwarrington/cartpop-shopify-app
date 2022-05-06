@@ -5,6 +5,9 @@ import {
   Layout,
   Page,
   Select,
+  SettingToggle,
+  TextField,
+  TextStyle,
 } from "@shopify/polaris";
 import { TitleBar, Toast, useAppBridge } from "@shopify/app-bridge-react";
 import {
@@ -149,6 +152,27 @@ const SettingsLinksPage = () => {
                 {...fields.linksRedirectLocation}
               />
             </FormLayout>
+          </Card>
+        </Layout.AnnotatedSection>
+        <Layout.AnnotatedSection
+          title="Landing page"
+          description="Show a landing page rather than going directly to cart or checkout. This is especially useful if you need to accept line item properties."
+        >
+          <SettingToggle action={{ content: "Enable" }}>
+            The landing page is{" "}
+            <TextStyle variation="strong">Disabled</TextStyle>.
+          </SettingToggle>
+
+          <Card>
+            <Card.Section title="Design">
+              <FormLayout>
+                <FormLayout.Group>
+                  <TextField label="Brand color" />
+                  <TextField label="Background color" />
+                </FormLayout.Group>
+                <TextField label="Background image" />
+              </FormLayout>
+            </Card.Section>
           </Card>
         </Layout.AnnotatedSection>
       </Layout>
