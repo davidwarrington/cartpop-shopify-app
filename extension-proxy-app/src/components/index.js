@@ -3,6 +3,7 @@ import GallerySlider from "./GallerySlider";
 import LineItems from "./LineItems";
 import ModalContainer from "./ModalContainer";
 import LineItem from "./LineItem";
+import ProductImage from "./ProductImage";
 import ProductPrice from "./ProductPrice";
 import ProductRating from "./ProductRating";
 import QRCode from "./QRCode";
@@ -17,6 +18,7 @@ export {
   LineItems,
   LineItem,
   ModalContainer,
+  ProductImage,
   ProductRating,
   ProductPrice,
   QRCode,

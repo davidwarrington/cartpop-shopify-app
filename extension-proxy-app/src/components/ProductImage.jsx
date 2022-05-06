@@ -6,7 +6,7 @@ const ProductImage = ({ product }) => {
   return (
     <>
       <img
-        className="h-full aspect-square object-cover w-1/3 rounded-2xl p-2 box-border"
+        className="h-full aspect-square object-cover w-1/3 rounded-2xl box-border"
         src={product.images[0].src}
         alt=""
       />
