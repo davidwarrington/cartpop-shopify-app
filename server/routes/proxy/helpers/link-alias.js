@@ -1,4 +1,7 @@
 import { parseGid } from "@shopify/admin-graphql-api-utilities";
+import { Shopify } from "@shopify/shopify-api";
+import { Product } from "@shopify/shopify-api/dist/rest-resources/2022-04/index.js";
+
 import {
   generatedCheckoutLink,
   generateQueryString,
@@ -34,41 +37,24 @@ export const link = async (req, res) => {
   const { email, discount, payment } = req.query;
   const link = req.link;
   const { clearCart, redirectLocation } = getShopLinkSettings(req.shopDoc);
-  let scripts = ``;
+  const generatedLink = generatedCheckoutLink({
+    link,
+  });
+  const urlQueryString = generateQueryString(link);
 
-  // TODO: fix this...
-  const hasLineProperties = true;
-  const hasSubscription = false;
-
-  // We need to use cart api if a link has one of these
-  if (hasLineProperties || hasSubscription) {
-    const urlQueryString = generateQueryString({
-      link,
-      email,
-      discount,
-      payment,
-    });
-  } else {
-    // Generate checkout link
-    const generatedLink = generatedCheckoutLink({
-      shop,
-      link,
-      email,
-      discount,
-      payment,
-    });
-    if (!generatedLink) {
-      throw `Checkout link generation failed on ${link} on ${shop}`;
-    }
-
-    // Redirect to generated link
-    scripts = `
-      <script>
-        window.location.replace("{{ shop.url }}${generatedLink}");
-      </script>`;
-  }
-
-  const bodyContent = contentLoader(locale);
+  // Extrapolate product ids
+  const productIds = link.products
+    .map((product) => parseGid(product.variantInfo.product.id))
+    .join(",");
+  // Load the current session to get the `accessToken`.
+  const session = await Shopify.Utils.loadOfflineSession(shop);
+  // Create a new client for the specified shop.
+  const client = new Shopify.Clients.Rest(session.shop, session.accessToken);
+  // Use `client.get` to request the specified Shopify REST API endpoint, in this case `products`.
+  const productsRes = await client.get({
+    path: "products",
+    query: { ids: productIds },
+  });
 
   const formattedLink = link
     ? {
@@ -93,6 +79,11 @@ export const link = async (req, res) => {
           : null,
         customer: link.customer,
         order: link.order,
+        products: productsRes.body ? productsRes.body.products : [],
+        clearCart,
+        redirectLocation,
+        queryString: urlQueryString || null,
+        redirectionUrl: generatedLink, // TODO:
       }
     : {};
 
@@ -101,8 +92,6 @@ export const link = async (req, res) => {
     shop,
     isMobile,
     shopifyRequestId,
-    scripts,
-    bodyContent,
   });
 
   return { markup };

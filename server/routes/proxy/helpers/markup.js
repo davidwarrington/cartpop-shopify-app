@@ -1,14 +1,7 @@
 import { lineitemKey, translationMetafield } from "../../../constants.js";
 import { defaultTranslations } from "../../../default-translations.js";
 
-export const getMarkup = ({
-  link,
-  isMobile = false,
-  shopifyRequestId,
-  clearCart,
-  redirectLocation,
-  urlQueryString,
-}) => {
+export const getMarkup = ({ link, isMobile = false, shopifyRequestId }) => {
   const randomId = "2602686fb8b88d94b8051bb6bb771e56";
 
   // <link rel="stylesheet" href="//cdn.shopify.com/app/services/{{shop.id}}/assets/{{theme.id}}/checkout_stylesheet/v2-ltr-edge-${randomId}-160" media="all" />
@@ -31,6 +24,20 @@ export const getMarkup = ({
       </head>
       <body>
         <script>
+          {% assign product = collections.all.products | where: 'id', ${
+            link.lineItems[0].productId
+          } | first %}
+          const product = {
+            ...{{ product | json }},
+            has_only_default_variant: {{product.has_only_default_variant}},
+            featured_image: "{{ product.featured_image | image_url: width: 400 }}",
+            reviews: {
+              rating_count: "{{product.metafields.reviews.rating_count.value | default: nill }}",
+              rating: "{{product.metafields.reviews.rating.value | default: nill }}",
+            }
+          };
+        </script>
+        <script>
           const shop = {
             id: {{ shop.id }},
             name: "{{ shop.name }}",
@@ -45,23 +52,7 @@ export const getMarkup = ({
             currency: "{{ shop.currency }}",
             locale: "{{ request.locale.name }}",
           };
-          const link = {
-            clearCart: ${clearCart},
-            redirectionType: "${redirectLocation}",
-            ...${JSON.stringify(link)},
-          };
-          {% assign product = collections.all.products | where: 'id', ${
-            link.lineItems[0].productId
-          } | first %}
-          const product = {
-            ...{{ product | json }},
-            featured_image: "{{ product.featured_image | image_url: width: 400 }}",
-            rating: {
-              rating_count: "{{product.metafields.rating.rating_count.value | default: nill }}",
-              rating_avg: "{{product.metafields.rating.rating_avg.value | default: nill }}",
-            }
-          };
-          const urlQueryString = ${urlQueryString};
+          const link = ${JSON.stringify(link)};
           const isMobile = ${isMobile === 1};
           const languageCode = "{{ request.locale.iso_code }}";
           const defaultTranslations = ${JSON.stringify(defaultTranslations)};
