@@ -67,7 +67,7 @@ export const upgrade = async (req, res) => {
     });
 
     if (!res?.body?.data?.appSubscriptionCreate?.confirmationUrl) {
-      console.warn(res?.body?.data);
+      console.warn("api/billing (upgrade)", res?.body);
       throw `Invalid payload returned for ${shop}`;
     }
 
