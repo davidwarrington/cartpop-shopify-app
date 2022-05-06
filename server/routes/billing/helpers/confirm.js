@@ -73,6 +73,7 @@ export const confirm = async (req, res) => {
 
     return { success: true, shop };
   } catch (err) {
+    console.warn("api/billing (confirm)", err);
     throw err;
   }
 };
