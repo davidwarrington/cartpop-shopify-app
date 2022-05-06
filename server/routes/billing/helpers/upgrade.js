@@ -69,6 +69,11 @@ export const upgrade = async (req, res) => {
     });
 
     if (!res?.body?.data?.appSubscriptionCreate?.confirmationUrl) {
+      console.warn("api/billing (upgrade): _tokenAuth_", {
+        shop,
+        token: session.accessToken ? true : false,
+      });
+      console.warn("api/billing (upgrade): _headers_", res?.headers);
       console.warn("api/billing (upgrade): _body_", res?.body);
       console.warn(
         "api/billing (upgrade) _subscriptionInput_:",
