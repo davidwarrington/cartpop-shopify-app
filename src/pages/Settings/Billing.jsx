@@ -24,6 +24,10 @@ import BenefitUnlimited from "../../assets/benefit-unlimited.png";
 import BenefitAnalytics from "../../assets/benefit-analytics.png";
 import BenefitAlias from "../../assets/benefit-alias.png";
 import BenefitReorder from "../../assets/benefit-reorder.png";
+import BenefitSubscriptions from "../../assets/benefit-subscriptions.png";
+import BenefitDynamic from "../../assets/benefit-dynamic.png";
+import BenefitProperties from "../../assets/benefit-properties.png";
+
 import { useShop } from "../../core/ShopProvider";
 
 const pageTitle = "Billing";
@@ -190,28 +194,7 @@ const SettingsBillingPage = () => {
                       alignment="center"
                       spacing="extraTight"
                     >
-                      <Image source={BenefitUnlimited} />
-                      <Stack alignment="center" spacing="tight">
-                        <Icon source={TickMinor} color="success" />
-                        <Heading>Create unlimited links</Heading>
-                      </Stack>
-                    </Stack>
-                    <Stack alignment="center" wrap={false}>
-                      <div style={{ textAlign: "center" }}>
-                        Create as many links as you need with no limitations.
-                      </div>
-                    </Stack>
-                  </Stack>
-                </Stack.Item>
-                <Stack.Item fill>
-                  <Stack vertical spacing="tight" distribution="center">
-                    <Stack
-                      vertical
-                      distribution="center"
-                      alignment="center"
-                      spacing="extraTight"
-                    >
-                      <Image source={BenefitAlias} />
+                      <Image source={BenefitAlias} height="225" />
                       <Stack alignment="center" spacing="tight">
                         <Icon source={TickMinor} color="success" />
                         <Heading>Link aliases</Heading>
@@ -237,7 +220,50 @@ const SettingsBillingPage = () => {
                       alignment="center"
                       spacing="extraTight"
                     >
-                      <Image source={BenefitAnalytics} />
+                      <Image source={BenefitDynamic} height="225" />
+                      <Stack alignment="center" spacing="tight">
+                        <Icon source={TickMinor} color="success" />
+                        <Heading>Dynamic links</Heading>
+                      </Stack>
+                    </Stack>
+                    <Stack distribution="center" wrap={false}>
+                      <div style={{ textAlign: "center" }}>
+                        Dynamically pass in products, discount codes, and more.
+                        Great for automated email and SMS flows.
+                      </div>
+                    </Stack>
+                  </Stack>
+                </Stack.Item>
+                <Stack.Item fill>
+                  <Stack vertical spacing="tight" distribution="center">
+                    <Stack
+                      vertical
+                      distribution="center"
+                      alignment="center"
+                      spacing="extraTight"
+                    >
+                      <Image source={BenefitUnlimited} height="225" />
+                      <Stack alignment="center" spacing="tight">
+                        <Icon source={TickMinor} color="success" />
+                        <Heading>Create unlimited links</Heading>
+                      </Stack>
+                    </Stack>
+                    <Stack alignment="center" wrap={false}>
+                      <div style={{ textAlign: "center" }}>
+                        Create as many links as you need with no limitations.
+                      </div>
+                    </Stack>
+                  </Stack>
+                </Stack.Item>
+                <Stack.Item fill>
+                  <Stack vertical spacing="tight" distribution="center">
+                    <Stack
+                      vertical
+                      distribution="center"
+                      alignment="center"
+                      spacing="extraTight"
+                    >
+                      <Image source={BenefitAnalytics} height="225" />
                       <Stack alignment="center" spacing="tight">
                         <Icon source={TickMinor} color="success" />
                         <Heading>Link analytics</Heading>
@@ -247,6 +273,50 @@ const SettingsBillingPage = () => {
                       <div style={{ textAlign: "center" }}>
                         Get detailed analytics including clicks, qr code scans,
                         and more.
+                      </div>
+                    </Stack>
+                  </Stack>
+                </Stack.Item>
+                <Stack.Item fill>
+                  <Stack vertical spacing="tight" distribution="center">
+                    <Stack
+                      vertical
+                      distribution="center"
+                      alignment="center"
+                      spacing="extraTight"
+                    >
+                      <Image source={BenefitProperties} height="225" />
+                      <Stack alignment="center" spacing="tight">
+                        <Icon source={TickMinor} color="success" />
+                        <Heading>Line Item Properties</Heading>
+                      </Stack>
+                    </Stack>
+                    <Stack distribution="center" wrap={false}>
+                      <div style={{ textAlign: "center" }}>
+                        Add line item properties to products to support gift
+                        cards, monogramming, and more.
+                      </div>
+                    </Stack>
+                  </Stack>
+                </Stack.Item>
+                <Stack.Item fill>
+                  <Stack vertical spacing="tight" distribution="center">
+                    <Stack
+                      vertical
+                      distribution="center"
+                      alignment="center"
+                      spacing="extraTight"
+                    >
+                      <Image source={BenefitSubscriptions} height="225" />
+                      <Stack alignment="center" spacing="tight">
+                        <Icon source={TickMinor} color="success" />
+                        <Heading>Subscription products</Heading>
+                      </Stack>
+                    </Stack>
+                    <Stack distribution="center" wrap={false}>
+                      <div style={{ textAlign: "center" }}>
+                        Add subscription products. Dramatically increase
+                        customer life time value.
                       </div>
                     </Stack>
                   </Stack>
