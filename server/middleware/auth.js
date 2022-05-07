@@ -101,13 +101,10 @@ export default function applyAuthMiddleware(app) {
   app.get("/auth/callback", async (req, res) => {
     const { db } = req;
     let fetchShopData = true;
+    let session = null;
 
     try {
-      const session = await Shopify.Auth.validateAuthCallback(
-        req,
-        res,
-        req.query
-      );
+      session = await Shopify.Auth.validateAuthCallback(req, res, req.query);
 
       const host = req.query.host;
 
