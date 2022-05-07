@@ -10,7 +10,7 @@ import {
   Subheading,
   TextStyle,
 } from "@shopify/polaris";
-import { DesktopMajor, MobileMajor, RiskMinor } from "@shopify/polaris-icons";
+import { DesktopMajor, MobileMajor, HintMajor } from "@shopify/polaris-icons";
 import { roundTwoPlaces } from "../helpers";
 import { Tooltip } from "./Tooltip";
 import { AnalyticsTooltip } from "./AnalyticsTooltip";
@@ -49,10 +49,16 @@ export function LinkAnalytics({ link, hasSubscription }) {
           <Stack.Item>
             <Stack alignment="center" spacing="tight">
               <Heading>Analytics</Heading>
-              <TextStyle variation="subdued">All time</TextStyle>
+              <Button disclosure disabled>
+                <TextStyle variation="subdued">All time</TextStyle>
+              </Button>
             </Stack>
           </Stack.Item>
-          <Link removeUnderline>View report</Link>
+          <Tooltip content="Coming soon">
+            <Button disabled plain removeUnderline>
+              View report
+            </Button>
+          </Tooltip>
         </Stack>
       }
     >
@@ -241,8 +247,8 @@ export function LinkAnalytics({ link, hasSubscription }) {
         </Card.Section>
       )}
       <Card.Section subdued>
-        <Stack alignment="center" spacing="extraTight">
-          <Icon source={RiskMinor} color="subdued" />
+        <Stack alignment="center" spacing="tight">
+          <Icon source={HintMajor} color="subdued" />
           <Stack.Item>
             <TextStyle variation="subdued">
               Analytics can only be tracked when customers arrive using a link
