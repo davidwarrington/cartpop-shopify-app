@@ -88,6 +88,9 @@ export function App() {
       } else if (labels.includes("RUNGUM") && labels.includes("BUBBLEGUM")) {
         window.location.href =
           "https://orders-demo.myshopify.com/a/cart/3205c9b7ab";
+      } else if (labels.includes("DARK CHOCOLATE")) {
+        window.location.href =
+          "https://orders-demo.myshopify.com/a/cart/j24cdb09d4";
       } else {
         setStatus(APP_STATES.idle);
       }
@@ -126,7 +129,7 @@ export function App() {
             </svg>
             <p className="text-base font-medium">Redirecting to checkout...</p>
           </div>
-          <p>{description}</p>
+          {/* <p>{description}</p> */}
         </div>
       </div>
     );
