@@ -130,7 +130,7 @@ const SettingsLinksPage = () => {
         />
       ) : null}
       <Layout>
-        <Layout.AnnotatedSection
+        {/* <Layout.AnnotatedSection
           id="general"
           title="General"
           description="These settings apply to all links."
@@ -153,7 +153,7 @@ const SettingsLinksPage = () => {
               />
             </FormLayout>
           </Card>
-        </Layout.AnnotatedSection>
+        </Layout.AnnotatedSection> */}
         <Layout.AnnotatedSection
           title="Landing page"
           description="Show a landing page rather than going directly to cart or checkout. This is especially useful if you need to accept line item properties."
