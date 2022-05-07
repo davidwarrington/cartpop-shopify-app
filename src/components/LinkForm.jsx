@@ -27,6 +27,7 @@ import {
   useDynamicList,
   submitSuccess,
   submitFail,
+  asChoiceField,
 } from "@shopify/react-form";
 
 import { PAGE_STATES } from "../constants";
@@ -64,6 +65,17 @@ export function LinkForm({
     () => setShowModal((showModal) => !showModal),
     []
   );
+
+  const settings = {
+    clearCart: useField(
+      link.settings && typeof link.settings.clearCart !== undefined
+        ? link.settings.clearCart
+        : true
+    ),
+    destination: useField(
+      (link.settings && link.settings.destination) || "checkout"
+    ),
+  };
 
   const products = useDynamicList(
     link.products
@@ -125,6 +137,7 @@ export function LinkForm({
         ...order,
         attributes: orderAttributes.fields,
       },
+      settings,
     },
     dynamicLists: {
       products,
@@ -348,6 +361,7 @@ export function LinkForm({
                 <Stack vertical spacing="tight">
                   <Select
                     label="Link destination"
+                    disabled={!hasSubscription}
                     options={[
                       {
                         label: "Checkout",
@@ -362,15 +376,26 @@ export function LinkForm({
                         value: "landing_page",
                       },
                     ]}
+                    {...fields.settings.destination}
+                    helpText={
+                      hasSubscription ? null : (
+                        <>
+                          Redirect to cart or an optimized landing page by{" "}
+                          <Link url="/settings/billing">upgrading to Pro</Link>.
+                        </>
+                      )
+                    }
                   />
 
-                  <Button fullWidth>Edit page design</Button>
+                  {fields.settings.destination.value === "landing_page" ? (
+                    <Button fullWidth>Edit page design</Button>
+                  ) : null}
                 </Stack>
               </Card.Section>
               <Card.Section subdued>
                 <Checkbox
                   label="Clear customer's existing cart when adding the link's products."
-                  checked={true}
+                  {...asChoiceField(fields.settings.clearCart)}
                 />
               </Card.Section>
             </Card>

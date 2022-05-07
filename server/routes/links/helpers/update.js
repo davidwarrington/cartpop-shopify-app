@@ -9,7 +9,8 @@ export const update = async (req, res) => {
 
   try {
     // TODO: sanitize input
-    const { name, active, alias, products, customer, order } = payload;
+    const { name, active, alias, products, customer, order, settings } =
+      payload;
 
     const updatedLinkDoc = await db.collection("links").findOneAndUpdate(
       {
@@ -23,6 +24,7 @@ export const update = async (req, res) => {
           products,
           customer,
           order,
+          settings: settings,
           alias: alias || generateLinkAlias(),
           updatedAt: new Date(),
         },

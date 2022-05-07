@@ -8,7 +8,7 @@ export const create = async (req, res) => {
 
   try {
     // TODO: sanitize input
-    const { name, products, customer, order } = payload;
+    const { name, products, customer, order, settings } = payload;
 
     const newLink = await db.collection("links").insertOne({
       shop: shop,
@@ -19,6 +19,7 @@ export const create = async (req, res) => {
       products, // required
       customer: customer || null,
       order: order || null,
+      settings: settings || {},
       analytics: {},
       createdAt: new Date(),
     });
