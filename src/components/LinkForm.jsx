@@ -75,6 +75,16 @@ export function LinkForm({
     destination: useField(
       (link.settings && link.settings.destination) || "checkout"
     ),
+    canEditVariant: useField(
+      link.settings && typeof link.settings.canEditVariant !== undefined
+        ? link.settings.canEditVariant
+        : false
+    ),
+    canEditQuantity: useField(
+      link.settings && typeof link.settings.canEditQuantity !== undefined
+        ? link.settings.canEditQuantity
+        : false
+    ),
   };
 
   const products = useDynamicList(
@@ -302,7 +312,7 @@ export function LinkForm({
               handleRename={handleRename}
               toggleModal={toggleNameModal}
             />
-            <ProductsCard products={products} />
+            <ProductsCard products={products} settings={fields.settings} />
             <CustomerCard customer={fields.customer} />
             <OrderCard order={fields.order} attributes={orderAttributes} />
             {newForm ? (
@@ -388,7 +398,9 @@ export function LinkForm({
                   />
 
                   {fields.settings.destination.value === "landing_page" ? (
-                    <Button fullWidth>Edit page design</Button>
+                    <>
+                      <Button fullWidth>Edit page design</Button>
+                    </>
                   ) : null}
                 </Stack>
               </Card.Section>

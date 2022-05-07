@@ -1,9 +1,17 @@
 import { useCallback, useState } from "react";
-import { Button, Card, Heading, Stack } from "@shopify/polaris";
+import {
+  Button,
+  Card,
+  Checkbox,
+  FormLayout,
+  Heading,
+  Stack,
+} from "@shopify/polaris";
 import { ResourcePicker } from "@shopify/app-bridge-react";
+import { asChoiceField } from "@shopify/react-form";
 import { ProductList } from "./ProductList";
 
-export function ProductsCard({ products }) {
+export function ProductsCard({ products, settings }) {
   const [showPicker, setShowPicker] = useState(false);
 
   const togglePickerShow = useCallback(() => {
@@ -76,6 +84,20 @@ export function ProductsCard({ products }) {
         <Card.Section>
           <ProductList lineItems={products} />
         </Card.Section>
+        {settings && settings.destination.value === "landing_page" ? (
+          <Card.Section title="Landing page settings">
+            <FormLayout>
+              <Checkbox
+                label="Customer can edit product variant"
+                {...asChoiceField(settings.canEditVariant)}
+              />
+              <Checkbox
+                label="Customer can edit quantity"
+                {...asChoiceField(settings.canEditQuantity)}
+              />
+            </FormLayout>
+          </Card.Section>
+        ) : null}
       </Card>
       {/* Learn more: https://shopify.dev/apps/tools/app-bridge/react-components/resourcepicker */}
       <ResourcePicker
