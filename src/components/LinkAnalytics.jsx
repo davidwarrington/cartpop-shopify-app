@@ -231,6 +231,17 @@ export function LinkAnalytics({ link, hasSubscription }) {
               </Stack.Item>
             </Stack>
           </Card.Section>
+          <Card.Section subdued>
+            <Stack alignment="center" spacing="tight">
+              <Icon source={HintMajor} color="subdued" />
+              <Stack.Item>
+                <TextStyle variation="subdued">
+                  Analytics can only be tracked when customers arrive using a
+                  link alias.
+                </TextStyle>
+              </Stack.Item>
+            </Stack>
+          </Card.Section>
         </>
       ) : (
         <Card.Section>
@@ -238,7 +249,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
             status="info"
             action={{
               url: "/settings/billing",
-              content: "Learn more",
+              content: "Learn more about Pro",
             }}
           >
             Link analytics require upgrading to{" "}
@@ -246,17 +257,6 @@ export function LinkAnalytics({ link, hasSubscription }) {
           </Banner>
         </Card.Section>
       )}
-      <Card.Section subdued>
-        <Stack alignment="center" spacing="tight">
-          <Icon source={HintMajor} color="subdued" />
-          <Stack.Item>
-            <TextStyle variation="subdued">
-              Analytics can only be tracked when customers arrive using a link
-              alias.
-            </TextStyle>
-          </Stack.Item>
-        </Stack>
-      </Card.Section>
     </Card>
   );
 }
