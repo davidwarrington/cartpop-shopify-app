@@ -263,16 +263,16 @@ const SettingsBillingPage = () => {
                       alignment="center"
                       spacing="extraTight"
                     >
-                      <Image source={BenefitAnalytics} height="225" />
+                      <Image source={BenefitSubscriptions} height="225" />
                       <Stack alignment="center" spacing="tight">
                         <Icon source={TickMinor} color="success" />
-                        <Heading>Link analytics</Heading>
+                        <Heading>Subscription products</Heading>
                       </Stack>
                     </Stack>
                     <Stack distribution="center" wrap={false}>
                       <div style={{ textAlign: "center" }}>
-                        Get detailed analytics including clicks, qr code scans,
-                        and more.
+                        Add subscription products. Dramatically increase
+                        customer life time value.
                       </div>
                     </Stack>
                   </Stack>
@@ -307,16 +307,16 @@ const SettingsBillingPage = () => {
                       alignment="center"
                       spacing="extraTight"
                     >
-                      <Image source={BenefitSubscriptions} height="225" />
+                      <Image source={BenefitAnalytics} height="225" />
                       <Stack alignment="center" spacing="tight">
                         <Icon source={TickMinor} color="success" />
-                        <Heading>Subscription products</Heading>
+                        <Heading>Link analytics</Heading>
                       </Stack>
                     </Stack>
                     <Stack distribution="center" wrap={false}>
                       <div style={{ textAlign: "center" }}>
-                        Add subscription products. Dramatically increase
-                        customer life time value.
+                        Get detailed analytics including clicks, qr code scans,
+                        and more.
                       </div>
                     </Stack>
                   </Stack>
