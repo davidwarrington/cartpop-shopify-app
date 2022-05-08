@@ -6,7 +6,7 @@ const GET_SHOP_DATA = `{
   shop {
     id
     name
-		ianaTimezone
+    ianaTimezone
     email
     url
     currencyCode
@@ -21,6 +21,7 @@ const GET_SHOP_DATA = `{
     }
   }
   shopLocales {
+    name
     locale
     primary
     published
