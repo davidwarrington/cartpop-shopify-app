@@ -23,7 +23,7 @@ export function LocaleSwitcher({ activeLocale, setLocale }) {
   useEffect(() => {
     if (data && data.shopLocales && data.shopLocales.length) {
       if (!activeLocale) {
-        const primaryLocale = locales.find((locale) => locale.primary);
+        const primaryLocale = data.shopLocales.find((locale) => locale.primary);
         setLocale(primaryLocale.locale);
       }
 
@@ -51,17 +51,16 @@ export function LocaleSwitcher({ activeLocale, setLocale }) {
     return <Button disabled>English</Button>;
   }
 
-  const primaryLocale = locales.find((locale) => locale.primary);
-  const selectedLocale = locales.find(
-    (locale) => locale.locale === activeLocale
-  );
+  const primaryLocale = activeLocale
+    ? locales.find((locale) => locale.locale === activeLocale)
+    : locales.find((locale) => locale.locale === locale.primary);
 
   return (
     <Popover
       active={popoverActive}
       activator={
         <Button icon={LanguageMinor} onClick={togglePopoverActive} disclosure>
-          {selectedLocale.name} ({selectedLocale.locale})
+          {primaryLocale?.name} ({primaryLocale?.locale})
         </Button>
       }
       autofocusTarget="first-node"

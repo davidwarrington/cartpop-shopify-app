@@ -13,6 +13,7 @@ import { TitleBar, Toast, useAppBridge } from "@shopify/app-bridge-react";
 import { capitalize, userLoggedInFetch } from "../../helpers";
 import { PAGE_STATES } from "../../constants";
 import { LocaleSwitcher } from "../../components/LocaleSwitcher";
+import { useShop } from "../../core/ShopProvider";
 
 const pageTitle = "Translations";
 const pageBreadcrumbs = [
@@ -21,6 +22,12 @@ const pageBreadcrumbs = [
 ];
 
 const SettingsTranslationsPage = () => {
+  const { shopData } = useShop();
+  const primaryLocale =
+    shopData &&
+    shopData.shopLocales &&
+    shopData.shopLocales.find((locale) => locale.primary);
+
   const app = useAppBridge();
   const fetchFunction = userLoggedInFetch(app);
 
@@ -28,7 +35,9 @@ const SettingsTranslationsPage = () => {
   const [metafieldId, setMetafieldId] = useState(null);
   const [translations, setTranslations] = useState(null);
   const [defaultTranslations, setDefaultTranslations] = useState(null);
-  const [locale, setLocale] = useState("en");
+  const [locale, setLocale] = useState(
+    primaryLocale ? primaryLocale.locale : null
+  );
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
