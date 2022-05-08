@@ -12,6 +12,7 @@ export const get = async (req, res) => {
     return {
       settings: shopDoc.settings || {},
       shop: shop,
+      name: shopDoc.shopData?.name || null,
       scopes: shopDoc.scopes,
       shopLocales: shopDoc.shopData?.shopLocales || null,
       primaryDomain: shopDoc.shopData?.primaryDomain?.url || null,

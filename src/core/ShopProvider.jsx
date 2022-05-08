@@ -21,6 +21,7 @@ const ShopProvider = ({ shop, children }) => {
             settings,
             scopes,
             shop,
+            name,
             primaryDomain,
             shopifyPlan,
             subscription,
