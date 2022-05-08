@@ -1,11 +1,12 @@
 import {
+  Badge,
+  Button,
   Card,
-  Checkbox,
   FormLayout,
+  Heading,
   Layout,
   Page,
-  Select,
-  SettingToggle,
+  Stack,
   TextField,
   TextStyle,
 } from "@shopify/polaris";
@@ -21,6 +22,7 @@ import {
 import { useShop } from "../../core/ShopProvider";
 import { userLoggedInFetch } from "../../helpers";
 import { useState } from "react";
+import { CustomColorPicker } from "../../components/ColorPicker";
 
 const pageTitle = "Links";
 
@@ -28,12 +30,29 @@ const SettingsLinksPage = () => {
   const app = useAppBridge();
   const fetchFunction = userLoggedInFetch(app);
   const { shopData, setShopData } = useShop();
-  const { settings } = shopData;
+  const { settings, name, subscription } = shopData;
+  const hasSubscription = subscription ? true : false;
+
+  console.log("shopData", shopData);
 
   const [toast, setToast] = useState(null);
 
+  const branding = {
+    brandingShopName: useField((settings && settings.brandingShopName) || name),
+    brandingColorBrand: useField(
+      (settings && settings.brandingColorBrand) || "" // TODO:
+    ),
+    brandingColorBackground: useField(
+      (settings && settings.brandingColorBackground) || "" // TODO:
+    ),
+    brandingBackgroundImage: useField(
+      (settings && settings.brandingBackgroundImage) || null
+    ),
+  };
+
   const { fields, submit, submitting, dirty, reset, submitErrors } = useForm({
     fields: {
+      branding,
       linksClearCart: useField(
         settings && settings.linksClearCart === false ? false : true
       ),
@@ -155,22 +174,52 @@ const SettingsLinksPage = () => {
           </Card>
         </Layout.AnnotatedSection> */}
         <Layout.AnnotatedSection
-          title="Landing page"
-          description="Show a landing page rather than going directly to cart or checkout. This is especially useful if you need to accept line item properties."
+          title={
+            <Stack alignment="center">
+              <Heading>Landing page</Heading>
+              {!hasSubscription ? (
+                <Badge status="warning">Requires PRO</Badge>
+              ) : null}
+            </Stack>
+          }
+          description="Customize the design of the link landing page. This page will only show when a link destination is set to landing page."
         >
-          <SettingToggle action={{ content: "Enable" }}>
-            The landing page is{" "}
-            <TextStyle variation="strong">Disabled</TextStyle>.
-          </SettingToggle>
-
           <Card>
-            <Card.Section title="Design">
+            <Card.Section>
               <FormLayout>
+                <TextField
+                  label="Brand name"
+                  requiredIndicator
+                  {...fields.branding.brandingShopName}
+                />
+                <Stack distribution="fillEvenly" alignment="center">
+                  <Button fullWidth>Select brand logo</Button>
+                  <Stack.Item>
+                    <Card subdued sectioned>
+                      <TextStyle variation="subdued">
+                        No logo selected.
+                      </TextStyle>
+                    </Card>
+                  </Stack.Item>
+                </Stack>
                 <FormLayout.Group>
-                  <TextField label="Brand color" />
-                  <TextField label="Background color" />
+                  <CustomColorPicker
+                    required
+                    label="Brand color"
+                    field={fields.branding.brandingColorBrand}
+                  />
+                  {/* <TextField label="Brand color"  requiredIndicator {...fields.branding.brandingColorBrand} /> */}
+                  <CustomColorPicker
+                    required
+                    label="Background color"
+                    field={fields.branding.brandingColorBackground}
+                  />
+                  {/* <TextField label="Background color" requiredIndicator {...fields.branding.brandingColorBackground} /> */}
                 </FormLayout.Group>
-                <TextField label="Background image" />
+                <TextField
+                  label="Background image"
+                  {...fields.branding.brandingBackgroundImage}
+                />
               </FormLayout>
             </Card.Section>
           </Card>
