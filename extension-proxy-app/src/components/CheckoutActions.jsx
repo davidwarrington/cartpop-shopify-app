@@ -17,7 +17,6 @@ const CheckoutActions = ({ completeButtonRef }) => {
       await handleCheckout();
 
       const utmString = getUtmParameters();
-      console.log("utmString", utmString);
 
       const redirectionUrl = `/checkout?${
         link.queryString
