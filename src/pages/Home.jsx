@@ -23,6 +23,9 @@ import cashRegister from "../assets/cash_register_128.png";
 import { AllLinksCard } from "../components/AllLinksTable";
 import { userLoggedInFetch } from "../helpers";
 import { useShop } from "../core/ShopProvider";
+import { LinkTabs } from "../components/LinkTabs";
+
+const pageTitle = "Saved links";
 
 const Home = () => {
   const app = useAppBridge();
@@ -61,7 +64,12 @@ const Home = () => {
 
   return (
     <Page
-      title={links && links.length ? "Dashboard" : ""}
+      title={links && links.length ? pageTitle : ""}
+      subtitle={
+        links && links.length
+          ? "Create links with customer friendly aliases and detailed analytics."
+          : ""
+      }
       primaryAction={
         links && links.length
           ? {
@@ -72,7 +80,7 @@ const Home = () => {
       }
     >
       {/* Empty TitleBar to reset when navigating from other pages like Settings */}
-      <TitleBar title={"Dashboard"} />
+      <TitleBar title={pageTitle} />
       <Layout>
         {links && links.length ? (
           <>
@@ -94,13 +102,17 @@ const Home = () => {
               </Layout.Section>
             ) : null}
             <Layout.Section fullWidth>
-              <AllLinksCard links={links} />
+              <Stack vertical>
+                <LinkTabs />
+                <AllLinksCard links={links} />
+              </Stack>
             </Layout.Section>
             {/* <CardCheckoutPromotions /> */}
           </>
         ) : (
           <Layout.Section fullWidth>
             <Stack vertical spacing="tight">
+              <LinkTabs />
               <Card>
                 <EmptyState
                   image={cashRegister}

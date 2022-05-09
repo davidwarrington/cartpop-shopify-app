@@ -22,8 +22,9 @@ import { useShop } from "../../core/ShopProvider";
 import { ProductList } from "../../components/ProductList";
 import QRCodeGenerator from "../../components/QRCodeGenerator";
 import { RequireSubscription } from "../../components/RequireSubscription";
+import { LinkTabs } from "../../components/LinkTabs";
 
-const pageTitle = "Generate a dynamic payment link";
+const pageTitle = "Dynamic links";
 
 const DynamicLink = () => {
   const { shopData } = useShop();
@@ -39,64 +40,63 @@ const DynamicLink = () => {
 
   return (
     <Frame>
-      <TitleBar
-        title={pageTitle}
-        breadcrumbs={[{ content: "Dashboard", url: "/" }]}
-      />
+      <TitleBar title={pageTitle} />
       <Page
         title={pageTitle}
-        subtitle="Dynamic payment links accept any valid product."
-        breadcrumbs={[{ content: "Dashboard", url: "/" }]}
+        subtitle="Generate checkout links on demand using any valid product."
       >
-        <Card>
-          <RequireSubscription title="Please upgrade to Pro to unlock dynamic links.">
-            <Tabs
-              tabs={[
-                { id: "product", content: "Product" },
-                // { id:"customer", content: "Customer" },
-                // { id:"order", content: "Order" },
-              ]}
-              selected={selectedTab}
-              onSelect={handleTabChange}
-            />
-            <Card.Section>
-              <LinkUrl url={url} toast={toast} setToast={setToast} />
-            </Card.Section>
-            <Card.Section flush>
-              {selectedTab === 0 ? (
-                <ProductLink
-                  url={url}
-                  setUrl={setUrl}
-                  shopDomain={shopDomain}
-                />
-              ) : null}
-              {selectedTab === 1 ? <OrderLink /> : null}
-              {selectedTab === 2 ? <CustomerLink /> : null}
-            </Card.Section>
-            <Card.Section subdued title="Supported url parameters">
-              <List>
-                <List.Item>
-                  <TextStyle variation="strong">products=</TextStyle>
-                  <TextStyle variation="subdued">
-                    variantId:quantity:sellingPlanId
-                  </TextStyle>
-                </List.Item>
-                <List.Item>
-                  <TextStyle variation="strong">email=</TextStyle>
-                  <TextStyle variation="subdued">email@example.com</TextStyle>
-                </List.Item>
-                <List.Item>
-                  <TextStyle variation="strong">payment=</TextStyle>
-                  <TextStyle variation="subdued">shop_pay</TextStyle>
-                </List.Item>
-                <List.Item>
-                  <TextStyle variation="strong">discount=</TextStyle>
-                  <TextStyle variation="subdued">FREESHIP</TextStyle>
-                </List.Item>
-              </List>
-            </Card.Section>
-          </RequireSubscription>
-        </Card>
+        <Stack vertical>
+          <LinkTabs />
+          <Card>
+            <RequireSubscription title="Please upgrade to Pro to unlock dynamic links.">
+              {/* <Tabs
+                tabs={[
+                  { id: "product", content: "Product" },
+                  // { id:"customer", content: "Customer" },
+                  // { id:"order", content: "Order" },
+                ]}
+                selected={selectedTab}
+                onSelect={handleTabChange}
+              /> */}
+              <Card.Section>
+                <LinkUrl url={url} toast={toast} setToast={setToast} />
+              </Card.Section>
+              <Card.Section flush>
+                {selectedTab === 0 ? (
+                  <ProductLink
+                    url={url}
+                    setUrl={setUrl}
+                    shopDomain={shopDomain}
+                  />
+                ) : null}
+                {selectedTab === 1 ? <OrderLink /> : null}
+                {selectedTab === 2 ? <CustomerLink /> : null}
+              </Card.Section>
+              <Card.Section subdued title="Supported url parameters">
+                <List>
+                  <List.Item>
+                    <TextStyle variation="strong">products=</TextStyle>
+                    <TextStyle variation="subdued">
+                      variantId:quantity:sellingPlanId
+                    </TextStyle>
+                  </List.Item>
+                  <List.Item>
+                    <TextStyle variation="strong">email=</TextStyle>
+                    <TextStyle variation="subdued">email@example.com</TextStyle>
+                  </List.Item>
+                  <List.Item>
+                    <TextStyle variation="strong">payment=</TextStyle>
+                    <TextStyle variation="subdued">shop_pay</TextStyle>
+                  </List.Item>
+                  <List.Item>
+                    <TextStyle variation="strong">discount=</TextStyle>
+                    <TextStyle variation="subdued">FREESHIP</TextStyle>
+                  </List.Item>
+                </List>
+              </Card.Section>
+            </RequireSubscription>
+          </Card>
+        </Stack>
         {toast && toast.show ? (
           <Toast
             content={toast.content}
