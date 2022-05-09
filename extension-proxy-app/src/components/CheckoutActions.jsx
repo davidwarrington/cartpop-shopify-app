@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useShop } from "../hooks";
-import { useCart } from "../hooks/useCart";
+import { getUtmParameters } from "../helpers";
+import { useShop, useCart } from "../hooks";
 
 const CheckoutActions = ({ completeButtonRef }) => {
   const { paymentTypes } = useShop();
@@ -16,16 +16,19 @@ const CheckoutActions = ({ completeButtonRef }) => {
       setProcessing(true);
       await handleCheckout();
 
+      const utmString = getUtmParameters();
+      console.log("utmString", utmString);
+
       const redirectionUrl = `/checkout?${
         link.queryString
           ? link.queryString.replace("&payment=shop_pay", "")
           : ""
-      }`;
+      }&${utmString}`;
 
       if (hasShopPay && payment == "shopify_pay") {
-        //TODO:window.location.replace(`${redirectionUrl}&payment=shop_pay`);
+        window.location.replace(`${redirectionUrl}&payment=shop_pay`);
       } else {
-        //TODO:window.location.replace(redirectionUrl);
+        window.location.replace(redirectionUrl);
       }
     } catch (e) {
       console.warn(e);
