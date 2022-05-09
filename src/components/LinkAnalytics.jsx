@@ -54,11 +54,11 @@ export function LinkAnalytics({ link, hasSubscription }) {
               </Button>
             </Stack>
           </Stack.Item>
-          <Tooltip content="Coming soon">
+          {/* <Tooltip content="Coming soon">
             <Button disabled plain removeUnderline>
               View report
             </Button>
-          </Tooltip>
+          </Tooltip> */}
         </Stack>
       }
     >
@@ -67,7 +67,11 @@ export function LinkAnalytics({ link, hasSubscription }) {
           <Card.Section>
             <Stack distribution="fillEvenly">
               <Stack.Item>
-                <Tooltip subheading content="Links viewed count as a click.">
+                <Tooltip
+                  dark
+                  subheading
+                  content="Links viewed count as a click."
+                >
                   Clicks
                 </Tooltip>
                 <AnalyticsTooltip
@@ -134,6 +138,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
               </Stack.Item>
               <Stack.Item>
                 <Tooltip
+                  dark
                   subheading
                   content="Links scanned via QR Code will register as a scan rather than a click."
                 >
@@ -204,6 +209,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
               </Stack.Item>
               <Stack.Item>
                 <Tooltip
+                  dark
                   subheading
                   content="If a customer converts from a CartPop link alias, it will count as an order."
                 >
@@ -217,6 +223,7 @@ export function LinkAnalytics({ link, hasSubscription }) {
               </Stack.Item>
               <Stack.Item>
                 <Tooltip
+                  dark
                   subheading
                   content="Orders that were placed and originated from a CartPop link."
                 >

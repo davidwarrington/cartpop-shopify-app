@@ -1,4 +1,20 @@
-import { Subheading, Tooltip as PolarisTooltip } from "@shopify/polaris";
+import {
+  AppProvider,
+  Subheading,
+  Tooltip as PolarisTooltip,
+} from "@shopify/polaris";
+
+const Theme = ({ dark, children }) => {
+  if (dark) {
+    return (
+      <AppProvider i18n={{}} colorScheme="dark">
+        {children}
+      </AppProvider>
+    );
+  }
+
+  return children;
+};
 
 const Wrapper = ({ subheading, children }) => {
   if (subheading) {
@@ -13,6 +29,7 @@ export function Tooltip({
   subheading = false,
   underline = true,
   preferredPosition = "above",
+  dark = false,
   children,
 }) {
   if (!children) {
@@ -24,21 +41,25 @@ export function Tooltip({
   }
 
   return (
-    <Wrapper subheading={subheading}>
-      <PolarisTooltip
-        dismissOnMouseOut
-        preferredPosition={preferredPosition}
-        content={content}
-      >
-        <span
-          style={{
-            borderBottom: underline ? "2px dotted #c4cdd5" : "",
-            cursor: underline ? "pointer" : "default",
-          }}
+    <Theme dark={dark}>
+      <Wrapper subheading={subheading}>
+        <PolarisTooltip
+          dismissOnMouseOut
+          preferredPosition={preferredPosition}
+          content={content}
         >
-          {children}
-        </span>
-      </PolarisTooltip>
-    </Wrapper>
+          <AppProvider i18n={{}} colorScheme="light">
+            <span
+              style={{
+                borderBottom: underline ? "2px dotted #c4cdd5" : "",
+                cursor: underline ? "pointer" : "default",
+              }}
+            >
+              {children}
+            </span>
+          </AppProvider>
+        </PolarisTooltip>
+      </Wrapper>
+    </Theme>
   );
 }
