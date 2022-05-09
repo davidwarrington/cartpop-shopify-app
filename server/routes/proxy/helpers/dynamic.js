@@ -1,14 +1,10 @@
-import {
-  generateQueryString,
-  getHeaders,
-  getShopLinkSettings,
-} from "../../../helpers/app-proxy.js";
+import { generateQueryString, getHeaders } from "../../../helpers/app-proxy.js";
+import { link } from "./link-alias.js";
 import { contentLoader, getMarkup } from "./markup.js";
 
 export const dynamic = async (req, res) => {
   const { shop, locale, isMobile, shopifyRequestId } = getHeaders(req);
   const { products, customer, email, discount, payment } = req.query;
-  const { clearCart, redirectLocation } = getShopLinkSettings(req.shopDoc);
 
   if (customer) {
     // TODO: look up customer given id. Check access scopes.
@@ -39,15 +35,10 @@ export const dynamic = async (req, res) => {
             useShopPay: payment ? true : false,
           }
         : null,
+    settings: link.settings || null,
   };
 
   const urlQueryString = generateQueryString({ link: formattedLink });
-
-  // const scripts = getScriptMarkup({
-  //   clearCart,
-  //   redirectLocation,
-  //   urlQueryString,
-  // });
 
   const markup = getMarkup({
     link: formattedLink,

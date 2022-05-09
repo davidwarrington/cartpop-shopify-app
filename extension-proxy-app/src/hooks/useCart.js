@@ -37,7 +37,7 @@ const CartProvider = ({ link, setStatus, children }) => {
 
   const handleCheckout = async () => {
     // Clear cart on load
-    if (link.clearCart) {
+    if (link.settings && link.settings.clearCart) {
       await clear();
     }
 

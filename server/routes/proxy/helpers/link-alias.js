@@ -6,7 +6,6 @@ import {
   generatedCheckoutLink,
   generateQueryString,
   getHeaders,
-  getShopLinkSettings,
 } from "../../../helpers/app-proxy.js";
 import {
   contentLoader,
@@ -36,7 +35,6 @@ export const link = async (req, res) => {
   const { shop, locale, isMobile, shopifyRequestId } = getHeaders(req);
   const { email, discount, payment } = req.query;
   const link = req.link;
-  const { clearCart, redirectLocation } = getShopLinkSettings(req.shopDoc);
   const generatedLink = generatedCheckoutLink({
     link,
   });
@@ -80,8 +78,7 @@ export const link = async (req, res) => {
         customer: link.customer,
         order: link.order,
         products: productsRes.body ? productsRes.body.products : [],
-        clearCart,
-        redirectLocation,
+        settings: link.settings || null,
         queryString: urlQueryString || null,
         redirectionUrl: generatedLink, // TODO:
       }

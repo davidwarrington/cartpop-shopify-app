@@ -16,7 +16,7 @@ export const generatedCheckoutLink = ({
 
   const { products } = link;
 
-  // Products are required for chekout link
+  // Products are required for checkout link
   if (!products || !products.length) {
     return null;
   }
@@ -168,12 +168,5 @@ export const getHeaders = (req) => {
     shopifyRequestId,
     locale,
     shop,
-  };
-};
-
-export const getShopLinkSettings = (shopDoc) => {
-  return {
-    clearCart: shopDoc?.settings?.linksClearCart === false ? false : true,
-    redirectLocation: shopDoc?.settings?.linksRedirectLocation || "checkout",
   };
 };
