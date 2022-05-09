@@ -40,7 +40,7 @@ export const link = async (req, res) => {
   const generatedLink = generatedCheckoutLink({
     link,
   });
-  const urlQueryString = generateQueryString(link);
+  const urlQueryString = generateQueryString({ link });
 
   // Extrapolate product ids
   const productIds = link.products
