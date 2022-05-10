@@ -48,7 +48,7 @@ export const translatedLiquid = (locale, property) => {
     return;
   }
   const { namespace, key } = translationMetafield;
-  return `{{ shop.metafields.${namespace}.${key}.value[request.locale.iso_code].${property} | default: "${defaultTranslations[locale] ? defaultTranslations[locale][property] : defaultTranslations.en.[property]}" }}`;
+  return `{{ shop.metafields.${namespace}.${key}.value[request.locale.iso_code].${property} | default: "${defaultTranslations[locale] ? defaultTranslations[locale][property] : defaultTranslations['en'][property]}" }}`;
 };
 
 const bugsnagScript = () => {
