@@ -165,6 +165,11 @@ export const contentNotFound = (locale) => {
 
 const checkoutStyles = `
 <style>
+  :root {
+    --bg-color: #fff;
+    --color-brand: #3b8ede;
+  }
+
   html,body {
     margin: 0;
     width: 100%;
