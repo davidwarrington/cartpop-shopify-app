@@ -2,6 +2,7 @@ import CheckoutActions from "./CheckoutActions";
 import GallerySlider from "./GallerySlider";
 import LineItems from "./LineItems";
 import ModalContainer from "./ModalContainer";
+import Loader from "./Loader";
 import LineItem from "./LineItem";
 import ProductImage from "./ProductImage";
 import ProductPrice from "./ProductPrice";
@@ -15,6 +16,7 @@ import VariantSelector from "./VariantSelector";
 export {
   CheckoutActions,
   GallerySlider,
+  Loader,
   LineItems,
   LineItem,
   ModalContainer,
