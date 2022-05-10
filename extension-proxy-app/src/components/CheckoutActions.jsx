@@ -1,38 +1,22 @@
-import { useState } from "react";
-import { getUtmParameters } from "../helpers";
-import { useShop, useCart } from "../hooks";
+import { useCallback, useState } from "react";
+import { useCart } from "../hooks";
 
 const CheckoutActions = ({ completeButtonRef }) => {
-  const { paymentTypes } = useShop();
-  const { handleCheckout, link } = useCart();
+  const { handleCheckoutRedirect, hasShopPay } = useCart();
   const isCrypto = false;
-  const hasShopPay =
-    (paymentTypes && paymentTypes.includes("shopify_pay")) || false;
 
   const [processing, setProcessing] = useState(false);
 
-  const handleCheckoutRedirect = async ({ payment = "" }) => {
+  const handleCheckout = useCallback(async (payload) => {
+    setProcessing(true);
     try {
-      setProcessing(true);
-      await handleCheckout();
-
-      const utmString = getUtmParameters();
-
-      const redirectionUrl = `/checkout?${
-        link.queryString
-          ? link.queryString.replace("&payment=shop_pay", "")
-          : ""
-      }&${utmString}`;
-
-      if (hasShopPay && payment == "shopify_pay") {
-        window.location.replace(`${redirectionUrl}&payment=shop_pay`);
-      } else {
-        window.location.replace(redirectionUrl);
-      }
+      await handleCheckoutRedirect(payload);
     } catch (e) {
+      // TODO: send to bugsnag
       console.warn(e);
+      setProcessing(false);
     }
-  };
+  }, []);
 
   return (
     <div className="px-4">
@@ -41,7 +25,7 @@ const CheckoutActions = ({ completeButtonRef }) => {
           <button
             ref={completeButtonRef}
             className="block py-5 flex align-center items-center justify-center text-white text-base font-medium bg-[#5931f5] rounded-lg w-full bg-blue hover:bg-[#5931f5]/75"
-            onClick={() => handleCheckoutRedirect({ payment: "shopify_pay" })}
+            onClick={() => handleCheckout({ payment: "shopify_pay" })}
             disabled={processing}
           >
             {processing ? (
@@ -143,7 +127,7 @@ const CheckoutActions = ({ completeButtonRef }) => {
       {!processing || !hasShopPay ? (
         <div className="flex justify-center">
           <button
-            onClick={handleCheckoutRedirect}
+            onClick={handleCheckout}
             className={`text-base font-medium py-5 px-10 rounded-md w-full disabled:opacity-50 flex align-center items-center justify-center ${
               hasShopPay
                 ? "md:py-2 text-brand hover:text-brand/70 hover:bg-gray-100 focus:bg-gray-100"

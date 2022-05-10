@@ -1,10 +1,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { getUtmParameters } from "../helpers";
 import { useShop } from "./useShop";
 
 const CartContext = createContext({});
 
 const CartProvider = ({ link, setStatus, children }) => {
-  const { routes } = useShop();
+  const { routes, paymentTypes } = useShop();
+  const hasShopPay =
+    (paymentTypes && paymentTypes.includes("shopify_pay")) || false;
 
   const [lineItems, setLineItems] = useState(link.lineItems || []);
 
@@ -51,6 +54,31 @@ const CartProvider = ({ link, setStatus, children }) => {
     );
     console.log("newCartRes", newCartRes);
     // TODO:setCartRes(newCartRes);
+  };
+
+  const handleCheckoutRedirect = async ({
+    destination = "checkout",
+    payment = "",
+  }) => {
+    try {
+      await handleCheckout();
+
+      const utmString = getUtmParameters();
+
+      const redirectionUrl = `/${destination}?${
+        link.queryString
+          ? link.queryString.replace("&payment=shop_pay", "")
+          : ""
+      }${utmString ? `&${utmString}` : ""}`;
+
+      if (hasShopPay && payment == "shopify_pay") {
+        window.location.replace(`${redirectionUrl}&payment=shop_pay`);
+      } else {
+        window.location.replace(redirectionUrl);
+      }
+    } catch (e) {
+      console.warn(e);
+    }
   };
 
   //   // Update linte item
@@ -135,6 +163,8 @@ const CartProvider = ({ link, setStatus, children }) => {
         update,
         handleLineItemChange,
         handleCheckout,
+        handleCheckoutRedirect,
+        hasShopPay,
       }}
     >
       {children}
@@ -151,6 +181,8 @@ const useCart = () => {
     link,
     handleLineItemChange,
     handleCheckout,
+    handleCheckoutRedirect,
+    hasShopPay,
   } = useContext(CartContext);
 
   return {
@@ -161,6 +193,8 @@ const useCart = () => {
     link,
     handleLineItemChange,
     handleCheckout,
+    handleCheckoutRedirect,
+    hasShopPay,
   };
 };
 
