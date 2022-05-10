@@ -5,8 +5,9 @@
     "url": "https://www.CheckoutPromotions.com"
   },
   "scripts": {
-    "build": "npm run build:client",
+    "build": "npm run build:client && npm run build:proxy",
     "build:client": "vite build --outDir dist/client",
+    "build:proxy": "cd extension-proxy-app && npm run build && mkdir ../src/assets/proxy && mv dist/assets/index.js ../src/assets/proxy/index.js && mv dist/assets/index.css ../src/assets/proxy/index.css",
     "debug": "node --inspect-brk server/index.js",
     "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch ./server",
     "prepare": "husky install",
